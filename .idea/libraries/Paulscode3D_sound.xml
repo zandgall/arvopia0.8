@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Paulscode3D sound">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../_lib/Paulscode 3D sound" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/../_lib/Paulscode 3D sound" recursive="false" />
+  </library>
+</component>

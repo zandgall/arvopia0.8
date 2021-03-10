@@ -1,0 +1,43 @@
+/BHow to Play: 
+
+WASD or Arrow Keys: Move
+
+Mouse: Click to punch/attack or click to damage/destroy selected entities
+
+You will damage a nearby entity if the Right-Mouse button is pressed
+If it is not, you will slowly destroy an entity that the mouse is hovered over
+
+/BCrafting and Inventory
+
+Opening your inventory with 'Z' will allow you to craft or move items
+
+/BFighting
+
+While holding right-click, you are able to swing or stab with an item you are holding, or if you aren't holding an item you'll punch
+
+While attacking any creature in front of you withing reach of your weapon or punch, will get hurt 
+
+/BOptions:
+
+FPS: Changes the video speed of the game
+
+Time speed: Changes how fast time goes by in game
+
+Light Quality: Lower values = smoother lights
+
+Slider Debug: Toggle this if sliders aren't working properly
+
+Music Volume: Sets the volume of music playing
+
+Sound Volume: Sets the volume of sound effects playing, such as walking
+
+
+/BWorld Select:
+
+This menu shows worlds located in the worlds and saves folders, ("C:\Arvopia\World", "C:\Arvopia\Packs\" and "C:\Arvopia\Saves")
+
+Back: Return to titlemenu
+
+Open other: Open a custom unlisted world
+
+Open Save: Open an unlisted save

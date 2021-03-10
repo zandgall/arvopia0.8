@@ -1,0 +1,41 @@
+/BHow to Play: 
+
+WASD or Arrow Keys: Move
+
+Mouse: Click to punch/attack or click to damage/destroy selected entities
+
+You will damage a nearby entity if the Right-Mouse button is pressed
+If it is not, you will slowly destroy an entity that the mouse is hovered over
+
+/BWeapons:
+
+You can open your inventory, or a creation menu if you hit Z, or X.
+
+Z will take you to your inventory and allow you to switch out items for use.
+
+X will take you to a creation menu where you can make tools and items to fight or create other items
+
+/BOptions:
+
+FPS: Changes the video speed of the game
+
+Time speed: Changes how fast time goes by in game
+
+Light Quality: Lower values = smoother lights
+
+Slider Debug: Toggle this if sliders aren't working properly
+
+Volume: Sets the volume of music playing
+
+SoundFX Volume: Sets the volume of sound effects playing, such as walking
+
+
+/BWorld Select:
+
+This menu shows worlds located in the worlds and saves folders, ("C:\Arvopia\World" and "C:\Arvopia\Saves")
+
+Back: Return to titlemenu
+
+Open other: Open a custom unlisted world
+
+Open Save: Open an unlisted save
