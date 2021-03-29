@@ -30,12 +30,13 @@ public class Reporter {
 			pc = Color.white, scs = Color.white, ep = Color.white, in = Color.white;
 
 	public static void init() {
-		File check = new File("C:\\Arvopia\\username.txt");
+		File check = new File(Game.prefix + "\\Arvopia\\username.txt");
+		System.out.println(Game.prefix + "\\Arvopia\\username.txt : " + check.exists());
 		sentUser = check.exists();
 
 		if (sentUser) {
 			try {
-				String[] file = FileLoader.readFile("C:\\Arvopia\\username.txt").split(System.lineSeparator());
+				String[] file = FileLoader.readFile(Game.prefix + "\\Arvopia\\username.txt").split(System.lineSeparator());
 				user = file[0];
 
 				file = file[1].split("\\s+");
@@ -75,7 +76,7 @@ public class Reporter {
 				builder += ep.getRGB() + " ";
 				builder += in.getRGB() + " ";
 
-				Utils.fileWriter(builder, "C:\\Arvopia\\username.txt");
+				Utils.fileWriter(builder, Game.prefix + "\\Arvopia\\username.txt");
 			}
 		} else {
 			String builder;
@@ -102,7 +103,7 @@ public class Reporter {
 			builder += ep.getRGB() + " ";
 			builder += in.getRGB() + " ";
 
-			Utils.fileWriter(builder, "C:\\Arvopia\\username.txt");
+			Utils.fileWriter(builder, Game.prefix + "\\Arvopia\\username.txt");
 		}
 	}
 
@@ -121,7 +122,7 @@ public class Reporter {
 		builder += ep.getRGB() + " ";
 		builder += in.getRGB() + " ";
 
-		Utils.fileWriter(builder, "C:\\Arvopia\\username.txt");
+		Utils.fileWriter(builder, Game.prefix + "\\Arvopia\\username.txt");
 	}
 
 	public static void out(String error) {
@@ -132,9 +133,9 @@ public class Reporter {
 			System.out.print("What's your username? : ");
 			user = sc.nextLine();
 			sentUser = true;
-			Utils.fileWriter(user, "C:\\Arvopia\\username.txt");
+			Utils.fileWriter(user, Game.prefix + "\\Arvopia\\username.txt");
 		} else {
-			user = FileLoader.readFile("C:\\Arvopia\\username.txt");
+			user = FileLoader.readFile(Game.prefix + "\\Arvopia\\username.txt");
 		}
 
 		String subject = "Bug report: " + user;
@@ -183,7 +184,7 @@ public class Reporter {
 		String toEmail = "Alexanderdgall@gmail.com";
 		String fromEmail = "messanger.zandgall@gmail.com";
 
-		user = FileLoader.readFile("C:\\Arvopia\\username.txt");
+		user = FileLoader.readFile(Game.prefix + "\\Arvopia\\username.txt");
 
 		try {
 			Properties props = System.getProperties();
@@ -225,7 +226,7 @@ public class Reporter {
 		String toEmail = "Alexanderdgall@gmail.com";
 		String fromEmail = "messanger.zandgall@gmail.com";
 		sentUser = true;
-		Utils.fileWriter(user, "C:\\Arvopia\\username.txt");
+		Utils.fileWriter(user, Game.prefix + "\\Arvopia\\username.txt");
 		String subject = "New user!";
 		String message = user + " has joined the world of Arvopia" + System.lineSeparator();
 
@@ -265,7 +266,7 @@ public class Reporter {
 	public static void quick(String error) {
 		String toEmail = "Alexanderdgall@gmail.com";
 		String fromEmail = "messanger.zandgall@gmail.com";
-		String user = FileLoader.readFile("C:\\Arvopia\\username.txt");
+		String user = FileLoader.readFile(Game.prefix + "\\Arvopia\\username.txt");
 		String subject = "Bug report: " + user;
 		String message = "Bug report from: " + user + System.lineSeparator() + System.lineSeparator();
 		message = message + "Error: " + error + System.lineSeparator() + System.lineSeparator();

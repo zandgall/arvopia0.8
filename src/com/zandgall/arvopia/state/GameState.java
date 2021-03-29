@@ -1,5 +1,6 @@
 package com.zandgall.arvopia.state;
 
+import com.zandgall.arvopia.Game;
 import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.Initiator;
 import com.zandgall.arvopia.guis.Gui;
@@ -91,7 +92,7 @@ public class GameState extends State {
 		if (open) {
 			FileChooser fileGet = new FileChooser();
 
-			String i = fileGet.getFile("C:\\Arvopia");
+			String i = fileGet.getFile(Game.prefix + "\\Arvopia");
 
 			if (i.length() > 0) {
 				loadWorld(i);
@@ -114,7 +115,7 @@ public class GameState extends State {
 		if (world.save == "") {
 			FileChooser fileSet = new FileChooser();
 
-			String i = fileSet.saveFile("C:\\Arvopia\\Saves");
+			String i = fileSet.saveFile(Game.prefix + "\\Arvopia\\Saves");
 
 			if(!new File(i).isDirectory())
 				world.saveWorld(i);
@@ -126,7 +127,7 @@ public class GameState extends State {
 	public void openSave() {
 		FileChooser fileGet = new FileChooser();
 
-		String i = fileGet.getFile("C:\\Arvopia\\Saves");
+		String i = fileGet.getFile(Game.prefix + "\\Arvopia\\Saves");
 
 		if (i.length() > 0) {
 			loadWorld(i);

@@ -26,21 +26,21 @@ public class ArvopiaLauncher {
 //			startMin();
 //		}
 		
-		Utils.createDirectory("C:\\Arvopia");
-		Utils.createDirectory("C:\\Arvopia\\tmp");
-		Utils.createDirectory("C:\\Arvopia\\logs");
-		Utils.createDirectory("C:\\Arvopia\\logs\\World");
-		Utils.createDirectory("C:\\Arvopia\\logs\\Player");
-		Utils.createDirectory("C:\\Arvopia\\logs\\Key Events");
-		Utils.createDirectory("C:\\Arvopia\\logs\\FPSLogs");
-		Utils.createDirectory("C:\\Arvopia\\logs\\Enviornment");
-		Utils.createDirectory("C:\\Arvopia\\logs\\FileLoading");
-		Utils.createDirectory("C:\\Arvopia\\Saves");
-		Utils.createDirectory("C:\\Arvopia\\Player");
-		Utils.createDirectory("C:\\Arvopia\\Recording");
-		Utils.createDirectory("C:\\Arvopia\\Mods");
-		Utils.createDirectory("C:\\Arvopia\\World");
-		Utils.createDirectory("C:\\Arvopia\\Pack");
+		Utils.createDirectory(Game.prefix + "\\Arvopia");
+		Utils.createDirectory(Game.prefix + "\\Arvopia\\tmp");
+		Utils.createDirectory(Game.prefix + "\\Arvopia\\logs");
+		Utils.createDirectory(Game.prefix + "\\Arvopia\\logs\\World");
+		Utils.createDirectory(Game.prefix + "\\Arvopia\\logs\\Player");
+		Utils.createDirectory(Game.prefix + "\\Arvopia\\logs\\Key Events");
+		Utils.createDirectory(Game.prefix + "\\Arvopia\\logs\\FPSLogs");
+		Utils.createDirectory(Game.prefix + "\\Arvopia\\logs\\Enviornment");
+		Utils.createDirectory(Game.prefix + "\\Arvopia\\logs\\FileLoading");
+		Utils.createDirectory(Game.prefix + "\\Arvopia\\Saves");
+		Utils.createDirectory(Game.prefix + "\\Arvopia\\Player");
+		Utils.createDirectory(Game.prefix + "\\Arvopia\\Recording");
+		Utils.createDirectory(Game.prefix + "\\Arvopia\\Mods");
+		Utils.createDirectory(Game.prefix + "\\Arvopia\\World");
+		Utils.createDirectory(Game.prefix + "\\Arvopia\\Pack");
 		
 		SetFiles.fileSet();
 		
@@ -51,9 +51,7 @@ public class ArvopiaLauncher {
 
 		SetFiles.fileSet();
 
-		log = new Log("C:\\Arvopia\\logs\\Arvopia0.8", "Main");
-		
-		Utils.fileWriter("min", "C:\\Arvopia\\screen.txt");
+		log = new Log("Arvopia\\logs\\Arvopia0.8", "Main");
 		
 		if(game!=null) {
 			game.stop();

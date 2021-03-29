@@ -18,6 +18,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,9 +77,9 @@ public class OptionState extends State {
 
 		Console.log("Loading saved options");
 
-		if (FileLoader.readFile("C:\\Arvopia\\Options0.8.txt") != null) {
+		if (new File(Game.prefix + "\\Arvopia\\Options0.8.txt").exists()) {
 
-			String s = FileLoader.readFile("C:\\Arvopia\\Options0.8.txt");
+			String s = FileLoader.readFile(Game.prefix + "\\Arvopia\\Options0.8.txt");
 
 			for (String n : options.keySet())
 				for (int i = 0; i < options.get(n).size(); i++) {
@@ -187,7 +188,7 @@ public class OptionState extends State {
 						out += options.get(s).get(i).name.replaceAll(" ", "") + " " + options.get(s).get(i).toggle.on
 								+ System.lineSeparator();
 				}
-			Utils.fileWriter(out, "C:\\Arvopia\\Options0.8.txt");
+			Utils.fileWriter(out, Game.prefix + "\\Arvopia\\Options0.8.txt");
 		}
 
 		scroll -= handler.getMouse().getMouseScroll() * 8;

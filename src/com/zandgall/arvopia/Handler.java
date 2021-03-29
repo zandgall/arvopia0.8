@@ -91,7 +91,7 @@ public class Handler implements Serializable {
 
 	public void loadMods(EntityManager e) {
 		loadInternalMods(e);
-		File f = new File("C:\\Arvopia\\Mods");
+		File f = new File(Game.prefix + "\\Arvopia\\Mods");
 		if (f.exists())
 			for (File s : f.listFiles()) {
 				System.out.println("Loading mod : " + s.getPath());
@@ -119,7 +119,7 @@ public class Handler implements Serializable {
 	
 	public ArrayList<EntityAdder> getAdders() {
 		ArrayList<EntityAdder> out = new ArrayList<EntityAdder>();
-		File f = new File("C:\\Arvopia\\Mods");
+		File f = new File(Game.prefix + "\\Arvopia\\Mods");
 		if (f.exists())
 			for (File s : f.listFiles()) {
 				ArrayList<Class<?>> objects = new ArrayList<Class<?>>();
@@ -160,7 +160,7 @@ public class Handler implements Serializable {
 					ArrayList<String> n = ClassLoading.getImageNames(s.getPath());
 					if (l != null && l.size() > 0) {
 						for (BufferedImage b : l) {
-							ImageLoader.saveImage(b, "C:\\Arvopia\\tmp\\" + n.get(l.indexOf(b)));
+							ImageLoader.saveImage(b, Game.prefix + "\\Arvopia\\tmp\\" + n.get(l.indexOf(b)));
 						}
 					}
 				}
@@ -168,7 +168,7 @@ public class Handler implements Serializable {
 	}
 
 	public void loadMod(String directory, EntityManager e) {
-		File f = new File("C:\\Arvopia\\Mods");
+		File f = new File(Game.prefix + "\\Arvopia\\Mods");
 		if (f.exists())
 			for (File s : f.listFiles()) {
 				if (s.isDirectory()) {
@@ -266,17 +266,17 @@ public class Handler implements Serializable {
 		}
 		System.out.println("set up sound system");
 
-		player = new Log("C:\\Arvopia\\logs\\Player\\player.txt", "Player");
+		player = new Log(Game.prefix + "\\Arvopia\\logs\\Player\\player.txt", "Player");
 
-		worldl = new Log("C:\\Arvopia\\logs\\World\\world.txt", "World");
+		worldl = new Log(Game.prefix + "\\Arvopia\\logs\\World\\world.txt", "World");
 
-		keyEvent = new Log("C:\\Arvopia\\logs\\Key Events\\keyEvent.txt", "Keys");
+		keyEvent = new Log(Game.prefix + "\\Arvopia\\logs\\Key Events\\keyEvent.txt", "Keys");
 
-		fpsLogger = new Log("C:\\Arvopia\\logs\\FPSLogs\\Fps.txt", "Fps");
+		fpsLogger = new Log(Game.prefix + "\\Arvopia\\logs\\FPSLogs\\Fps.txt", "Fps");
 
-		enviornmentl = new Log("C:\\Arvopia\\logs\\Enviornment\\Enviornment.txt", "Enviornment");
+		enviornmentl = new Log(Game.prefix + "\\Arvopia\\logs\\Enviornment\\Enviornment.txt", "Enviornment");
 
-		filelogger = new Log("C:\\Arvopia\\logs\\FileLoading\\Files.txt", "Files");
+		filelogger = new Log(Game.prefix + "\\Arvopia\\logs\\FileLoading\\Files.txt", "Files");
 	}
 
 	public void logPlayer(String string) {
@@ -309,8 +309,8 @@ public class Handler implements Serializable {
 	}
 
 	public static int getGamePoints() {
-		return Utils.parseInt(FileLoader.readFile("C:\\Arvopia\\00.arv"))
-				+ Utils.parseInt(FileLoader.readFile("C:\\Arvopia\\02.arv"));
+		return Utils.parseInt(FileLoader.readFile(Game.prefix + "\\Arvopia\\00.arv"))
+				+ Utils.parseInt(FileLoader.readFile(Game.prefix + "\\Arvopia\\02.arv"));
 	}
 
 	public void logSilent(String message) {

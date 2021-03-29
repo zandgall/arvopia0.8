@@ -2571,8 +2571,8 @@ public class World implements Serializable {
 			}
 		} else if (type != "Save") {
 			try {
-				for (String f : new File("C:\\Arvopia\\mods").list())
-					Files.copy(new File("C:\\Arvopia\\mods\\" + f).toPath(), new File(path + "\\mods\\" + f).toPath());
+				for (String f : new File(Game.prefix + "\\Arvopia\\mods").list())
+					Files.copy(new File(Game.prefix + "\\Arvopia\\mods\\" + f).toPath(), new File(path + "\\mods\\" + f).toPath());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

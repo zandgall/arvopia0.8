@@ -43,6 +43,8 @@ public class Utils {
 	}
 
 	public static void fileWriter(String string, String fileName) {
+		if(fileName.startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
+			fileName.replace("C:", "~/Applications");
 		File file = new File(fileName);
 
 		try {
@@ -66,6 +68,8 @@ public class Utils {
 	}
 
 	public static void existWriter(String string, String fileName) {
+		if(fileName.startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
+			fileName.replace("C:", "~/Applications");
 		File file = new File(fileName);
 
 		try {
@@ -83,6 +87,10 @@ public class Utils {
 	}
 
 	public static void createDirectory(String fileName) {
+
+		if(fileName.startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
+			fileName.replace("C:", "~/Applications");
+
 		File file = new File(fileName);
 
 		if (file.exists()) {

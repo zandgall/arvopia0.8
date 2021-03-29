@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.ArrayList;
 import static java.lang.Math.*;
 
+import com.zandgall.arvopia.Game;
 import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.SmartCostume;
 import com.zandgall.arvopia.entity.EntityAdder;
@@ -456,7 +457,7 @@ public class LevelMakerState extends State {
 			handler.getGame().getDisplay().setSize(W, H);
 		}
 		if (image.on) {
-			writeImage("C:\\Arvopia\\World\\" + name.getContent() + ".png");
+			writeImage(Game.prefix + "\\Arvopia\\World\\" + name.getContent() + ".png");
 		}
 
 		if (confirm.on) {
@@ -467,13 +468,13 @@ public class LevelMakerState extends State {
 			handler.height = 400;
 			handler.getGame().useResize(true);
 			handler.getGame().getDisplay().setSize(preW, preH);
-			saveWorld("C:\\Arvopia\\World\\" + name.getContent() + ".arv");
-			((GameState) handler.getGame().gameState).loadWorld("C:\\Arvopia\\World\\" + name.getContent() + ".arv");
+			saveWorld(Game.prefix + "\\Arvopia\\World\\" + name.getContent() + ".arv");
+			((GameState) handler.getGame().gameState).loadWorld(Game.prefix + "\\Arvopia\\World\\" + name.getContent() + ".arv");
 			setState(handler.getGame().gameState);
 			return;
 		}
 		if (save.on) {
-			saveWorld("C:\\Arvopia\\World\\" + name.getContent() + ".arv");
+			saveWorld(Game.prefix + "\\Arvopia\\World\\" + name.getContent() + ".arv");
 		}
 		back.tick();
 		if (back.on) {
@@ -488,7 +489,7 @@ public class LevelMakerState extends State {
 
 		if (open.on) {
 			FileChooser f = new FileChooser();
-			String s = f.getFile("C:\\Arvopia\\World");
+			String s = f.getFile(Game.prefix + "\\Arvopia\\World");
 			loadWorld(s);
 		}
 

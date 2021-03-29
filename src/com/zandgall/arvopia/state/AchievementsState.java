@@ -1,5 +1,6 @@
 package com.zandgall.arvopia.state;
 
+import com.zandgall.arvopia.Game;
 import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.gfx.transform.Tran;
 import com.zandgall.arvopia.input.KeyManager;
@@ -154,7 +155,7 @@ public class AchievementsState extends State {
 
 		g.setColor(Color.white);
 		g.setFont(new Font("Arial", 1, 20));
-		Tran.drawOutlinedText(g, 10d, handler.getHeight()-10, "Game points: " + (Utils.parseInt(FileLoader.readFile("C:\\Arvopia\\00.arv")) + Utils.parseInt(FileLoader.readFile("C:\\Arvopia\\02.arv"))), 1, Color.black, Color.white);
+		Tran.drawOutlinedText(g, 10d, handler.getHeight()-10, "Game points: " + (Utils.parseInt(FileLoader.readFile(Game.prefix + "\\Arvopia\\00.arv")) + Utils.parseInt(FileLoader.readFile(Game.prefix + "\\Arvopia\\02.arv"))), 1, Color.black, Color.white);
 		Tran.drawOutlinedText(g, 10d, 150, "Quests:", 1, Color.black, Color.white); 
 
 		back.render(g);
