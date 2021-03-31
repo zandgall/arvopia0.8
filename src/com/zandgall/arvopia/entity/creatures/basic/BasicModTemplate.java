@@ -613,28 +613,28 @@ public class BasicModTemplate extends Creature {
 	}
 	
 	public static void export() throws IOException {
-		Utils.createDirectory(Game.prefix + "\\Arvopia");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Mod export");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Mod export\\Creatures");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Mod export\\Creatures\\"+BasicModTemplate.name);
+		Utils.createDirectory(Game.prefix + "/Arvopia");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Mod export");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Mod export/Creatures");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Mod export/Creatures/"+BasicModTemplate.name);
 		
 
-		Log log = new Log(Game.prefix + "\\Arvopia\\Mod export\\Creatures\\"+BasicModTemplate.name+"\\Main", "Log");
+		Log log = new Log(Game.prefix + "/Arvopia/Mod export/Creatures/"+BasicModTemplate.name+"/Main", "Log");
 		log.log("Writing...");
 
 		Game game = new Game("Exporting...", 720, 400, false, log);
 
 		Public.init(new Handler(game));
 
-		Utils.fileWriter(BasicModTemplate.name, Game.prefix + "\\Arvopia\\Mod export\\name.txt");
-		FileLoader.writeObjects(Game.prefix + "\\Arvopia\\Mod export\\" + BasicModTemplate.name + ".arv",
+		Utils.fileWriter(BasicModTemplate.name, Game.prefix + "/Arvopia/Mod export/name.txt");
+		FileLoader.writeObjects(Game.prefix + "/Arvopia/Mod export/" + BasicModTemplate.name + ".arv",
 				new Object[] { new BasicModTemplate() });
 
 		log.log("Successfully wrote " + BasicModTemplate.name);
 	}
 
 	// Run this when you want to export the mod
-	// Exports to "C:\\Arvopia\\Mod Export\\"
+	// Exports to "C:/Arvopia/Mod Export/"
 	// (Instructions on mod packing here)
 	public static void main(String[] args) throws IOException {
 		BasicModTemplate.export();

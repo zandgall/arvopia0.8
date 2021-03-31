@@ -115,7 +115,7 @@ public class Bird extends BasicTemplate {
 			
 			if(bottoms || Public.chance(0.1)) {
 				state=0;
-				game.soundSystem.stop("BirdFlap"+layer);
+				//game.soundSystem.stop("BirdFlap"+layer);
 			}
 		} else if(state == 0) {
 			//Walking||Still

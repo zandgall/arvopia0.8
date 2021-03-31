@@ -92,7 +92,7 @@ public class GameState extends State {
 		if (open) {
 			FileChooser fileGet = new FileChooser();
 
-			String i = fileGet.getFile(Game.prefix + "\\Arvopia");
+			String i = fileGet.getFile(Game.prefix + "/Arvopia");
 
 			if (i.length() > 0) {
 				loadWorld(i);
@@ -115,7 +115,7 @@ public class GameState extends State {
 		if (world.save == "") {
 			FileChooser fileSet = new FileChooser();
 
-			String i = fileSet.saveFile(Game.prefix + "\\Arvopia\\Saves");
+			String i = fileSet.saveFile(Game.prefix + "/Arvopia/Saves");
 
 			if(!new File(i).isDirectory())
 				world.saveWorld(i);
@@ -127,7 +127,7 @@ public class GameState extends State {
 	public void openSave() {
 		FileChooser fileGet = new FileChooser();
 
-		String i = fileGet.getFile(Game.prefix + "\\Arvopia\\Saves");
+		String i = fileGet.getFile(Game.prefix + "/Arvopia/Saves");
 
 		if (i.length() > 0) {
 			loadWorld(i);
@@ -150,7 +150,7 @@ public class GameState extends State {
 
 		handler.getGame().stable = false;
 
-		String[] t = FileLoader.readFile(path + "\\Player.arv").split("\\s+");
+		String[] t = FileLoader.readFile(path + "/Player.arv").split("\\s+");
 
 		world.getEntityManager().getPlayer().setX(Utils.parseDouble(t[0]));
 		world.getEntityManager().getPlayer().setY(Utils.parseDouble(t[1]));
@@ -225,7 +225,7 @@ public class GameState extends State {
 				&& (h.contains("-5"))) {
 			Achievement.award(Achievement.smithy);
 		}
-//		if (!com.zandgall.arvopia.utils.FileLoader.readFile("C:\\Arvopia\\01.arv", false).contains("Hoarder")) {
+//		if (!com.zandgall.arvopia.utils.FileLoader.readFile("C:/Arvopia/01.arv", false).contains("Hoarder")) {
 		if(!AchievementManager.al.contains(Achievement.get("Hoarder")))
 			for (String i : world.getEntityManager().getPlayer().items.keySet())
 				if (world.getEntityManager().getPlayer().items.get(i).amount >= 100)

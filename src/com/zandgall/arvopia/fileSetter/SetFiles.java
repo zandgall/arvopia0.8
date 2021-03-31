@@ -12,23 +12,23 @@ public class SetFiles {
 	}
 
 	public static void fileSet() {
-		file = new File(Game.prefix + "\\Arvopia\\Options.txt");
+		file = new File(Game.prefix + "/Arvopia/Options.txt");
 		if (!file.exists()) {
 			try {
 				if (file.createNewFile())
 					System.out.println("Options File Created");
-				com.zandgall.arvopia.utils.Utils.existWriter("60 2 5 6 60 false", Game.prefix + "\\Arvopia\\Options.txt");
+				com.zandgall.arvopia.utils.Utils.existWriter("60 2 5 6 60 false", Game.prefix + "/Arvopia/Options.txt");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		file = new File(Game.prefix + "\\Arvopia\\DontShowThisAgain");
+		file = new File(Game.prefix + "/Arvopia/DontShowThisAgain");
 		if (!file.exists()) {
 			try {
 				if (file.createNewFile()) {
 					System.out.println("DontShow File Created");
 				}
-				com.zandgall.arvopia.utils.Utils.existWriter("false", Game.prefix + "\\Arvopia\\DontShowThisAgain");
+				com.zandgall.arvopia.utils.Utils.existWriter("false", Game.prefix + "/Arvopia/DontShowThisAgain");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

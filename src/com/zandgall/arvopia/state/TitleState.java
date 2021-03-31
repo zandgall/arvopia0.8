@@ -68,7 +68,7 @@ public class TitleState extends State {
 		body.affectImage(new Color(120, 225, 255));
 
 		enviornment = new Enviornment(handler, 1, 1, 1);
-		handler.soundSystem.stop("Wind");
+		//handler.soundSystem.stop("Wind");
 		enviornment.setupStars();
 		World.setWidth((int) (handler.getWidth()/9.0)+1);
 		World.setHeight((int) (handler.getHeight()/18.0)+1);
@@ -107,10 +107,10 @@ public class TitleState extends State {
 		enviornment.precipitation=false;
 		enviornment.setTimeSpeed(((OptionState) handler.getGame().optionState).getSlideri("Enviornment", "Time Speed"));
 		enviornment.lightQuality=((OptionState) handler.getGame().optionState).getSlideri("Enviornment", "Light Quality");
-		if(handler.soundSystem.playing("Rain"))
-			handler.soundSystem.stop("Rain");
-		if(handler.soundSystem.playing("Wind"))
-			handler.soundSystem.stop("Wind");
+		//if(handler.soundSystem.playing("Rain"))
+		//	handler.soundSystem.stop("Rain");
+		//if(handler.soundSystem.playing("Wind"))
+		//	handler.soundSystem.stop("Wind");
 		
 		if(bgdirection) {
 			bgslide-=0.5;

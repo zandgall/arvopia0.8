@@ -87,12 +87,8 @@ public class Utils {
 	}
 
 	public static void createDirectory(String fileName) {
-
-		if(fileName.startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
-			fileName.replace("C:", "~/Applications");
-
 		File file = new File(fileName);
-
+		System.out.println("Trying to create directory " + file.getAbsolutePath());
 		if (file.exists()) {
 			return;
 		}

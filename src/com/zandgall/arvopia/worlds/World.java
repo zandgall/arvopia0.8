@@ -230,9 +230,9 @@ public class World implements Serializable {
 		if (path == "generation") {
 			generateWorld(true, 200, 100, 1f, 1f, 1f, 1f, 0.2f, 2);
 			type = "Generation";
-		} else if (path.contains("\\Pack")) {
-			handler.loadMod(path + "\\mods", entityManager);
-			loadWorld(path + "\\world.arv");
+		} else if (path.contains("/Pack")) {
+			handler.loadMod(path + "/mods", entityManager);
+			loadWorld(path + "/world.arv");
 			type = "Pack";
 		} else {
 			loadWorld(path);
@@ -289,7 +289,7 @@ public class World implements Serializable {
 		addingload = System.nanoTime() - pre;
 		pre = System.nanoTime();
 
-//		entityManager.addEntity(NPC.loadMODNPC("C:\\Arvopia\\Mods", handler, spawnx, spawny - 40), true);
+//		entityManager.addEntity(NPC.loadMODNPC("C:/Arvopia/Mods", handler, spawnx, spawny - 40), true);
 
 		backgroundImages = new ArrayList<BufferedImage>();
 		backgroundSnowOverlays = new ArrayList<BufferedImage>();
@@ -2527,7 +2527,7 @@ public class World implements Serializable {
 
 		save = path;
 
-		openWorldData(path + "\\World.arv");
+		openWorldData(path + "/World.arv");
 
 		Tile.set(width, height);
 
@@ -2539,15 +2539,15 @@ public class World implements Serializable {
 
 		type = "Save";
 		handler.getGame().initMessage("Loading Enviornment...");
-		openEnviornment(path + "\\Enviornment.arv");
+		openEnviornment(path + "/Enviornment.arv");
 		handler.getGame().initMessage("Loading Entities...");
-		handler.loadMods(path + "\\mods", entityManager);
-		openEntities(path + "\\Entities.arv");
+		handler.loadMods(path + "/mods", entityManager);
+		openEntities(path + "/Entities.arv");
 		handler.getGame().initMessage("Loading Player...");
-		openPlayer(path + "\\Player.arv");
+		openPlayer(path + "/Player.arv");
 		handler.getGame().initMessage("Loading quests...");
-		openQuests(path + "\\Quests.arv");
-		openAchievements(path + "\\Achievements.arv");
+		openQuests(path + "/Quests.arv");
+		openAchievements(path + "/Achievements.arv");
 
 		handler.getGame().initMessage("Finishing up...");
 
@@ -2561,36 +2561,36 @@ public class World implements Serializable {
 
 		Utils.createDirectory(path);
 
-		Utils.createDirectory(path + "\\mods");
+		Utils.createDirectory(path + "/mods");
 		if (type == "Pack") {
 			try {
-				for (String f : new File(this.path + "\\mods").list())
-					Files.copy(new File(this.path + "\\mods\\" + f).toPath(), new File(path + "\\mods\\" + f).toPath());
+				for (String f : new File(this.path + "/mods").list())
+					Files.copy(new File(this.path + "/mods/" + f).toPath(), new File(path + "/mods/" + f).toPath());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else if (type != "Save") {
 			try {
-				for (String f : new File(Game.prefix + "\\Arvopia\\mods").list())
-					Files.copy(new File(Game.prefix + "\\Arvopia\\mods\\" + f).toPath(), new File(path + "\\mods\\" + f).toPath());
+				for (String f : new File(Game.prefix + "/Arvopia/mods").list())
+					Files.copy(new File(Game.prefix + "/Arvopia/mods/" + f).toPath(), new File(path + "/mods/" + f).toPath());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 
-		writeWorldData(path + "\\World.arv");
+		writeWorldData(path + "/World.arv");
 
 		writeBGImage(path);
 
-		writeEnviornment(path + "\\Enviornment.arv");
+		writeEnviornment(path + "/Enviornment.arv");
 
-		writeEntities(path + "\\Entities.arv");
+		writeEntities(path + "/Entities.arv");
 
-		writePlayer(path + "\\Player.arv");
+		writePlayer(path + "/Player.arv");
 
-		writeQuests(path + "\\Quests.arv");
+		writeQuests(path + "/Quests.arv");
 
-		writeAchievements(path + "\\Achievements.arv");
+		writeAchievements(path + "/Achievements.arv");
 
 		Initiator.asavingWorld(handler, path);
 
@@ -2661,8 +2661,8 @@ public class World implements Serializable {
 	public void writeBGImage(String path) {
 		for (int i = 0; i < Math.min(backgroundImages.size(), backgroundSnowOverlays.size()); i++) {
 			try {
-				ImageIO.write(backgroundImages.get(i), "png", new File(path + "\\BGImage" + i + ".png"));
-				ImageIO.write(backgroundSnowOverlays.get(i), "png", new File(path + "\\BGImageSnowy" + i + ".png"));
+				ImageIO.write(backgroundImages.get(i), "png", new File(path + "/BGImage" + i + ".png"));
+				ImageIO.write(backgroundSnowOverlays.get(i), "png", new File(path + "/BGImageSnowy" + i + ".png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -2729,9 +2729,9 @@ public class World implements Serializable {
 		backgroundSnowOverlays.clear();
 		for (String s : new File(path).list()) {
 			if (s.contains("BGImage"))
-				backgroundImages.add(ImageLoader.loadImageEX(path + "\\" + s));
+				backgroundImages.add(ImageLoader.loadImageEX(path + "/" + s));
 			if (s.contains("BGImageSnowy"))
-				backgroundSnowOverlays.add(ImageLoader.loadImageEX(path + "\\" + s));
+				backgroundSnowOverlays.add(ImageLoader.loadImageEX(path + "/" + s));
 		}
 	}
 

@@ -199,11 +199,11 @@ public class FileLoader {
 		Utils.createDirectory(b);
 		
 		for(String s: af.list()) {
-			if(new File(a+"\\"+s).isDirectory())
-				copyFolder(a + "\\" + s, b + "\\" + s);
+			if(new File(a+"/"+s).isDirectory())
+				copyFolder(a + "/" + s, b + "/" + s);
 			else {
 				try {
-					Files.copy(new File(a+"\\"+s).toPath(), new File(b + "\\" + s).toPath());
+					Files.copy(new File(a+"/"+s).toPath(), new File(b + "/" + s).toPath());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

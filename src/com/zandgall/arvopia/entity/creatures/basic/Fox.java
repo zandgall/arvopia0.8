@@ -63,9 +63,9 @@ public class Fox extends BasicTemplate {
 
 		if (timed > timer) {
 			game.setPosition(yip, (int) x, (int) y, 0);
-			game.soundSystem.stop(yip);
-			if (game.soundSystem.getVolume(yip) > 0)
-				game.play(yip);
+			//game.soundSystem.stop(yip);
+			//if (game.soundSystem.getVolume(yip) > 0)
+			//	game.play(yip);
 			timed = 0;
 		}
 
@@ -119,7 +119,7 @@ public class Fox extends BasicTemplate {
 
 	public void kill() {
 		
-		game.soundSystem.stop(yip);
+		//game.soundSystem.stop(yip);
 		game.removeSound("Sounds/FoxBark.ogg", yip);
 		
 		if (game.getPlayer().targets.contains(this))

@@ -120,13 +120,13 @@ public class Button implements Serializable {
 		
 		boolean react = !game.getMouse().fullLeft && mouseLeft;
 		
-		Vector3D f = game.soundSystem.getListenerData().position; 
-		game.setPosition("button", (int) f.x, (int) f.y, (int) f.z);
+		//Vector3D f = game.soundSystem.getListenerData().position;
+		//game.setPosition("button", (int) f.x, (int) f.y, (int) f.z);
 		if ((mouseX > x - 1) && (mouseX < x + width + 1) && (mouseY > y - 1) && (mouseY < y + height + 1)) {
 			if (react) {
 				game.getMouse().setClicked(false);
 				on = true;
-				game.soundSystem.stop("button");
+		//		game.soundSystem.stop("button");
 				game.play("button");
 				data = false;
 			} else if ((mouseRight && game.getMouse().wasClicked()) || game.getMouse().STILLTIMER>100) {
@@ -151,13 +151,13 @@ public class Button implements Serializable {
 	public void tick(int mouseX, int mouseY) {
 		mouseLeft = game.getMouse().isLeft();
 		mouseRight = game.getMouse().isRight();
-		Vector3D f = game.soundSystem.getListenerData().position; 
-		game.setPosition("button", (int) f.x, (int) f.y, (int) f.z);
+		//Vector3D f = game.soundSystem.getListenerData().position;
+		//game.setPosition("button", (int) f.x, (int) f.y, (int) f.z);
 		if ((mouseX > x - 1) && (mouseX < x + width + 1) && (mouseY > y - 1) && (mouseY < y + height + 1)) {
 			if ((mouseLeft && game.getMouse().wasClicked())) {
 				game.getMouse().setClicked(false);
 				on = true;
-				game.soundSystem.stop("button");
+				//game.soundSystem.stop("button");
 				game.play("button");
 				data = false;
 			} else if (mouseRight || game.getMouse().STILLTIMER>100) {

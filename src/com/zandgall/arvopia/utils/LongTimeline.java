@@ -127,8 +127,8 @@ public class LongTimeline {
 		g.dispose();
 
 		try {
-			ImageIO.write(out, "png", new File(Game.prefix + "\\Arvopia\\logs\\" + name + ".png"));
-			System.out.println("Wrote: " + Game.prefix + "\\Arvopia\\logs\\" + name + ".png");
+			ImageIO.write(out, "png", new File(Game.prefix + "/Arvopia/logs/" + name + ".png"));
+			System.out.println("Wrote: " + Game.prefix + "/Arvopia/logs/" + name + ".png");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

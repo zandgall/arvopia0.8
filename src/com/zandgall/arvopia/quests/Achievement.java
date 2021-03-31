@@ -48,13 +48,13 @@ public class Achievement {
 	public static void init(Handler game, AchievementManager am) {
 		Achievement.game = game;
 
-		File f = new File(Game.prefix + "\\Arvopia\\00.arv");
+		File f = new File(Game.prefix + "/Arvopia/00.arv");
 		if (!f.exists()) {
-			Utils.fileWriter("0", Game.prefix + "\\Arvopia\\00.arv");
+			Utils.fileWriter("0", Game.prefix + "/Arvopia/00.arv");
 		}
-		f = new File(Game.prefix + "\\Arvopia\\01.arv");
+		f = new File(Game.prefix + "/Arvopia/01.arv");
 		if (!f.exists()) {
-			Utils.fileWriter("", Game.prefix + "\\Arvopia\\01.arv");
+			Utils.fileWriter("", Game.prefix + "/Arvopia/01.arv");
 		}
 		Achievement.am = am;
 
@@ -73,7 +73,7 @@ public class Achievement {
 		full.add(disrespectful);
 		full.add(allachievements);
 
-		String s = FileLoader.readFile(Game.prefix + "\\Arvopia\\01.arv");
+		String s = FileLoader.readFile(Game.prefix + "/Arvopia/01.arv");
 
 		for (Achievement a : full) {
 			am.addForRemoval(a);
@@ -101,12 +101,12 @@ public class Achievement {
 			return;
 		game.log("CONGRATULATION! YOU WERE JUST AWARDED " + a.name + ": " + a.description);
 
-		if (!FileLoader.readFile(Game.prefix + "\\Arvopia\\01.arv").contains(a.name)) {
-			int prev = Utils.parseInt(FileLoader.readFile(Game.prefix + "\\Arvopia\\00.arv", false));
+		if (!FileLoader.readFile(Game.prefix + "/Arvopia/01.arv").contains(a.name)) {
+			int prev = Utils.parseInt(FileLoader.readFile(Game.prefix + "/Arvopia/00.arv", false));
 			game.log("You earned: " + a.value);
-			Utils.fileWriter("" + (prev + a.value), Game.prefix + "\\Arvopia\\00.arv");
-			Utils.fileWriter(FileLoader.readFile(Game.prefix + "\\Arvopia\\01.arv") + System.lineSeparator() + a.name,
-					Game.prefix + "\\Arvopia\\01.arv");
+			Utils.fileWriter("" + (prev + a.value), Game.prefix + "/Arvopia/00.arv");
+			Utils.fileWriter(FileLoader.readFile(Game.prefix + "/Arvopia/01.arv") + System.lineSeparator() + a.name,
+					Game.prefix + "/Arvopia/01.arv");
 		}
 
 		am.add(a);

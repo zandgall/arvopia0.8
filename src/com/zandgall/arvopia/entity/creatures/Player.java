@@ -387,18 +387,18 @@ public class Player extends Creature {
 
 		game.setPosition("Swoosh", (int) x, (int) y, 0);
 		if (attackReady&&attacking) {
-			game.soundSystem.stop("Swoosh");
-			game.soundSystem.play("Swoosh");
+			//game.soundSystem.stop("Swoosh");
+			//game.soundSystem.play("Swoosh");
 		}
 
 		game.setPosition("Fire", (int) x, (int) y, 0);
 		if (currentItem != null && currentItem.hasLight) {
-			if (!game.soundSystem.playing("Fire")) {
-				game.soundSystem.play("Fire");
-			}
+			//if (!game.soundSystem.playing("Fire")) {
+			//	game.soundSystem.play("Fire");
+			//}
 		} else {
-			if (game.soundSystem.playing("Fire"))
-				game.soundSystem.stop("Fire");
+			//if (game.soundSystem.playing("Fire"))
+			//	game.soundSystem.stop("Fire");
 		}
 	}
 

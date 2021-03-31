@@ -63,7 +63,7 @@ public class CustomizationState extends State {
 		valueDown = new downArrow(handler, 232, 314);
 
 		back = new Button(handler, 10, handler.getHeight() - 40, "Go back", "Back");
-		export = new Button(handler, 70, handler.getHeight() - 40, "Exports the image to Arvopia\\Player0.8\\out.png",
+		export = new Button(handler, 70, handler.getHeight() - 40, "Exports the image to Arvopia/Player0.8/out.png",
 				"Export");
 		random = new Button(handler, 150, handler.getHeight() - 40, "Randomizes the selections", "Randomize");
 
@@ -80,7 +80,7 @@ public class CustomizationState extends State {
 	}
 
 	public void save() {
-		if (!FileLoader.readFile(Game.prefix + "\\Arvopia\\01.arv").contains("No Name") && Reporter.user != user.getContent()) {
+		if (!FileLoader.readFile(Game.prefix + "/Arvopia/01.arv").contains("No Name") && Reporter.user != user.getContent()) {
 			Reporter.addUser();
 			Achievement.award(Achievement.noname);
 		}
@@ -123,7 +123,7 @@ public class CustomizationState extends State {
 		 * pantsIn.index + System.lineSeparator(); s += eyesIn.index +
 		 * System.lineSeparator(); s += useCostume + System.lineSeparator(); s +=
 		 * costumeIndex + System.lineSeparator(); Utils.fileWriter(s,
-		 * "C:\\Arvopia\\Player0.8\\Indexes.txt"); System.out.println("Saved indexes " +
+		 * "C:/Arvopia/Player0.8/Indexes.txt"); System.out.println("Saved indexes " +
 		 * s);
 		 */
 
@@ -137,7 +137,7 @@ public class CustomizationState extends State {
 			s += in + " " + indexes.get(in).c.getRed() + " " + indexes.get(in).c.getGreen() + " "
 					+ indexes.get(in).c.getBlue() + " " + indexes.get(in).index + System.lineSeparator();
 		}
-		Utils.fileWriter(s, Game.prefix + "\\Arvopia\\Player0.8\\Indexes.txt");
+		Utils.fileWriter(s, Game.prefix + "/Arvopia/Player0.8/Indexes.txt");
 		
 		SmartCostume.body = new SerialImage(indexes.get("Body").getCo());
 		SmartCostume.arm = new SerialImage(indexes.get("Arms").getCo());
@@ -288,7 +288,7 @@ public class CustomizationState extends State {
 		valueDown.render(g);
 
 		g.setFont(Public.defaultBoldFont.deriveFont(20.0f));
-//		Tran.drawOutlinedText(g, 270d, handler.getHeight()-10, "Game points: " + (Utils.parseInt(FileLoader.readFile("C:\\Arvopia\\00.arv")) + Utils.parseInt(FileLoader.readFile("C:\\Arvopia\\02.arv"))), 1, Color.black, Color.white);
+//		Tran.drawOutlinedText(g, 270d, handler.getHeight()-10, "Game points: " + (Utils.parseInt(FileLoader.readFile("C:/Arvopia/00.arv")) + Utils.parseInt(FileLoader.readFile("C:/Arvopia/02.arv"))), 1, Color.black, Color.white);
 
 	}
 
@@ -299,17 +299,17 @@ public class CustomizationState extends State {
 		if (parent != null)
 			System.out.println("\t\tPlayer textures exist? : " + (parent.exists()) + " Has kids? : "
 					+ (parent.list() != null && parent.list().length > 0));
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Player0.8\\Face");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Player0.8\\Arms");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Player0.8\\Hair");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Player0.8\\Eyes");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Player0.8\\Pants");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Player0.8\\Hands");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Player0.8\\Body");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Player0.8\\Shoes");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Player0.8\\Pupils");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Player0.8\\Costumes");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Player0.8\\Skin");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Face");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Arms");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Hair");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Eyes");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Pants");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Hands");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Body");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Shoes");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Pupils");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Costumes");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Skin");
 
 //		if(true)
 //			return;
@@ -323,7 +323,7 @@ public class CustomizationState extends State {
 		copyImages("Body");
 		copyImages("Shoes");
 		copyImages("Pupils");
-		copyImages("Costumes");
+		//copyImages("Costumes");
 		copyImages("Skin");
 
 		// Using TODO
@@ -342,8 +342,8 @@ public class CustomizationState extends State {
 
 		int cx = 0, cy = 0;
 
-		for (String s : new File(Game.prefix + "\\Arvopia\\Player0.8\\Costumes").list()) {
-			costumes.put(s, new Costume(handler, ImageLoader.loadImageEX(Game.prefix + "\\Arvopia\\Player0.8\\Costumes\\" + s), s, s,
+		for (String s : new File(Game.prefix + "/Arvopia/Player0.8/Costumes").list()) {
+			costumes.put(s, new Costume(handler, ImageLoader.loadImageEX(Game.prefix + "/Arvopia/Player0.8/Costumes/" + s), s, s,
 					handler.getWidth() - 375 + cx, 50 + cy));
 
 			cx += 73;
@@ -357,16 +357,17 @@ public class CustomizationState extends State {
 	}
 
 	private void copyImages(String path) {
-		for (String s : new File("Player/" + path).list()) {
+		String[] list = new File("Player/" + path).list();
+		for (String s : list) {
 			ImageLoader.saveImage(ImageLoader.loadImageEX("Player/" + path + "/" + s),
-					Game.prefix + "\\Arvopia\\Player0.8\\" + path + "\\" + s);
+					Game.prefix + "/Arvopia/Player0.8/" + path + "/" + s);
 		}
 	}
 
 	private void initiateIndex(String path) {
 		ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
-		for (String s : new File(Game.prefix + "\\Arvopia\\Player0.8\\" + path).list()) {
-			images.add(ImageLoader.loadImageEX(Game.prefix + "\\Arvopia\\Player0.8\\" + path + "\\" + s));
+		for (String s : new File(Game.prefix + "/Arvopia/Player0.8/" + path).list()) {
+			images.add(ImageLoader.loadImageEX(Game.prefix + "/Arvopia/Player0.8/" + path + "/" + s));
 		}
 		indexes.put(path, new typeIndex(images));
 	}
@@ -379,8 +380,8 @@ public class CustomizationState extends State {
 
 		initIndex();
 
-		if (new File(Game.prefix + "\\Arvopia\\Player0.8\\Indexes.txt").exists()) {
-			String orig = FileLoader.readFile(Game.prefix + "\\Arvopia\\Player0.8\\Indexes.txt");
+		if (new File(Game.prefix + "/Arvopia/Player0.8/Indexes.txt").exists()) {
+			String orig = FileLoader.readFile(Game.prefix + "/Arvopia/Player0.8/Indexes.txt");
 			for (String line : orig.split(System.lineSeparator())) {
 				if (indexes.containsKey(line.split("\\s+")[0])) {
 					String[] codes = line.split("\\s+");
@@ -407,7 +408,7 @@ public class CustomizationState extends State {
 	public void write() {
 		BufferedImage image = getFull();
 
-		ImageLoader.saveImage(image, Game.prefix + "\\Arvopia\\Player0.8\\out.png");
+		ImageLoader.saveImage(image, Game.prefix + "/Arvopia/Player0.8/out.png");
 
 	}
 
@@ -662,13 +663,13 @@ class Costume {
 		this.src = src;
 		button = new IconButton(game, x, y, name, Tran.scaleUp(src.getSubimage(0, 0, 36, 54), 2.0f), description);
 
-		if (new File(Game.prefix + "\\Arvopia\\05.arv").exists()) {
-			if (!FileLoader.readFile(Game.prefix + "\\Arvopia\\05.arv").contains(name))
+		if (new File(Game.prefix + "/Arvopia/05.arv").exists()) {
+			if (!FileLoader.readFile(Game.prefix + "/Arvopia/05.arv").contains(name))
 				button.locked = true;
 		} else {
 			button.locked = true;
 			try {
-				System.out.println("Created 05.arv " + new File(Game.prefix + "\\Arvopia\\05.arv").createNewFile());
+				System.out.println("Created 05.arv " + new File(Game.prefix + "/Arvopia/05.arv").createNewFile());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -684,10 +685,10 @@ class Costume {
 			buy.tick();
 			if (buy.on) {
 				button.locked = false;
-				Utils.existWriter(FileLoader.readFile(Game.prefix + "\\Arvopia\\05.arv") + System.lineSeparator() + button.name,
-						Game.prefix + "\\Arvopia\\05.arv");
-				Utils.existWriter("" + (Utils.parseInt(FileLoader.readFile(Game.prefix + "\\Arvopia\\02.arv")) - 500),
-						Game.prefix + "\\Arvopia\\02.arv");
+				Utils.existWriter(FileLoader.readFile(Game.prefix + "/Arvopia/05.arv") + System.lineSeparator() + button.name,
+						Game.prefix + "/Arvopia/05.arv");
+				Utils.existWriter("" + (Utils.parseInt(FileLoader.readFile(Game.prefix + "/Arvopia/02.arv")) - 500),
+						Game.prefix + "/Arvopia/02.arv");
 			}
 		}
 	}

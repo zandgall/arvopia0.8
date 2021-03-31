@@ -16,8 +16,8 @@ public class ArvopiaLauncher {
 		
 //		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		
-//		if(new File("C:\\Arvopia\\screen.txt").exists()) {
-//			if(FileLoader.readFile("C:\\Arvopia\\screen.txt").contains("min")) {
+//		if(new File("C:/Arvopia/screen.txt").exists()) {
+//			if(FileLoader.readFile("C:/Arvopia/screen.txt").contains("min")) {
 //				startMin();
 //			} else {
 //				startFull();
@@ -26,21 +26,21 @@ public class ArvopiaLauncher {
 //			startMin();
 //		}
 		
-		Utils.createDirectory(Game.prefix + "\\Arvopia");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\tmp");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\logs");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\logs\\World");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\logs\\Player");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\logs\\Key Events");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\logs\\FPSLogs");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\logs\\Enviornment");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\logs\\FileLoading");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Saves");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Player");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Recording");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Mods");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\World");
-		Utils.createDirectory(Game.prefix + "\\Arvopia\\Pack");
+		Utils.createDirectory(Game.prefix + "/Arvopia");
+		Utils.createDirectory(Game.prefix + "/Arvopia/tmp");
+		Utils.createDirectory(Game.prefix + "/Arvopia/logs");
+		Utils.createDirectory(Game.prefix + "/Arvopia/logs/World");
+		Utils.createDirectory(Game.prefix + "/Arvopia/logs/Player");
+		Utils.createDirectory(Game.prefix + "/Arvopia/logs/Key Events");
+		Utils.createDirectory(Game.prefix + "/Arvopia/logs/FPSLogs");
+		Utils.createDirectory(Game.prefix + "/Arvopia/logs/Enviornment");
+		Utils.createDirectory(Game.prefix + "/Arvopia/logs/FileLoading");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Saves");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Recording");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Mods");
+		Utils.createDirectory(Game.prefix + "/Arvopia/World");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Pack");
 		
 		SetFiles.fileSet();
 		
@@ -51,7 +51,7 @@ public class ArvopiaLauncher {
 
 		SetFiles.fileSet();
 
-		log = new Log("Arvopia\\logs\\Arvopia0.8", "Main");
+		log = new Log("Arvopia/logs/Arvopia0.8", "Main");
 		
 		if(game!=null) {
 			game.stop();

@@ -64,17 +64,17 @@ public class Quest {
 	public static void init(Handler game, QuestManager qm) {
 		Quest.game = game;
 
-		File f = new File(Game.prefix + "\\Arvopia\\02.arv");
+		File f = new File(Game.prefix + "/Arvopia/02.arv");
 		if (!f.exists()) {
-			Utils.fileWriter("0", Game.prefix + "\\Arvopia\\02.arv");
+			Utils.fileWriter("0", Game.prefix + "/Arvopia/02.arv");
 		}
-		f = new File(Game.prefix + "\\Arvopia\\03.arv");
+		f = new File(Game.prefix + "/Arvopia/03.arv");
 		if (!f.exists()) {
-			Utils.fileWriter("", Game.prefix + "\\Arvopia\\03.arv");
+			Utils.fileWriter("", Game.prefix + "/Arvopia/03.arv");
 		}
-		f = new File(Game.prefix + "\\Arvopia\\04.arv");
+		f = new File(Game.prefix + "/Arvopia/04.arv");
 		if (!f.exists()) {
-			Utils.fileWriter("", Game.prefix + "\\Arvopia\\04.arv");
+			Utils.fileWriter("", Game.prefix + "/Arvopia/04.arv");
 		}
 		Quest.qm = qm;
 
@@ -84,8 +84,8 @@ public class Quest {
 		full.add(materialsForFrizzy);
 		full.add(isolatedWood);
 
-//		String s = FileLoader.readFile("C:\\Arvopia\\03.arv");
-//		String s2 = FileLoader.readFile("C:\\Arvopia\\03.arv");
+//		String s = FileLoader.readFile("C:/Arvopia/03.arv");
+//		String s2 = FileLoader.readFile("C:/Arvopia/03.arv");
 
 		for (Quest a : full) {
 			qm.addForRemoval(a);
@@ -129,26 +129,26 @@ public class Quest {
 	}
 
 	public static void begin(Quest a) {
-//		if ((FileLoader.readFile("C:\\Arvopia\\03.arv", false) != null)
-//				&& (FileLoader.readFile("C:\\Arvopia\\03.arv", false).contains(a.name))
+//		if ((FileLoader.readFile("C:/Arvopia/03.arv", false) != null)
+//				&& (FileLoader.readFile("C:/Arvopia/03.arv", false).contains(a.name))
 //				) {
 //			return;
 //		}
-//		String bef = FileLoader.readFile("C:\\Arvopia\\03.arv");
-//		Utils.existWriter(bef + System.lineSeparator() + a.name, "C:\\Arvopia\\03.arv");
+//		String bef = FileLoader.readFile("C:/Arvopia/03.arv");
+//		Utils.existWriter(bef + System.lineSeparator() + a.name, "C:/Arvopia/03.arv");
 
 		if(!QuestManager.al.contains(a))
 			qm.add(a); 
 	}
 
 	public static void finish(Quest a) {
-		if ((FileLoader.readFile(Game.prefix + "\\Arvopia\\04.arv", false) != null)
-				&& (FileLoader.readFile(Game.prefix + "\\Arvopia\\04.arv", false).contains(a.name))) {
+		if ((FileLoader.readFile(Game.prefix + "/Arvopia/04.arv", false) != null)
+				&& (FileLoader.readFile(Game.prefix + "/Arvopia/04.arv", false).contains(a.name))) {
 		}
-		if(!FileLoader.readFile(Game.prefix + "\\Arvopia\\03.arv").contains(a.name)) {
-			int pre = Utils.parseInt(FileLoader.readFile(Game.prefix + "\\Arvopia\\02.arv", false));
-			Utils.existWriter("" + (pre + a.value), Game.prefix + "\\Arvopia\\02.arv");
-			Utils.existWriter(FileLoader.readFile(Game.prefix + "\\Arvopia\\03.arv")+System.lineSeparator()+a.name, Game.prefix + "\\Arvopia\\03.arv");
+		if(!FileLoader.readFile(Game.prefix + "/Arvopia/03.arv").contains(a.name)) {
+			int pre = Utils.parseInt(FileLoader.readFile(Game.prefix + "/Arvopia/02.arv", false));
+			Utils.existWriter("" + (pre + a.value), Game.prefix + "/Arvopia/02.arv");
+			Utils.existWriter(FileLoader.readFile(Game.prefix + "/Arvopia/03.arv")+System.lineSeparator()+a.name, Game.prefix + "/Arvopia/03.arv");
 		}
 		
 		QUEST_FIN++;

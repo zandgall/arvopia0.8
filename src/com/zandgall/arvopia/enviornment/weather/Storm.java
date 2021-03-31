@@ -48,7 +48,7 @@ public class Storm {
 	}
 
 	public void tick(int speed) {
-		game.soundSystem.setVolume("Rain", OptionState.fxVolume/100.0f);
+		//game.soundSystem.setVolume("Rain", OptionState.fxVolume/100.0f);
 
 		if ((lTimer >= lTimed) && (l == null)) {
 			l = new Lightning(game, (int) Public.random(0.0D, World.getWidth() * Tile.TILEWIDTH));
@@ -73,7 +73,7 @@ public class Storm {
 	public void stop() {
 		System.out.println("STOPPED RAIN");
 		stop = true;
-		game.soundSystem.stop("Rain");
+		//game.soundSystem.stop("Rain");
 	}
 
 	public boolean done() {
@@ -91,7 +91,7 @@ public class Storm {
 
 	public void start() {
 		stop = false;
-		game.soundSystem.play("Rain");
+		//game.soundSystem.play("Rain");
 	}
 
 	public void render(Graphics g, Graphics2D g2d) {
@@ -234,7 +234,7 @@ public class Storm {
 			if (bends == 1) {
 				create1();
 			}
-			game.quickPlay("Sounds/Lightning.ogg", "Lightning", false, x, (int) game.soundSystem.getListenerData().position.y, 0);
+			//game.quickPlay("Sounds/Lightning.ogg", "Lightning", false, x, (int) game.soundSystem.getListenerData().position.y, 0);
 		}
 
 		private void create1() {

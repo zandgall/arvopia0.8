@@ -37,15 +37,15 @@ public class Bee extends Creature {
 		layer = (Math.random() - 5.0D);
 		buzz = "Buzz" + (((OptionState) handler.getGame().optionState).getToggle("Sound per layer") ? layer : "");
 		game.addSound("Sounds/Bee.ogg", buzz, true, 0, 0, 0);
-		game.soundSystem.setVolume(buzz, 0.2f);
+		//game.soundSystem.setVolume(buzz, 0.2f);
 		timer = 100L;
 		moveTimer = 0L;
 	}
 
 	public void tick() {
 		
-		if (!game.soundSystem.playing(buzz))
-			game.soundSystem.play(buzz);
+		//if (!game.soundSystem.playing(buzz))
+		//	game.soundSystem.play(buzz);
 
 		if (Math.random() < 0.5) {
 			if (Math.random() < 0.5) {
@@ -175,7 +175,7 @@ public class Bee extends Creature {
 
 	public void kill() {
 
-		game.soundSystem.stop(buzz);
+		//game.soundSystem.stop(buzz);
 		game.removeSound("Sounds/BeeBuzz.ogg", buzz);
 
 		game.getWorld().getItemManager().addItem(Item.honey.createNew((int) x, (int) y));

@@ -91,7 +91,7 @@ public class Handler implements Serializable {
 
 	public void loadMods(EntityManager e) {
 		loadInternalMods(e);
-		File f = new File(Game.prefix + "\\Arvopia\\Mods");
+		File f = new File(Game.prefix + "/Arvopia/Mods");
 		if (f.exists())
 			for (File s : f.listFiles()) {
 				System.out.println("Loading mod : " + s.getPath());
@@ -119,7 +119,7 @@ public class Handler implements Serializable {
 	
 	public ArrayList<EntityAdder> getAdders() {
 		ArrayList<EntityAdder> out = new ArrayList<EntityAdder>();
-		File f = new File(Game.prefix + "\\Arvopia\\Mods");
+		File f = new File(Game.prefix + "/Arvopia/Mods");
 		if (f.exists())
 			for (File s : f.listFiles()) {
 				ArrayList<Class<?>> objects = new ArrayList<Class<?>>();
@@ -160,7 +160,7 @@ public class Handler implements Serializable {
 					ArrayList<String> n = ClassLoading.getImageNames(s.getPath());
 					if (l != null && l.size() > 0) {
 						for (BufferedImage b : l) {
-							ImageLoader.saveImage(b, Game.prefix + "\\Arvopia\\tmp\\" + n.get(l.indexOf(b)));
+							ImageLoader.saveImage(b, Game.prefix + "/Arvopia/tmp/" + n.get(l.indexOf(b)));
 						}
 					}
 				}
@@ -168,22 +168,22 @@ public class Handler implements Serializable {
 	}
 
 	public void loadMod(String directory, EntityManager e) {
-		File f = new File(Game.prefix + "\\Arvopia\\Mods");
+		File f = new File(Game.prefix + "/Arvopia/Mods");
 		if (f.exists())
 			for (File s : f.listFiles()) {
 				if (s.isDirectory()) {
 					for (String d : s.list()) {
 						System.out.println("\tLoading " + d);
 						if (d.contains("Creatures")) {
-							for (String c : new File(directory + "\\" + d).list()) {
+							for (String c : new File(directory + "/" + d).list()) {
 								System.out.println("Loading creature " + c);
-								Creature.loadModCreature(directory + "\\" + d + "\\" + c, this, e);
+								Creature.loadModCreature(directory + "/" + d + "/" + c, this, e);
 							}
 						}
 						if (d.contains("NPCs")) {
-							for (String c : new File(directory + "\\" + d).list()) {
+							for (String c : new File(directory + "/" + d).list()) {
 								System.out.println("Loading npc " + c);
-								NPC.loadMODNPC(directory + "\\" + d + "\\" + c, this, e);
+								NPC.loadMODNPC(directory + "/" + d + "/" + c, this, e);
 							}
 						}
 					}
@@ -255,28 +255,26 @@ public class Handler implements Serializable {
 			SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
 			SoundSystemConfig.setCodec("wav", CodecWav.class);
 
-//			SoundSystemConfig.setSoundFilesPackage("Sounds");
-//			System.out.println(SoundSystemConfig.getSoundFilesPackage());
+			//soundSystem = new SoundSystem(LibraryJavaSound.class);
 
-			soundSystem = new SoundSystem(LibraryJavaSound.class);
-
-			soundSystem.setMasterVolume(2000.0f);
+			//soundSystem.setMasterVolume(2000.0f);
 		} catch (Exception e) {
+			System.err.println("Error when loading Sound System");
 			e.printStackTrace();
 		}
 		System.out.println("set up sound system");
 
-		player = new Log(Game.prefix + "\\Arvopia\\logs\\Player\\player.txt", "Player");
+		player = new Log(Game.prefix + "/Arvopia/logs/Player/player.txt", "Player");
 
-		worldl = new Log(Game.prefix + "\\Arvopia\\logs\\World\\world.txt", "World");
+		worldl = new Log(Game.prefix + "/Arvopia/logs/World/world.txt", "World");
 
-		keyEvent = new Log(Game.prefix + "\\Arvopia\\logs\\Key Events\\keyEvent.txt", "Keys");
+		keyEvent = new Log(Game.prefix + "/Arvopia/logs/Key Events/keyEvent.txt", "Keys");
 
-		fpsLogger = new Log(Game.prefix + "\\Arvopia\\logs\\FPSLogs\\Fps.txt", "Fps");
+		fpsLogger = new Log(Game.prefix + "/Arvopia/logs/FPSLogs/Fps.txt", "Fps");
 
-		enviornmentl = new Log(Game.prefix + "\\Arvopia\\logs\\Enviornment\\Enviornment.txt", "Enviornment");
+		enviornmentl = new Log(Game.prefix + "/Arvopia/logs/Enviornment/Enviornment.txt", "Enviornment");
 
-		filelogger = new Log(Game.prefix + "\\Arvopia\\logs\\FileLoading\\Files.txt", "Files");
+		filelogger = new Log(Game.prefix + "/Arvopia/logs/FileLoading/Files.txt", "Files");
 	}
 
 	public void logPlayer(String string) {
@@ -309,8 +307,8 @@ public class Handler implements Serializable {
 	}
 
 	public static int getGamePoints() {
-		return Utils.parseInt(FileLoader.readFile(Game.prefix + "\\Arvopia\\00.arv"))
-				+ Utils.parseInt(FileLoader.readFile(Game.prefix + "\\Arvopia\\02.arv"));
+		return Utils.parseInt(FileLoader.readFile(Game.prefix + "/Arvopia/00.arv"))
+				+ Utils.parseInt(FileLoader.readFile(Game.prefix + "/Arvopia/02.arv"));
 	}
 
 	public void logSilent(String message) {
@@ -337,7 +335,7 @@ public class Handler implements Serializable {
 		logEnviornment("Music is " + path);
 		currentMusic = path;
 		try {
-			soundSystem.backgroundMusic("music", new File(path).toURI().toURL(), path, true);
+			//soundSystem.backgroundMusic("music", new File(path).toURI().toURL(), path, true);
 //			soundSystem.backgroundMusic("musi", path, loop);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -348,7 +346,7 @@ public class Handler implements Serializable {
 		logEnviornment("Music is " + path);
 		currentMusic = path;
 		try {
-			soundSystem.backgroundMusic("music", FileLoader.resourceURL(path), path, true);
+			//soundSystem.backgroundMusic("music", FileLoader.resourceURL(path), path, true);
 //			soundSystem.backgroundMusic("musi", path, loop);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -358,9 +356,9 @@ public class Handler implements Serializable {
 	public void quickPlay(String path, boolean loop, int x, int y, int z) {
 		logEnviornment("Quick playing " + path);
 		try {
-			soundSystem.newStreamingSource(false, path, new File(path).toURI().toURL(), new File(path).getName(), loop,
-					x, y, z, SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
-			soundSystem.play(path);
+			//soundSystem.newStreamingSource(false, path, new File(path).toURI().toURL(), new File(path).getName(), loop,
+			//		x, y, z, SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
+			//soundSystem.play(path);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -369,7 +367,7 @@ public class Handler implements Serializable {
 	public void addAmbient(String path, String id, boolean loop) {
 		logEnviornment("Music is " + id);
 		try {
-			soundSystem.backgroundMusic(id, new File(path).toURI().toURL(), new File(path).getName(), true);
+			//soundSystem.backgroundMusic(id, new File(path).toURI().toURL(), new File(path).getName(), true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -377,15 +375,15 @@ public class Handler implements Serializable {
 
 	public void play(String identifier) {
 		logEnviornment("Playing : " + identifier);
-		soundSystem.play(identifier);
+		//soundSystem.play(identifier);
 	}
 
 	public void quickPlay(String path, String id, boolean loop, int x, int y, int z) {
 		logEnviornment("Quick playing " + id);
 		try {
-			soundSystem.newStreamingSource(false, id, new File(path).toURI().toURL(), path, loop, x, y, z,
-					SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
-			soundSystem.play(id);
+			//soundSystem.newStreamingSource(false, id, new File(path).toURI().toURL(), path, loop, x, y, z,
+			//		SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
+			//soundSystem.play(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -396,8 +394,8 @@ public class Handler implements Serializable {
 		logEnviornment("Doin a quickie " + id);
 
 		try {
-			soundSystem.quickPlay(false, new File(path).toURI().toURL(), new File(path).getName(), loop, x, y, z,
-					SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
+			//soundSystem.quickPlay(false, new File(path).toURI().toURL(), new File(path).getName(), loop, x, y, z,
+			//		SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -411,11 +409,11 @@ public class Handler implements Serializable {
 		if (enviornmentl != null)
 			logEnviornment("Adding " + id);
 		try {
-			soundSystem.loadSound(new File(path).toURI().toURL(), new File(path).getName());
-			soundSystem.newSource(false, id, new File(path).getName(), loop, x, y, z,
-					SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
+			//soundSystem.loadSound(new File(path).toURI().toURL(), new File(path).getName());
+			//soundSystem.newSource(false, id, new File(path).getName(), loop, x, y, z,
+			//		SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
 //			soundSystem.newSource(false, id, new File(path).toURI().toURL(), new File(path).getName(), loop, x, y, z, SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
-			sounds.add(id);
+			//sounds.add(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -429,11 +427,11 @@ public class Handler implements Serializable {
 		if (enviornmentl != null)
 			logEnviornment("Adding " + id);
 		try {
-			soundSystem.loadSound(new File(path).toURI().toURL(), new File(path).getName());
-			soundSystem.newStreamingSource(false, id, new File(path).getName(), loop, x, y, z,
-					SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
+			//soundSystem.loadSound(new File(path).toURI().toURL(), new File(path).getName());
+			//soundSystem.newStreamingSource(false, id, new File(path).getName(), loop, x, y, z,
+			//		SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
 //			soundSystem.newSource(false, id, new File(path).toURI().toURL(), new File(path).getName(), loop, x, y, z, SoundSystemConfig.ATTENUATION_ROLLOFF, SoundSystemConfig.getDefaultRolloff());
-			sounds.add(id);
+			//sounds.add(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -441,8 +439,8 @@ public class Handler implements Serializable {
 
 	public void removeSound(String path, String id) {
 		try {
-			soundSystem.loadSound(new File(path).toURI().toURL(), new File(path).getName());
-			sounds.remove(id);
+			//soundSystem.loadSound(new File(path).toURI().toURL(), new File(path).getName());
+			//sounds.remove(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -451,29 +449,29 @@ public class Handler implements Serializable {
 	private static final int SOUNDMULT = 5;
 
 	public void listenPosition(int x, int y, int z) {
-		soundSystem.setListenerPosition(x * SOUNDMULT, y * SOUNDMULT, z * SOUNDMULT);
+		//soundSystem.setListenerPosition(x * SOUNDMULT, y * SOUNDMULT, z * SOUNDMULT);
 	}
 	
 	public Vector3D listenerPos() {
-		return soundSystem.getListenerData().position;
+		return new Vector3D(0,0,0);//soundSystem.getListenerData().position;
 	}
 
 	public void setPosition(String sourcename, double x, double y, double z) {
-		soundSystem.setPosition(sourcename, (float) (x * SOUNDMULT), (float) (y * SOUNDMULT), (float) (z * SOUNDMULT+100));
+		//soundSystem.setPosition(sourcename, (float) (x * SOUNDMULT), (float) (y * SOUNDMULT), (float) (z * SOUNDMULT+100));
 	}
 	
 	public void putAtListener(String id) {
-		soundSystem.setPosition(id, listenerPos().x, listenerPos().y, listenerPos().z+100);
+		//soundSystem.setPosition(id, listenerPos().x, listenerPos().y, listenerPos().z+100);
 	}
 	
 	public void fadeOut(String path, String id, long millis) {
 		logEnviornment("Fading " + path);
 		if (path == null) {
-			soundSystem.fadeOut(id, null, null, millis);
+			//soundSystem.fadeOut(id, null, null, millis);
 			return;
 		}
 		try {
-			soundSystem.fadeOut(id, new File(path).toURI().toURL(), new File(path).getName(), millis);
+			//soundSystem.fadeOut(id, new File(path).toURI().toURL(), new File(path).getName(), millis);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -482,11 +480,11 @@ public class Handler implements Serializable {
 	public void fadeOutIn(String path, String id, long millis) {
 		logEnviornment("Fading " + path);
 		if (path == null) {
-			soundSystem.fadeOutIn(id, null, null, millis, millis);
+			//soundSystem.fadeOutIn(id, null, null, millis, millis);
 			return;
 		}
 		try {
-			soundSystem.fadeOutIn(id, new File(path).toURI().toURL(), new File(path).getName(), millis, millis);
+			//soundSystem.fadeOutIn(id, new File(path).toURI().toURL(), new File(path).getName(), millis, millis);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -494,18 +492,18 @@ public class Handler implements Serializable {
 
 	public void stopMusic() {
 		currentMusic = "empty";
-		soundSystem.stop("music");
+		//soundSystem.stop("music");
 	}
 
 	public void fadeOut(String path, long millis) {
 		logEnviornment("Fading " + path);
 		currentMusic = path;
 		if (path == null) {
-			soundSystem.fadeOut("music", null, null, millis);
+			//soundSystem.fadeOut("music", null, null, millis);
 			return;
 		}
 		try {
-			soundSystem.fadeOut("music", new File(path).toURI().toURL(), new File(path).getName(), millis);
+			//soundSystem.fadeOut("music", new File(path).toURI().toURL(), new File(path).getName(), millis);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -515,11 +513,11 @@ public class Handler implements Serializable {
 		logEnviornment("Fading " + path);
 		currentMusic = path;
 		if (path == null) {
-			soundSystem.fadeOutIn("music", null, null, millis, millis);
+			//soundSystem.fadeOutIn("music", null, null, millis, millis);
 			return;
 		}
 		try {
-			soundSystem.fadeOutIn("music", new File(path).toURI().toURL(), new File(path).getName(), millis, millis);
+			//soundSystem.fadeOutIn("music", new File(path).toURI().toURL(), new File(path).getName(), millis, millis);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

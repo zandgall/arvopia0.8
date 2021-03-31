@@ -135,7 +135,7 @@ public class Game implements Runnable {
 	public int fullTicks, fullRens, renTicks;
 
 	public String title;
-	public static String prefix = System.getProperty("user.home");
+	public static String prefix = System.getProperty("os.name").startsWith("Windows") ? System.getProperty("user.home") : "Game Files";
 	public boolean resizable;
 
 	private KeyManager keyManager;
@@ -314,7 +314,7 @@ public class Game implements Runnable {
 
 			initMessage("Initiating logs");
 
-			handler.log("Will open? : " + FileLoader.readFile(Game.prefix + "\\Arvopia\\DontShowThisAgain"));
+			handler.log("Will open? : " + FileLoader.readFile(Game.prefix + "/Arvopia/DontShowThisAgain"));
 
 			State.setState(menuState);
 			State.getState().init();
@@ -442,7 +442,7 @@ public class Game implements Runnable {
 	 * achievementsState.init();
 	 * 
 	 * handler.log("Will open? : " +
-	 * FileLoader.readFile("C:\\Arvopia\\DontShowThisAgain"));
+	 * FileLoader.readFile("C:/Arvopia/DontShowThisAgain"));
 	 * 
 	 * State.setState(menuState); State.getState().init();
 	 * 
@@ -659,10 +659,10 @@ public class Game implements Runnable {
 
 		if ((State.getState() != null) && (!paused)) {
 			State.getState().tick();
-			handler.soundSystem.setVolume("music", OptionState.msVolume);
-			for (String s : handler.sounds) {
-				handler.soundSystem.setVolume(s, OptionState.fxVolume);
-			}
+			//handler.soundSystem.setVolume("music", OptionState.msVolume);
+			//for (String s : handler.sounds) {
+			//	handler.soundSystem.setVolume(s, OptionState.fxVolume);
+			//}
 		} else if (paused) {
 			handler.getWorld().getEntityManager().getPlayer().tick();
 		}
@@ -752,7 +752,7 @@ public class Game implements Runnable {
 		if (record != null)
 			if (record.on) {
 				if (!record.preOn) {
-					recordPath = prefix + "\\Arvopia\\Recording\\" + Public.getCurrentDate() + " ("
+					recordPath = prefix + "/Arvopia/Recording/" + Public.getCurrentDate() + " ("
 							+ System.currentTimeMillis() / 1000 + ")";
 					Utils.createDirectory(recordPath);
 					System.out.println("Created " + recordPath);
@@ -760,7 +760,7 @@ public class Game implements Runnable {
 				if (new File(recordPath).exists()) {
 					int length = new File(recordPath).list().length;
 					ImageLoader.saveImage((BufferedImage) display.getCanvas().createImage(width, height),
-							recordPath + "\\" + length + ".png");
+							recordPath + "/" + length + ".png");
 				}
 			}
 
@@ -1063,7 +1063,7 @@ public class Game implements Runnable {
 		if (!isRunning())
 			return;
 		log.out("Terminated");
-		handler.soundSystem.cleanup();
+		//handler.soundSystem.cleanup();
 		display.stop();
 
 		System.exit(0);

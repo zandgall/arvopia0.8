@@ -45,7 +45,7 @@ public class Recorder {
 
 		try {
 			ImageOutputStream output = new FileImageOutputStream(
-					new File(Game.prefix + "\\Arvopia\\Recordings\\Recording" + System.currentTimeMillis() + ".gif"));
+					new File(Game.prefix + "/Arvopia/Recordings/Recording" + System.currentTimeMillis() + ".gif"));
 			GifSequenceWriter writer = new GifSequenceWriter(output, ((BufferedImage) images.get(0)).getType(), 1,
 					false);
 

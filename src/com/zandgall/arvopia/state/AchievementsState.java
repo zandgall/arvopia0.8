@@ -155,7 +155,7 @@ public class AchievementsState extends State {
 
 		g.setColor(Color.white);
 		g.setFont(new Font("Arial", 1, 20));
-		Tran.drawOutlinedText(g, 10d, handler.getHeight()-10, "Game points: " + (Utils.parseInt(FileLoader.readFile(Game.prefix + "\\Arvopia\\00.arv")) + Utils.parseInt(FileLoader.readFile(Game.prefix + "\\Arvopia\\02.arv"))), 1, Color.black, Color.white);
+		Tran.drawOutlinedText(g, 10d, handler.getHeight()-10, "Game points: " + (Utils.parseInt(FileLoader.readFile(Game.prefix + "/Arvopia/00.arv")) + Utils.parseInt(FileLoader.readFile(Game.prefix + "/Arvopia/02.arv"))), 1, Color.black, Color.white);
 		Tran.drawOutlinedText(g, 10d, 150, "Quests:", 1, Color.black, Color.white); 
 
 		back.render(g);

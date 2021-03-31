@@ -332,8 +332,8 @@ public abstract class Creature extends Entity {
 				file = "WoodWalk";
 			}
 			if (file != "") {
-				game.soundSystem.stop(file + i + name + soundIndex);
-				if (game.soundSystem.getVolume(file + i + name + soundIndex) > 0) {
+				//game.soundSystem.stop(file + i + name + soundIndex);
+				if (false) {//game.soundSystem.getVolume(file + i + name + soundIndex) > 0) {
 					game.setPosition(file + i + name + soundIndex, (int) x, (int) y, 0);
 					game.play(file + i + name + soundIndex);
 				}
@@ -640,12 +640,12 @@ public abstract class Creature extends Entity {
 	public void kill() {
 		game.getWorld().getEntityManager().getEntities().remove(this);
 
-		game.soundSystem.unloadSound("GrassWalk1" + layer);
-		game.soundSystem.unloadSound("GrassWalk2" + layer);
-		game.soundSystem.unloadSound("WoodWalk1" + layer);
-		game.soundSystem.unloadSound("WoodWalk2" + layer);
-		game.soundSystem.unloadSound("SnowWalk1" + layer);
-		game.soundSystem.unloadSound("SnowWalk2" + layer);
+		//game.soundSystem.unloadSound("GrassWalk1" + layer);
+		//game.soundSystem.unloadSound("GrassWalk2" + layer);
+		//game.soundSystem.unloadSound("WoodWalk1" + layer);
+		//game.soundSystem.unloadSound("WoodWalk2" + layer);
+		//game.soundSystem.unloadSound("SnowWalk1" + layer);
+		//game.soundSystem.unloadSound("SnowWalk2" + layer);
 	}
 
 	public static void loadJar(String jarfile, Handler handler, EntityManager e) {
@@ -670,9 +670,9 @@ public abstract class Creature extends Entity {
 	public static void loadModCreature(String directory, Handler handler, EntityManager e) {
 		try {
 			long pre = System.currentTimeMillis();
-			String name = FileLoader.readFile(directory + "\\name.txt").replaceAll(" ", "");
-			Creature out = (Creature) FileLoader.readObjects(directory + "\\" + name + ".arv", 1)[0];
-			ImageLoader.addRedirect(name, ImageLoader.loadImageEX(directory + "\\assets.png"));
+			String name = FileLoader.readFile(directory + "/name.txt").replaceAll(" ", "");
+			Creature out = (Creature) FileLoader.readObjects(directory + "/" + name + ".arv", 1)[0];
+			ImageLoader.addRedirect(name, ImageLoader.loadImageEX(directory + "/assets.png"));
 			out.name = name;
 			out.game = handler;
 			out.setup();
@@ -696,9 +696,9 @@ public abstract class Creature extends Entity {
 	public static Creature loadModCreature(String directory, Handler handler, int x, int y) {
 		try {
 			long pre = System.currentTimeMillis();
-			String name = FileLoader.readFile(directory + "\\name.txt").replaceAll(" ", "");
-			Creature out = (Creature) FileLoader.readObjects(directory + "\\" + name + ".arv", 1)[0];
-			ImageLoader.addRedirect(name, ImageLoader.loadImageEX(directory + "\\assets.png"));
+			String name = FileLoader.readFile(directory + "/name.txt").replaceAll(" ", "");
+			Creature out = (Creature) FileLoader.readObjects(directory + "/" + name + ".arv", 1)[0];
+			ImageLoader.addRedirect(name, ImageLoader.loadImageEX(directory + "/assets.png"));
 			out.name = name;
 			out.game = handler;
 			out.x = x;
