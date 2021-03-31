@@ -23,165 +23,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9bef066f-72b2-4085-8729-740f568ee5e3" name="Default Changelist" comment="Adding Mac Support">
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/Arvopia_0_8_Lab_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/Arvopia_0_8_Lab_jar.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/ArvopiaLauncher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/ArvopiaLauncher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/Console.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/Console.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/GifSequenceWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/GifSequenceWriter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/Handler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/Handler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/Initiator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/Initiator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/Log.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/ModHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/ModHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/Recorder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/Recorder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/Reporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/Reporter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/SmartCostume.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/SmartCostume.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/display/Display.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/display/Display.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/AreaAdders.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/AreaAdders.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/Entity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/Entity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/EntityAdder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/EntityAdder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/EntityManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/EntityManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/Bee.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/Bee.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/Butterfly.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/Butterfly.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/Cannibal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/Cannibal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/Creature.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/Creature.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/NPCs.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/NPCs.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/BasicFlyTemplate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/BasicFlyTemplate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/BasicModTemplate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/BasicModTemplate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/BasicTemplate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/BasicTemplate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/Bat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/Bat.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/Bear.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/Bear.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/Bird.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/Bird.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/Fairy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/Fairy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/Fox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/Fox.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/Skunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/Skunk.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/Wolf.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/basic/Wolf.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/npcs/Fawncier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/npcs/Fawncier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/npcs/Frizzy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/npcs/Frizzy.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/npcs/Lia.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/npcs/Lia.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/npcs/ModNPC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/npcs/ModNPC.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/npcs/NPC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/npcs/NPC.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/npcs/Template.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/npcs/Template.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/npcs/Villager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/creatures/npcs/Villager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/moveableStatics/Cloud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/moveableStatics/Cloud.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/moveableStatics/MoveableStatic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/moveableStatics/MoveableStatic.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/moveableStatics/Platform.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/moveableStatics/Platform.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/moveableStatics/TileDecor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/moveableStatics/TileDecor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/statics/Flower.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/statics/Flower.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/statics/House.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/statics/House.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/statics/Shrubbery.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/statics/Shrubbery.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/statics/Soil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/statics/Soil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/statics/StaticEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/statics/StaticEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/statics/Stone.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/statics/Stone.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/statics/Tree.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/entity/statics/Tree.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/Enviornment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/Enviornment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/Light.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/Light.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/LightManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/LightManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/LightingEffects.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/LightingEffects.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/weather/Rain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/weather/Rain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/weather/Snow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/weather/Snow.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/weather/SnowFlake.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/weather/SnowFlake.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/weather/Storm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/enviornment/weather/Storm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/fileSetter/SetFiles.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/fileSetter/SetFiles.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/Accessory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/Accessory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/Animation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/Animation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/Asset.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/Asset.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/Assets.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/Assets.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/BlendedAnimation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/BlendedAnimation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/GameCamera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/GameCamera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/ImageLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/ImageLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/Pos.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/Pos.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/PublicAssets.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/PublicAssets.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/SerialImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/SerialImage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/SpriteSheet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/SpriteSheet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/matriximg/MatrixIMG.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/matriximg/MatrixIMG.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/transform/ColorFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/transform/ColorFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/transform/HueCube.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/transform/HueCube.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/transform/Tran.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/gfx/transform/Tran.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/CraftOutput.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/CraftOutput.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/Dialogue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/Dialogue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/Gui.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/Gui.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/Inventory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/Inventory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/InventoryItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/InventoryItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/Menu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/Menu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/PlayerGui.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/PlayerGui.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/Trading.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/Trading.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/basic/BasicGui.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/basic/BasicGui.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/trading/TradingKeys.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/guis/trading/TradingKeys.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/input/KeyManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/input/KeyManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/input/MouseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/input/MouseManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/Item.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/Item.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/ItemManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/ItemManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/PlayerItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/PlayerItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/tools/Axe.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/tools/Axe.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/tools/RockChipper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/tools/RockChipper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/tools/Scythe.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/tools/Scythe.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/tools/Sword.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/tools/Sword.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/tools/Tool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/tools/Tool.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/tools/Torch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/tools/Torch.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/tools/Umbrella.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/items/tools/Umbrella.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/levelmaker/LevelMakerState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/levelmaker/LevelMakerState.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/particles/Damage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/particles/Damage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/particles/Particle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/particles/Particle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/particles/ParticleManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/particles/ParticleManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/quests/Achievement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/quests/Achievement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/quests/AchievementManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/quests/AchievementManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/quests/Cutscene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/quests/Cutscene.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/quests/CutsceneManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/quests/CutsceneManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/quests/Quest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/quests/Quest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/quests/QuestManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/quests/QuestManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/AchievementsState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/AchievementsState.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/CustomizationState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/CustomizationState.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/GameState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/GameState.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/GenerateWorldState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/GenerateWorldState.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/OptionState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/OptionState.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/ReportingState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/ReportingState.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/State.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/TitleState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/TitleState.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/WorldLoaderState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/state/WorldLoaderState.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/Bridge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/Bridge.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/EmptyTile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/EmptyTile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/GrassTile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/GrassTile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/Tile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/Tile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/WoodBackTile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/WoodBackTile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/WoodFloor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/WoodFloor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/WoodWall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/WoodWall.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/backtile/BackGrassTile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/backtile/BackGrassTile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/backtile/Backtile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/backtile/Backtile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/backtile/EmptyTile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/backtile/EmptyTile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/build/Building.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/build/Building.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/build/WoodFence.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/tiles/build/WoodFence.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/ArraySlider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/ArraySlider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/ArrowButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/ArrowButton.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/BevelIndent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/BevelIndent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/BevelPlatform.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/BevelPlatform.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Button.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Button.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Chart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Chart.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/ClassLoading.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/ClassLoading.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/ConditionalMusic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/ConditionalMusic.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/FileChooser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/FileChooser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/FileLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/FileLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/FileOpener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/FileOpener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/IconButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/IconButton.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/KeyFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/KeyFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/LongTimeline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/LongTimeline.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Mapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Mapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Noise.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Noise.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Public.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Public.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/SimplexNoise.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/SimplexNoise.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Slider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Slider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/StringTimeline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/StringTimeline.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/TabMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/TabMenu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/TextEditor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/TextEditor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Timeline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Timeline.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/ToggleButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/ToggleButton.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/Utils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/ValueAnimation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/utils/ValueAnimation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/water/Water.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/water/Water.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/water/WaterManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/water/WaterManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/worlds/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/worlds/Map.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/zandgall/arvopia/worlds/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/zandgall/arvopia/worlds/World.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -216,7 +59,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
@@ -287,15 +130,15 @@
     <option name="LAST_COMMIT_MESSAGE" value="Adding Mac Support" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="440" y="99" key="#Project_Structure" timestamp="1617151570750">
+    <state x="440" y="99" key="#Project_Structure" timestamp="1617207357457">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state x="440" y="99" key="#Project_Structure/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617151570750" />
+    <state x="440" y="99" key="#Project_Structure/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617207357457" />
     <state x="2360" y="99" key="#Project_Structure/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1617042050889" />
-    <state x="414" y="179" width="1092" height="715" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1617034225191">
+    <state x="414" y="179" width="1092" height="739" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1617207326480">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state x="414" y="179" width="1092" height="715" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617034225191" />
+    <state x="414" y="179" width="1092" height="739" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617207326480" />
     <state x="2610" y="315" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1617040401863">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>

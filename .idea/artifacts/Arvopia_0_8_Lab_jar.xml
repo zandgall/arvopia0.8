@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="Arvopia 0.8 Lab:jar">
+  <artifact type="jar" name="Arvopia 0.8 Lab:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/Arvopia_0_8_Lab_jar</output-path>
     <root id="archive" name="Arvopia 0.8 Lab.jar">
       <element id="module-output" name="Arvopia 0.8 Lab" />
