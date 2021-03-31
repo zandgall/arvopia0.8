@@ -89,9 +89,9 @@ public class Dialogue {
 				
 				if((int) (d.index/d.spacing)!=p)
 					if(!Character.isWhitespace(d.text.charAt((int) d.index))&&!punc.contains(d.text.charAt((int) d.index))) {
-						game.soundSystem.stop(d.voice);
+						//game.soundSystem.stop(d.voice);
 						game.setPosition(d.voice, d.x, d.y, 0);
-						game.soundSystem.setVolume(d.voice, 1000.0f);
+						//game.soundSystem.setVolume(d.voice, 1000.0f);
 						game.play(d.voice);
 					}
 			}

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import com.zandgall.arvopia.Game;
 import com.zandgall.arvopia.gfx.transform.Tran;
 
 public class LongTimeline {
@@ -126,8 +127,8 @@ public class LongTimeline {
 		g.dispose();
 
 		try {
-			ImageIO.write(out, "png", new File("C:\\Arvopia\\logs\\" + name + ".png"));
-			System.out.println("Wrote: " + "C:\\Arvopia\\logs\\" + name + ".png");
+			ImageIO.write(out, "png", new File(Game.prefix + "/Arvopia/logs/" + name + ".png"));
+			System.out.println("Wrote: " + Game.prefix + "/Arvopia/logs/" + name + ".png");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

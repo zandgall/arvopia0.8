@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.zandgall.arvopia.Game;
 import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.gfx.BlendedAnimation;
 import com.zandgall.arvopia.gfx.PublicAssets;
@@ -74,75 +75,75 @@ public class WorldLoaderState extends State {
 	}
 	
 	public void loadStuff() {
-		fworld1 = new File("C://Arvopia//World//World 1.arv");
+		fworld1 = new File(Game.prefix + "//Arvopia//World//World 1.arv");
 //		if (!fworld1.exists() || fworld1.length() < 1) {
 		System.out.println("\t\tDownloading Content: LevelOne");
-		fworld1 = new File("Packed Worlds\\LevelOne");
+		fworld1 = new File("Packed Worlds/LevelOne");
 
-		Utils.fileWriter(FileLoader.readFile(fworld1), "C://Arvopia//World//World 1.arv");
-		fworld1 = new File("C://Arvopia//World//World 1.arv");
+		Utils.fileWriter(FileLoader.readFile(fworld1), Game.prefix + "//Arvopia//World//World 1.arv");
+		fworld1 = new File(Game.prefix + "//Arvopia//World//World 1.arv");
 //		}
 
-		fworld2 = new File("C://Arvopia//World//World 2.arv");
+		fworld2 = new File(Game.prefix + "//Arvopia//World//World 2.arv");
 		if (!fworld2.exists() || fworld2.length() < 1) {
 			System.out.println("\t\tDownloading Content: LevelTwo");
-			fworld2 = new File("Packed Worlds\\LevelTwo");
+			fworld2 = new File("Packed Worlds/LevelTwo");
 
-			Utils.fileWriter(FileLoader.readFile(fworld2), "C://Arvopia//World//World 2.arv");
-			fworld2 = new File("C://Arvopia//World//World 2.arv");
+			Utils.fileWriter(FileLoader.readFile(fworld2), Game.prefix + "//Arvopia//World//World 2.arv");
+			fworld2 = new File(Game.prefix + "//Arvopia//World//World 2.arv");
 		}
 
-		fworld3 = new File("C://Arvopia//World//World 3.arv");
+		fworld3 = new File(Game.prefix + "//Arvopia//World//World 3.arv");
 		if (!fworld3.exists() || fworld3.length() < 1) {
 			System.out.println("\t\tDownloading Content: 0.5Forest");
-			fworld3 = new File("Packed Worlds\\0.5Forest");
+			fworld3 = new File("Packed Worlds/0.5Forest");
 
-			Utils.fileWriter(FileLoader.readFile(fworld3), "C://Arvopia//World//World 3.arv");
-			fworld3 = new File("C://Arvopia//World//World 3.arv");
+			Utils.fileWriter(FileLoader.readFile(fworld3), Game.prefix + "//Arvopia//World//World 3.arv");
+			fworld3 = new File(Game.prefix + "//Arvopia//World//World 3.arv");
 		}
 
-		fworld4 = new File("C://Arvopia//World//World 4.arv");
+		fworld4 = new File("//Arvopia//World//World 4.arv");
 		if (!fworld4.exists() || fworld4.length() < 1) {
 			System.out.println("\t\tDownloading Content: 0.6World");
-			fworld4 = new File("Packed Worlds\\0.6World");
+			fworld4 = new File("Packed Worlds/0.6World");
 
-			Utils.fileWriter(FileLoader.readFile(fworld4), "C://Arvopia//World//World 4.arv");
-			fworld4 = new File("C://Arvopia//World//World 4.arv");
+			Utils.fileWriter(FileLoader.readFile(fworld4), Game.prefix + "//Arvopia//World//World 4.arv");
+			fworld4 = new File(Game.prefix + "//Arvopia//World//World 4.arv");
 		}
 		
-		fworld5 = new File("C://Arvopia//World//World 1 (2nd edition).arv");
+		fworld5 = new File(Game.prefix + "//Arvopia//World//World 1 (2nd edition).arv");
 		if (!fworld5.exists() || fworld5.length() < 1) {
 			System.out.println("\t\tDownloading Content: World 1 remake");
-			fworld5 = new File("Packed Worlds\\World 1 remake");
+			fworld5 = new File("Packed Worlds/World 1 remake");
 
-			Utils.fileWriter(FileLoader.readFile(fworld4), "C://Arvopia//World//World 1 (2nd edition).arv");
-			fworld5 = new File("C://Arvopia//World//World 1 (2nd edition).arv");
+			Utils.fileWriter(FileLoader.readFile(fworld4), Game.prefix + "//Arvopia//World//World 1 (2nd edition).arv");
+			fworld5 = new File(Game.prefix + "//Arvopia//World//World 1 (2nd edition).arv");
 		}
 
 		// Directory's file paths = directory.list();
 
-		File world = new File("C:\\Arvopia\\Pack");
+		File world = new File(Game.prefix + "/Arvopia/Pack");
 
 		String[] paths = world.list();
 
 		worlds = new ArrayList<worldfile>();
 
 		for (int i = 0; i < paths.length; i++) {
-			worlds.add(new worldfile(handler, worlds.size(), new File("C:\\Arvopia\\Pack\\" + paths[i]), "Pack"));
+			worlds.add(new worldfile(handler, worlds.size(), new File(Game.prefix + "/Arvopia/Pack/" + paths[i]), "Pack"));
 
 		}
 
-		world = new File("C:\\Arvopia\\World");
+		world = new File(Game.prefix + "/Arvopia/World");
 
 		paths = world.list();
 
 //		worlds.add(new worldfile(handler, 0, new File("Generate new world")));
 
 		for (int i = 0; i < paths.length; i++) {
-			worlds.add(new worldfile(handler, worlds.size(), new File("C:\\Arvopia\\World\\" + paths[i])));
+			worlds.add(new worldfile(handler, worlds.size(), new File(Game.prefix + "/Arvopia/World/" + paths[i])));
 		}
 
-		world = new File("C:\\Arvopia\\Saves");
+		world = new File(Game.prefix + "/Arvopia/Saves");
 
 		paths = world.list();
 
@@ -150,7 +151,7 @@ public class WorldLoaderState extends State {
 
 			saves = true;
 
-			worlds.add(new worldfile(handler, worlds.size(), new File("C:\\Arvopia\\Saves\\" + paths[i]), "Save"));
+			worlds.add(new worldfile(handler, worlds.size(), new File(Game.prefix + "/Arvopia/Saves/" + paths[i]), "Save"));
 
 		}
 	}
@@ -175,7 +176,7 @@ public class WorldLoaderState extends State {
 			
 			if(file.exists()) {
 				try {
-					Files.copy(file.toPath(), new File("C:\\Arvopia\\Mods\\"+new File(path).getName()).toPath());
+					Files.copy(file.toPath(), new File(Game.prefix + "/Arvopia/Mods/"+new File(path).getName()).toPath());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -192,7 +193,7 @@ public class WorldLoaderState extends State {
 			File file = new File(path);
 			
 			if(file.exists()) {
-				FileLoader.copyFolder(path, "C:\\Arvopia\\Pack\\"+file.getName());
+				FileLoader.copyFolder(path, Game.prefix + "/Arvopia/Pack/"+file.getName());
 			}
 			
 			loadStuff();
@@ -374,7 +375,7 @@ class worldfile {
 
 			modified = new Date(file.lastModified());
 			if (file.isDirectory()) {
-				String[] s = FileLoader.readFile(new File(file.getAbsolutePath() + "\\World.arv")).split("\\s+");
+				String[] s = FileLoader.readFile(new File(file.getAbsolutePath() + "/World.arv")).split("\\s+");
 				type = s[0];
 				version = s[1];
 
@@ -416,7 +417,7 @@ class worldfile {
 
 		if (type.contains("Pack")) {
 			offset = defaultoffset;
-			length = (int) (new File(file.getPath() + "\\world.arv").length() / 1000);
+			length = (int) (new File(file.getPath() + "/world.arv").length() / 1000);
 		} else if (type.contains("World"))
 			offset = worldoffset;
 		else if (type.contains("Save"))

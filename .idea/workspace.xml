@@ -3,8 +3,29 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="9bef066f-72b2-4085-8729-740f568ee5e3" name="Default Changelist" comment="" />
+    <list default="true" id="9bef066f-72b2-4085-8729-740f568ee5e3" name="Default Changelist" comment="Adding Mac Support">
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/Arvopia_0_8_Lab_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/Arvopia_0_8_Lab_jar.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,6 +35,12 @@
     <option name="testRunner" value="GRADLE" />
     <option name="delegatedBuild" value="true" />
   </component>
+  <component name="ExportToHTMLSettings">
+    <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/../Arvopia 0.8 Lab\exportToHTML" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -22,19 +49,25 @@
     </option>
   </component>
   <component name="ProjectId" id="1kWBZLsyEvBXtFO1ATt0NmklKKB" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="configurable.group.language" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\java\Arvopia 0.8 Lab\macsrc" />
       <recent name="C:\Users\alexa\eclipse-workspace\Arvopia 0.8 Lab\src\com\zandgall\arvopia\sounds" />
     </key>
   </component>
@@ -70,44 +103,116 @@
       <option name="presentableId" value="Default" />
       <updated>1559929710153</updated>
     </task>
+    <task id="LOCAL-00001" summary="Adding Mac Support">
+      <created>1617047068538</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1617047068538</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Adding Mac Support" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding Mac Support" />
+  </component>
   <component name="WindowStateProjectService">
-    <state x="2607" y="334" key="FileChooserDialogImpl" timestamp="1613833790045">
+    <state x="440" y="99" key="#Project_Structure" timestamp="1617207357457">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="440" y="99" key="#Project_Structure/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617207357457" />
+    <state x="2360" y="99" key="#Project_Structure/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1617042050889" />
+    <state x="414" y="179" width="1092" height="739" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1617207326480">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="414" y="179" width="1092" height="739" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617207326480" />
+    <state x="2610" y="315" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1617040401863">
       <screen x="1920" y="0" width="1920" height="1050" />
     </state>
-    <state x="2607" y="334" key="FileChooserDialogImpl/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1613833790045" />
-    <state width="1877" height="235" key="GridCell.Tab.0.bottom" timestamp="1615400252958">
+    <state x="690" y="315" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617034559112" />
+    <state x="2610" y="315" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1617040401863" />
+    <state x="790" y="235" key="#com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialog" timestamp="1617145001295">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="235" key="GridCell.Tab.0.bottom/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1615400252958" />
-    <state width="1877" height="235" key="GridCell.Tab.0.center" timestamp="1615400252958">
+    <state x="790" y="235" key="#com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialog/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617145001295" />
+    <state x="2663" y="431" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.packages" timestamp="1617038066723">
+      <screen x="1920" y="0" width="1920" height="1050" />
+    </state>
+    <state x="2663" y="431" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.packages/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1617038066723" />
+    <state x="707" y="379" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1615400889111">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="235" key="GridCell.Tab.0.center/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1615400252958" />
-    <state width="1877" height="235" key="GridCell.Tab.0.left" timestamp="1615400252957">
+    <state x="707" y="379" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1615400889111" />
+    <state x="2607" y="334" key="FileChooserDialogImpl" timestamp="1617040315877">
+      <screen x="1920" y="0" width="1920" height="1050" />
+    </state>
+    <state x="687" y="334" key="FileChooserDialogImpl/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617034179159" />
+    <state x="2607" y="334" key="FileChooserDialogImpl/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1617040315877" />
+    <state width="1877" height="235" key="GridCell.Tab.0.bottom" timestamp="1617207039242">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="235" key="GridCell.Tab.0.left/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1615400252957" />
-    <state width="1877" height="235" key="GridCell.Tab.0.right" timestamp="1615400252958">
+    <state width="1877" height="235" key="GridCell.Tab.0.bottom/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617207039242" />
+    <state width="1877" height="235" key="GridCell.Tab.0.center" timestamp="1617207039241">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="235" key="GridCell.Tab.0.right/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1615400252958" />
-    <state width="1877" height="235" key="GridCell.Tab.1.bottom" timestamp="1615400252774">
+    <state width="1877" height="235" key="GridCell.Tab.0.center/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617207039241" />
+    <state width="1877" height="235" key="GridCell.Tab.0.left" timestamp="1617207039232">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="235" key="GridCell.Tab.1.bottom/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1615400252774" />
-    <state width="1877" height="235" key="GridCell.Tab.1.center" timestamp="1615400252773">
+    <state width="1877" height="235" key="GridCell.Tab.0.left/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617207039232" />
+    <state width="1877" height="235" key="GridCell.Tab.0.right" timestamp="1617207039242">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="235" key="GridCell.Tab.1.center/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1615400252773" />
-    <state width="1877" height="235" key="GridCell.Tab.1.left" timestamp="1615400252773">
+    <state width="1877" height="235" key="GridCell.Tab.0.right/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617207039242" />
+    <state width="1877" height="235" key="GridCell.Tab.1.bottom" timestamp="1617207039244">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="235" key="GridCell.Tab.1.left/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1615400252773" />
-    <state width="1877" height="235" key="GridCell.Tab.1.right" timestamp="1615400252773">
+    <state width="1877" height="235" key="GridCell.Tab.1.bottom/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617207039244" />
+    <state width="1877" height="235" key="GridCell.Tab.1.center" timestamp="1617207039242">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state width="1877" height="235" key="GridCell.Tab.1.right/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1615400252773" />
+    <state width="1877" height="235" key="GridCell.Tab.1.center/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617207039242" />
+    <state width="1877" height="235" key="GridCell.Tab.1.left" timestamp="1617207039242">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="1877" height="235" key="GridCell.Tab.1.left/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617207039242" />
+    <state width="1877" height="235" key="GridCell.Tab.1.right" timestamp="1617207039244">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="1877" height="235" key="GridCell.Tab.1.right/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617207039244" />
+    <state x="2360" y="99" key="SettingsEditor" timestamp="1617040711650">
+      <screen x="1920" y="0" width="1920" height="1050" />
+    </state>
+    <state x="440" y="99" key="SettingsEditor/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617034586452" />
+    <state x="2360" y="99" key="SettingsEditor/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1617040711650" />
+    <state x="552" y="257" key="Vcs.Push.Dialog.v2" timestamp="1617047071226">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="552" y="257" key="Vcs.Push.Dialog.v2/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617047071226" />
+    <state x="2684" y="393" key="classpath-attribute-editor" timestamp="1617040387286">
+      <screen x="1920" y="0" width="1920" height="1050" />
+    </state>
+    <state x="2684" y="393" key="classpath-attribute-editor/0.0.1920.1050/1920.0.1920.1050@1920.0.1920.1050" timestamp="1617040387286" />
+    <state x="517" y="107" width="585" height="801" key="find.popup" timestamp="1617048821192">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="517" y="107" width="585" height="801" key="find.popup/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617048821192" />
+    <state x="623" y="227" width="672" height="678" key="search.everywhere.popup" timestamp="1617030177919">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="623" y="227" width="672" height="678" key="search.everywhere.popup/0.0.1920.1050/1920.0.1920.1050@0.0.1920.1050" timestamp="1617030177919" />
   </component>
 </project>

@@ -38,7 +38,7 @@ public abstract class ConditionalMusic {
 				game.fadeOutIn(files[filenum], 2000);
 			else game.music(files[filenum], false);
 			
-			game.soundSystem.setVolume("music", OptionState.msVolume);
+			//game.soundSystem.setVolume("music", OptionState.msVolume);
 		}
 	}
 	

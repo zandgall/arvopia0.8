@@ -18,6 +18,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,9 +77,9 @@ public class OptionState extends State {
 
 		Console.log("Loading saved options");
 
-		if (FileLoader.readFile("C:\\Arvopia\\Options0.8.txt") != null) {
+		if (new File(Game.prefix + "/Arvopia/Options0.8.txt").exists()) {
 
-			String s = FileLoader.readFile("C:\\Arvopia\\Options0.8.txt");
+			String s = FileLoader.readFile(Game.prefix + "/Arvopia/Options0.8.txt");
 
 			for (String n : options.keySet())
 				for (int i = 0; i < options.get(n).size(); i++) {
@@ -91,7 +92,7 @@ public class OptionState extends State {
 		fxVolume = (float) Math.pow(getSlider("Volume", 1) / 100.0f, 3);
 		handler.getGame().setFps((int) getSlider("Game control", 0));
 		msVolume = (float) Math.pow(getSlider("Volume", 0) / 100.0f, 3);
-		handler.soundSystem.setVolume("music", msVolume);
+		//handler.soundSystem.setVolume("music", msVolume);
 
 		Console.log("Finished");
 		reset = new Button(handler, back.getX() - 85, handler.getHeight() - 40, "", "Reset");
@@ -187,7 +188,7 @@ public class OptionState extends State {
 						out += options.get(s).get(i).name.replaceAll(" ", "") + " " + options.get(s).get(i).toggle.on
 								+ System.lineSeparator();
 				}
-			Utils.fileWriter(out, "C:\\Arvopia\\Options0.8.txt");
+			Utils.fileWriter(out, Game.prefix + "/Arvopia/Options0.8.txt");
 		}
 
 		scroll -= handler.getMouse().getMouseScroll() * 8;
@@ -250,7 +251,7 @@ public class OptionState extends State {
 		splitstreamrender = getToggle("Split-Stream Rendering");
 		splitstreamlighting = getToggle("Split-Stream Lighting");
 
-		handler.soundSystem.setVolume("music", msVolume);
+		//handler.soundSystem.setVolume("music", msVolume);
 
 		if (reset.on)
 			for (ArrayList<Option> ol : options.values())

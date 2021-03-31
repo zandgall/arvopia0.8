@@ -367,26 +367,26 @@ public class ModNPC extends NPC {
 	}
 	
 	public static void export() throws IOException {
-		Utils.createDirectory("C:\\Arvopia");
-		Utils.createDirectory("C:\\Arvopia\\Mod export");
-		Utils.createDirectory("C:\\Arvopia\\Mod export\\NPCs");
-		Utils.createDirectory("C:\\Arvopia\\Mod export\\NPCs\\"+ModNPC.name);
+		Utils.createDirectory(Game.prefix + "/Arvopia");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Mod export");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Mod export/NPCs");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Mod export/NPCs/"+ModNPC.name);
 		
-		Log log = new Log("C:\\Arvopia\\Mod export\\NPCs\\"+ModNPC.name+"\\Main", "Log");
+		Log log = new Log(Game.prefix + "/Arvopia/Mod export/NPCs/"+ModNPC.name+"/Main", "Log");
 		
 		Game game = new Game("Exporting...", 720, 400, false, log);
 		log.log("Writing...");
 		
 		Public.init(new Handler(game));
 		
-		Utils.fileWriter(ModNPC.name, "C:\\Arvopia\\Mod export\\NPCs\\"+ModNPC.name+"\\name.txt");
-		FileLoader.writeObjects("C:\\Arvopia\\Mod export\\NPCs\\"+ModNPC.name+"\\"+ModNPC.name+".arv", new Object[] {(NPC) new ModNPC()});
+		Utils.fileWriter(ModNPC.name, Game.prefix + "/Arvopia/Mod export/NPCs/"+ModNPC.name+"/name.txt");
+		FileLoader.writeObjects(Game.prefix + "/Arvopia/Mod export/NPCs/"+ModNPC.name+"/"+ModNPC.name+".arv", new Object[] {(NPC) new ModNPC()});
 		
 		log.log("Successfully wrote " + ModNPC.name);
 	}
 	
 	//Run this when you want to export the mod
-	//Exports to "C:\\Arvopia\\Mod Export\\"
+	//Exports to "C:/Arvopia/Mod Export/"
 	//(Instructions on mod packing here)
 	public static void main(String[] args) throws IOException {
 		ModNPC.export();

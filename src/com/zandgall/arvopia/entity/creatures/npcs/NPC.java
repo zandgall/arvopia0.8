@@ -390,9 +390,9 @@ public abstract class NPC extends Creature implements Cloneable {
 	public static void loadMODNPC(String directory, Handler handler, EntityManager e) {
 		try {
 			long pre = System.currentTimeMillis();
-			String name = FileLoader.readFile(directory + "\\name.txt").replaceAll(" ", "");
-			NPC out = (NPC) FileLoader.readObjects(directory + "\\" + name + ".arv", 1)[0];
-			ImageLoader.addRedirect(name, ImageLoader.loadImageEX(directory + "\\assets.png"));
+			String name = FileLoader.readFile(directory + "/name.txt").replaceAll(" ", "");
+			NPC out = (NPC) FileLoader.readObjects(directory + "/" + name + ".arv", 1)[0];
+			ImageLoader.addRedirect(name, ImageLoader.loadImageEX(directory + "/assets.png"));
 			out.name = name;
 			out.game = handler;
 			out.initTradingGUI();
@@ -412,9 +412,9 @@ public abstract class NPC extends Creature implements Cloneable {
 	public static NPC loadMODNPC(String directory, Handler handler, int x, int y) {
 		try {
 			long pre = System.currentTimeMillis();
-			String name = FileLoader.readFile(directory + "\\name.txt").replaceAll(" ", "");
-			NPC out = (NPC) FileLoader.readObjects(directory + "\\" + name + ".arv", 1)[0];
-			ImageLoader.addRedirect(name, ImageLoader.loadImageEX(directory + "\\assets.png"));
+			String name = FileLoader.readFile(directory + "/name.txt").replaceAll(" ", "");
+			NPC out = (NPC) FileLoader.readObjects(directory + "/" + name + ".arv", 1)[0];
+			ImageLoader.addRedirect(name, ImageLoader.loadImageEX(directory + "/assets.png"));
 			out.name = name;
 			out.game = handler;
 			out.x = x;

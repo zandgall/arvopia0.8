@@ -77,6 +77,8 @@ public class FileLoader {
 //	}
 
 	public static String readFile(String path) {
+		if(path.startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
+			path.replace("C:", "~/Applications");
 		String output = null;
 		try {
 			File file = new File(path);
@@ -104,6 +106,8 @@ public class FileLoader {
 	}
 	
 	public static String readFile(File file) {
+		if(file.getPath().startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
+			file = new File(file.getPath().replace("C:", "~/Applications"));
 		String output = null;
 		try {
 //			System.out.println("File chosen: " + file.getAbsolutePath() + " is " + file.exists());
@@ -129,6 +133,8 @@ public class FileLoader {
 	}
 
 	public static String readFile(String path, boolean doesntmatter) {
+		if(path.startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
+			path.replace("C:", "~/Applications");
 		String output = null;
 		try {
 			File file = new File(path);
@@ -150,6 +156,8 @@ public class FileLoader {
 	}
 
 	public static Object[] readObjects(String path, int length) throws IOException, ClassNotFoundException {
+		if(path.startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
+			path.replace("C:", "~/Applications");
 		FileInputStream inputStream = new FileInputStream(new File(path));
 
 		ObjectInputStream reader = new ObjectInputStream(inputStream);
@@ -169,6 +177,8 @@ public class FileLoader {
 	}
 
 	public static void writeObjects(String path, Object[] objects) throws IOException {
+		if(path.startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
+			path.replace("C:", "~/Applications");
 
 		FileOutputStream outputStream = new FileOutputStream(new File(path));
 
@@ -189,11 +199,11 @@ public class FileLoader {
 		Utils.createDirectory(b);
 		
 		for(String s: af.list()) {
-			if(new File(a+"\\"+s).isDirectory())
-				copyFolder(a + "\\" + s, b + "\\" + s);
+			if(new File(a+"/"+s).isDirectory())
+				copyFolder(a + "/" + s, b + "/" + s);
 			else {
 				try {
-					Files.copy(new File(a+"\\"+s).toPath(), new File(b + "\\" + s).toPath());
+					Files.copy(new File(a+"/"+s).toPath(), new File(b + "/" + s).toPath());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

@@ -216,7 +216,7 @@ public class Trading extends Gui implements Serializable {
 			minorindex += speed;
 			minorindex = Public.range(1, speeches.getSpeech(speechindex).length(), minorindex);
 			if(!Character.isWhitespace(speeches.getSpeech(speechindex).charAt((int) minorindex-1)) && p!=(int) (minorindex/soundSpace)) {
-				game.soundSystem.stop(voice);
+				//game.soundSystem.stop(voice);
 				game.setPosition(voice, (int) game.getPlayer().getX(), (int) game.getPlayer().getY(), 10);
 				game.play(voice);
 			}

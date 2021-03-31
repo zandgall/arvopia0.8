@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import com.zandgall.arvopia.Game;
 import com.zandgall.arvopia.gfx.ImageLoader;
 
 public class ClassLoading {
@@ -116,13 +117,13 @@ public class ClassLoading {
 				if (je.getName().startsWith("com/") || je.getName() == "com")
 					continue;
 				if (je.isDirectory()) {
-					Utils.createDirectory("C:\\Arvopia\\tmp\\" + je.getName());
+					Utils.createDirectory(Game.prefix + "/Arvopia/tmp/" + je.getName());
 				} else if(je.getName().endsWith(".png")) {
 					BufferedImage image = ImageLoader.loadImage(new URL("jar:file:" + pathToJar + "!/"+je.getName()));
-					ImageLoader.saveImage(image, "C:\\Arvopia\\tmp\\" + je.getName());
+					ImageLoader.saveImage(image, Game.prefix + "/Arvopia/tmp/" + je.getName());
 				} else {
 					String b = FileLoader.streamToString(new URL("jar:file:" + pathToJar + "!/"+je.getName()).openStream(), ("jar:file:" + pathToJar + "!/"+je.getName()).length());
-					Utils.fileWriter(b, "C:\\Arvopia\\tmp\\" + je.getName());
+					Utils.fileWriter(b, Game.prefix + "/Arvopia/tmp/" + je.getName());
 				}
 			}
 		} catch(Exception e) {

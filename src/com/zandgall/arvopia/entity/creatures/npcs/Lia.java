@@ -1,5 +1,6 @@
 package com.zandgall.arvopia.entity.creatures.npcs;
 
+import com.zandgall.arvopia.Game;
 import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.Reporter;
 import com.zandgall.arvopia.entity.creatures.Creature;
@@ -45,8 +46,8 @@ public class Lia extends NPC {
 				"Please walk around and enjoy yourself!", "Hey, while you're at it,", "could you get me some wood?",
 				"10 logs will do!", "Thanks so much!", "You see, that's how quests work", "Have fun exploring!" });
 
-		if (FileLoader.readFile("C:\\Arvopia\\03.arv").contains(Quest.getWoodForLia.name)) {
-			if (FileLoader.readFile("C:\\Arvopia\\04.arv").contains(Quest.getWoodForLia.name)) {
+		if (FileLoader.readFile(Game.prefix + "/Arvopia/03.arv").contains(Quest.getWoodForLia.name)) {
+			if (FileLoader.readFile(Game.prefix + "/Arvopia/04.arv").contains(Quest.getWoodForLia.name)) {
 				resetSpeech(new String[] { "Welcome back to Arvopia " + Reporter.user + "!" });
 			} else
 				resetSpeech(new String[] { "Welcome back to Arvopia " + Reporter.user + "!",

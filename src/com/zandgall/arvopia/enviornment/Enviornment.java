@@ -135,7 +135,7 @@ public class Enviornment implements Serializable {
 		} else if (!precipitation && prep) {
 			System.err.println("Ended Rain");
 //			game.fadeOut("Rain", "Rain", 100);
-			game.soundSystem.stop("Rain");
+			//game.soundSystem.stop("Rain");
 		}
 
 	}
@@ -307,7 +307,7 @@ public class Enviornment implements Serializable {
 			game.play("Rain");
 		} else if (!precipitation && prep) {
 			System.err.println("Ended Rain");
-			game.soundSystem.stop("Rain");
+			//game.soundSystem.stop("Rain");
 		}
 
 		game.putAtListener("Rain");
