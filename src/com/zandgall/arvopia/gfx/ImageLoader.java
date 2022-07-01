@@ -35,7 +35,7 @@ public class ImageLoader {
 			return out;
 		} catch (Exception e) {
 //			game.log(e.getMessage());
-//			e.printStackTrace();
+			e.printStackTrace();
 //			Reporter.quick("Could not load " + path + ", this could be a big problem");
 			System.err.println("Could not load image " + path);
 		}

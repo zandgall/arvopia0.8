@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Arvopia 0.8 Lab" target="1.8" />
+      <module name="Arvopia 0.8 Lab" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

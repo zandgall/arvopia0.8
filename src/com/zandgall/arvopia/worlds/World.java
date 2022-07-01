@@ -306,6 +306,13 @@ public class World implements Serializable {
 		backgroundImages.add(bg3[0]);
 		backgroundSnowOverlays.add(bg3[1]);
 		backgroundload = System.nanoTime() - pre;
+		try {
+			ImageIO.write(bg1[0], "png", new File("C:\\Arvopia\\bg0.png"));
+			ImageIO.write(bg2[0], "png", new File("C:\\Arvopia\\bg1.png"));
+			ImageIO.write(bg3[0], "png", new File("C:\\Arvopia\\bg2.png"));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public World(Handler handler, int width, int height, float foliage, float stones, float insects, float creatures,
@@ -408,7 +415,13 @@ public class World implements Serializable {
 		BufferedImage[] bg3 = createBackground(5);
 		backgroundImages.add(bg3[0]);
 		backgroundSnowOverlays.add(bg3[1]);
-
+		try {
+			ImageIO.write(bg1[0], "png", new File("C:\\Arvopia\\bg0.png"));
+			ImageIO.write(bg2[0], "png", new File("C:\\Arvopia\\bg1.png"));
+			ImageIO.write(bg3[0], "png", new File("C:\\Arvopia\\bg2.png"));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		backgroundload = System.nanoTime() - pre;
 	}
 
@@ -511,7 +524,13 @@ public class World implements Serializable {
 		BufferedImage[] bg3 = createBackground(5);
 		backgroundImages.add(bg3[0]);
 		backgroundSnowOverlays.add(bg3[1]);
-
+		try {
+			ImageIO.write(bg1[0], "png", new File("C:\\Arvopia\\bg0.png"));
+			ImageIO.write(bg2[0], "png", new File("C:\\Arvopia\\bg1.png"));
+			ImageIO.write(bg3[0], "png", new File("C:\\Arvopia\\bg2.png"));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		backgroundload = System.nanoTime() - pre;
 	}
 

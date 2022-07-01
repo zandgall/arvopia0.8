@@ -45,6 +45,7 @@ public abstract class Entity implements Serializable, Cloneable {
 	public boolean dead;
 	public int snowy = 0;
 	public int maxSnowy = 10;
+	public int ticks = 0;
 
 	public Entity(Handler handler, double x, double y, int width, int height, boolean solid, boolean creature,
 			boolean particle, boolean staticEntity) {
@@ -111,9 +112,14 @@ public abstract class Entity implements Serializable, Cloneable {
 	
 	public boolean checkCollision(double xOffset, double yOffset) {
 		for (Entity e : game.getWorld().getEntityManager().getEntities()) {
-			if (!e.equals(this)) {
-				if ((e.isSolid) && (e.getCollision(0.0F, 0.0F).intersects(getCollision(xOffset, yOffset))))
-					return true;
+			try {
+				if (!e.equals(this)) {
+					if ((e.isSolid) && (e.getCollision(0.0F, 0.0F).intersects(getCollision(xOffset, yOffset))))
+						return true;
+				}
+			} catch(NullPointerException ex) {
+				System.err.println("NullPointerException in collision finding!");
+				ex.printStackTrace();
 			}
 		}
 		return false;
@@ -121,9 +127,14 @@ public abstract class Entity implements Serializable, Cloneable {
 
 	public boolean colBottom(double xOffset, double yOffset) {
 		for (Entity e : game.getWorld().getEntityManager().getEntities()) {
-			if (!e.equals(this)) {
-				if ((e.isSolid) && (e.getCollision(0.0F, 0.0F).intersects(bottom(xOffset, yOffset))))
-					return true;
+			try {
+				if (!e.equals(this)) {
+					if ((e.isSolid) && (e.getCollision(0.0F, 0.0F).intersects(bottom(xOffset, yOffset))))
+						return true;
+				}
+			} catch(NullPointerException ex) {
+				System.err.println("NullPointerException in collision finding!");
+				ex.printStackTrace();
 			}
 		}
 		return false;
@@ -131,9 +142,14 @@ public abstract class Entity implements Serializable, Cloneable {
 
 	public boolean colTop(double xOffset, double yOffset) {
 		for (Entity e : game.getWorld().getEntityManager().getEntities()) {
-			if (!e.equals(this)) {
-				if ((e.isSolid) && (e.getCollision(0.0F, 0.0F).intersects(top(xOffset, yOffset))))
-					return true;
+			try {
+				if (!e.equals(this)) {
+					if ((e.isSolid) && (e.getCollision(0.0F, 0.0F).intersects(top(xOffset, yOffset))))
+						return true;
+				}
+			} catch(NullPointerException ex) {
+				System.err.println("NullPointerException in collision finding!");
+				ex.printStackTrace();
 			}
 		}
 		return false;
@@ -141,9 +157,14 @@ public abstract class Entity implements Serializable, Cloneable {
 
 	public boolean colRight(double xOffset, double yOffset) {
 		for (Entity e : game.getWorld().getEntityManager().getEntities()) {
-			if (!e.equals(this)) {
-				if ((e.isSolid) && (e.getCollision(0.0F, 0.0F).intersects(right(xOffset, yOffset))))
-					return true;
+			try {
+				if (!e.equals(this)) {
+					if ((e.isSolid) && (e.getCollision(0.0F, 0.0F).intersects(right(xOffset, yOffset))))
+						return true;
+				}
+			} catch(NullPointerException ex) {
+				System.err.println("NullPointerException in collision finding!");
+				ex.printStackTrace();
 			}
 		}
 		return false;
@@ -151,9 +172,14 @@ public abstract class Entity implements Serializable, Cloneable {
 
 	public boolean colLeft(double xOffset, double yOffset) {
 		for (Entity e : game.getWorld().getEntityManager().getEntities()) {
-			if (!e.equals(this)) {
-				if ((e.isSolid) && (e.getCollision(0.0F, 0.0F).intersects(left(xOffset, yOffset))))
-					return true;
+			try {
+				if (!e.equals(this)) {
+					if ((e.isSolid) && (e.getCollision(0.0F, 0.0F).intersects(left(xOffset, yOffset))))
+						return true;
+				}
+			} catch(NullPointerException ex) {
+				System.err.println("NullPointerException in collision finding!");
+				ex.printStackTrace();
 			}
 		}
 		return false;
@@ -161,9 +187,14 @@ public abstract class Entity implements Serializable, Cloneable {
 
 	public boolean checkTouching(double xOffset, double yOffset) {
 		for (Entity e : game.getWorld().getEntityManager().getEntities()) {
-			if (!e.equals(this)) {
-				if (e.getCollision(0.0F, 0.0F).intersects(getCollision(xOffset, yOffset)))
-					return true;
+			try {
+				if (!e.equals(this)) {
+					if (e.getCollision(0.0F, 0.0F).intersects(getCollision(xOffset, yOffset)))
+						return true;
+				}
+			} catch(NullPointerException ex) {
+				System.err.println("NullPointerException in collision finding!");
+				ex.printStackTrace();
 			}
 		}
 		return false;

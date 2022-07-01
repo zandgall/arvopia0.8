@@ -29,8 +29,7 @@ public class Torch extends Tool {
 
 		torchAn = new Animation(150, new BufferedImage[] { PublicAssets.torch.getSubimage(0, 0, 18, 45),
 				PublicAssets.torch.getSubimage(18, 0, 18, 45) }, "", "Torch");
-		stab = new Animation(150, new BufferedImage[] { PublicAssets.torchStab.getSubimage(0, 0, 36, 21),
-				PublicAssets.torchStab.getSubimage(36, 0, 36, 21) }, "Stab", "Torch");
+		stab = new Animation(150, new BufferedImage[] {}, "Stab", "Torch");
 		torch = new Light(game, 100, 100, 15, 1, Color.orange);
 	}
 

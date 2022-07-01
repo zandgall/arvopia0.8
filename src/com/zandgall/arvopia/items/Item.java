@@ -280,9 +280,7 @@ public class Item implements Serializable {
 
 				yMove += 0.001D;
 
-				if (!bottom) {
-					y += yMove;
-				}
+				y += yMove;
 			} else {
 				downed = true;
 			}

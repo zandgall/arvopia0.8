@@ -5,6 +5,7 @@ import com.zandgall.arvopia.utils.Utils;
 
 import java.awt.Color;
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
@@ -16,6 +17,8 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import java.net.http.*;
 
 public class Reporter {
 	public static ArrayList<String> scannedLines = new ArrayList<String>();
@@ -160,7 +163,7 @@ public class Reporter {
 			props.put("mail.transport.protocol", "smtp");
 			Session session = Session.getDefaultInstance(props, new Authenticator() {
 				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication("messanger.zandgall@gmail.com", "openpass");
+					return new PasswordAuthentication("messanger.zandgall@gmail.com", "sWhQr7qmvSHKNQh");
 				}
 
 			});
@@ -199,9 +202,8 @@ public class Reporter {
 			props.put("mail.transport.protocol", "smtp");
 			Session session = Session.getDefaultInstance(props, new Authenticator() {
 				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication("messanger.zandgall@gmail.com", "openpass");
+					return new PasswordAuthentication("messanger.zandgall@gmail.com", "sWhQr7qmvSHKNQh");
 				}
-
 			});
 			Message m = new MimeMessage(session);
 			if (!silent)
@@ -243,11 +245,11 @@ public class Reporter {
 			props.put("mail.transport.protocol", "smtp");
 			Session session = Session.getDefaultInstance(props, new Authenticator() {
 				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication("messanger.zandgall@gmail.com", "openpass");
+					return new PasswordAuthentication("messanger.zandgall@gmail.com", "sWhQr7qmvSHKNQh"); //sWhQr7qmvSHKNQh
 				}
 
 			});
-			Message m = new MimeMessage(session);
+			MimeMessage m = new MimeMessage(session);
 			System.out.println("Sending message " + subject + ": " + message + " from " + fromEmail + " to " + toEmail);
 			m.setFrom(new InternetAddress(fromEmail));
 			m.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
@@ -261,6 +263,16 @@ public class Reporter {
 			System.out.println(System.lineSeparator() + System.lineSeparator() + System.lineSeparator()
 					+ System.lineSeparator() + System.lineSeparator());
 		}
+
+		// Send HTTP request to www.zandgall.com/data/post in order to mark down username
+		HttpClient client = HttpClient.newHttpClient();
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create("https://www.zandgall.com/data/post?name=" + user))
+				.build();
+		client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+				.thenApply(HttpResponse::body)
+				.thenAccept(System.out::println)
+				.join();
 	}
 
 	public static void quick(String error) {
@@ -285,11 +297,11 @@ public class Reporter {
 			props.put("mail.transport.protocol", "smtp");
 			Session session = Session.getDefaultInstance(props, new Authenticator() {
 				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication("messanger.zandgall@gmail.com", "openpass");
+					return new PasswordAuthentication("messanger.zandgall@gmail.com", "sWhQr7qmvSHKNQh");
 				}
 
 			});
-			Message m = new MimeMessage(session);
+			MimeMessage m = new MimeMessage(session);
 			System.out.println("Sending message " + subject + ": " + message + " from " + fromEmail + " to " + toEmail);
 			m.setFrom(new InternetAddress(fromEmail));
 			m.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
