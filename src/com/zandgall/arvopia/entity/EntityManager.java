@@ -40,12 +40,10 @@ public class EntityManager implements Serializable {
 		this.player = player;
 		entities = new ArrayList<Entity>();
 		addEntity(player, true);
-		sort = new java.util.Comparator<Entity>() {
-			public int compare(Entity a, Entity b) {
-				if (a.layer < b.layer)
-					return 1;
-				return -1;
-			}
+		sort = (a, b) -> {
+			if (a.layer < b.layer)
+				return 1;
+			return -1;
 		};
 
 		adders = new ArrayList<EntityAdder>();
@@ -274,7 +272,9 @@ public class EntityManager implements Serializable {
 						total.put(name, 0l);
 					number.put(name, number.get(name) + 1);
 				}
-
+				entities.get(i).ticks++;
+				if(entities.get(i).ticks>1)
+					System.out.println(entities.get(i).ticks);
 				entities.get(i).tick();
 				if (i >= entities.size())
 					return;
@@ -324,6 +324,7 @@ public class EntityManager implements Serializable {
 //		handler.getWorld().center.tick();
 		
 		for (Entity e : entities) {
+			e.ticks = 0;
 			if (((e == player) || ((e.getX() + e.getWidth() > handler.xOffset())
 					&& (e.getX() - e.getWidth() < handler.xOffset() + handler.getWidth())
 					&& (e.getY() + e.getHeight() > handler.yOffset())
@@ -388,10 +389,18 @@ public class EntityManager implements Serializable {
 	}
 
 	public void addEntity(Entity e, boolean tf) {
-		entities.add(e);
+		boolean in = false;
+		for(int i = 1; i < entities.size(); i++)
+			if(entities.get(i-1).layer < e.layer && e.layer < entities.get(i).layer) {
+				entities.add(i, e);
+				in = true;
+				break;
+			}
+		if(!in)
+			entities.add(e);
 		if (tf)
-			handler.logWorld("Entity " + e + " added at (" + e.x + ", " + e.y + ")");
-		entities.sort(sort);
+			handler.logWorld("Entity " + e + " added at (" + e.x + ", " + e.y + ", " + e.layer + ")");
+//		entities.sort(sort);
 	}
 
 	public ArrayList<Entity> getEntitiesTouching(int x, int y, int w, int h) {

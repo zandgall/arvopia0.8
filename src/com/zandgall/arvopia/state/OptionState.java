@@ -316,7 +316,7 @@ public class OptionState extends State {
 		if (tabs.getTab() == "General")
 			g.drawImage(renderGeneral(), 0, 30, null);
 		else if (tabs.getTab() == "Controls/Keybinds")
-			g.drawImage(renderControl(), 0, 30, null);
+			g.drawImage(renderControl(), 0, 37, null);
 
 		back.render(g);
 
@@ -345,7 +345,7 @@ public class OptionState extends State {
 	}
 
 	private BufferedImage renderControl() {
-		BufferedImage out = new BufferedImage(720, 365, BufferedImage.TYPE_4BYTE_ABGR);
+		BufferedImage out = new BufferedImage(720, 358, BufferedImage.TYPE_4BYTE_ABGR);
 
 		Graphics2D g = out.createGraphics();
 

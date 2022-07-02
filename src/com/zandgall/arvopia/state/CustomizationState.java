@@ -81,11 +81,10 @@ public class CustomizationState extends State {
 
 	public void save() {
 		if (!FileLoader.readFile(Game.prefix + "/Arvopia/01.arv").contains("No Name") && Reporter.user != user.getContent()) {
+			Reporter.user = user.getContent();
 			Reporter.addUser();
 			Achievement.award(Achievement.noname);
 		}
-
-		Reporter.user = user.getContent();
 
 		/*
 		 * ImageLoader.addRedirect("PlayerFace", Tran.effectColor(faceIn.get(), faceC));
@@ -97,7 +96,7 @@ public class CustomizationState extends State {
 		 * handsC)); ImageLoader.addRedirect("PlayerShoes",
 		 * Tran.effectColor(shoesIn.get(), shoesC));
 		 * ImageLoader.addRedirect("PlayerPants", Tran.effectColor(pantsIn.get(),
-		 * pantsC)); ImageLoader.addRedirect("PlayerPupils",
+		 * pantsC)); ImageLoader.addRedirect("PlayerPupils",o
 		 * Tran.effectColor(eyesIn.get(), eyesC));
 		 * 
 		 * BufferedImage clear = new BufferedImage(faceIn.get().getWidth(),

@@ -48,10 +48,8 @@ public class PublicAssets {
 
 	public static void init() {
 		torch = ImageLoader.loadImage("/textures/Inventory/Tools/Torch/Torch.png");
-		torchStab = ImageLoader.loadImage("/textures/Inventory/Tools/Torch/TorchStab.png");
 
 		sword = ImageLoader.loadImage("/textures/Inventory/Tools/Sword/Sword.png");
-		swordStab = ImageLoader.loadImage("/textures/Inventory/Tools/Sword/SwordStab.png");
 
 		beehive = ImageLoader.loadImage("/textures/Statics/Beehive.png");
 
