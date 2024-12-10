@@ -20,13 +20,13 @@ public abstract class StaticEntity extends com.zandgall.arvopia.entity.Entity {
 			int weakness) {
 		super(handler, x, y, width, height, solid, false, false, true);
 
-		this.health = (health * 10);
-		maxHealth = (health * 10);
+		this.health = health;
+		maxHealth = health;
 
 		this.weakness = weakness;
 	}
 
-	public void reset() {
+    public void reset() {
 	}
 
 	public void showBox(Graphics g) {

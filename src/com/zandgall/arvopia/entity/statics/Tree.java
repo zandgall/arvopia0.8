@@ -1,707 +1,481 @@
 package com.zandgall.arvopia.entity.statics;
 
+import com.zandgall.arvopia.ArvopiaLauncher;
 import com.zandgall.arvopia.Handler;
+import com.zandgall.arvopia.entity.Entity;
+import com.zandgall.arvopia.entity.creatures.Creature;
+import com.zandgall.arvopia.environment.weather.SnowFlake;
 import com.zandgall.arvopia.gfx.ImageLoader;
-import com.zandgall.arvopia.gfx.PublicAssets;
-import com.zandgall.arvopia.gfx.SpriteSheet;
 import com.zandgall.arvopia.gfx.transform.Tran;
 import com.zandgall.arvopia.items.PlayerItem;
 import com.zandgall.arvopia.tiles.Tile;
+import com.zandgall.arvopia.utils.Noise;
 import com.zandgall.arvopia.utils.Public;
 import com.zandgall.arvopia.worlds.World;
 import static java.lang.Math.*;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.Serial;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Random;
 
 public class Tree extends StaticEntity {
+	@Serial
 	private static final long serialVersionUID = 1L;
 
-	BufferedImage[][] tree = PublicAssets.tree;
+	public static final double TEMP_DIFF = 2;
+	private static final BufferedImage
+		segment = ImageLoader.loadImage("/textures/Statics/Tree.png").getSubimage(0, 36, 18, 18),
+		segmentTop = ImageLoader.loadImage("/textures/Statics/Tree.png").getSubimage(0, 18, 18, 18),
+		segmentBottom = ImageLoader.loadImage("/textures/Statics/Tree.png").getSubimage(0, 54, 18, 18),
+		segmentLight = Tran.litUp(segment),
+		segmentTopLight = Tran.litUp(segmentTop);
 
-	public static BufferedImage stump, trunk, trunk2, branch0, branch1, branch2, branchn0, branchn1, branchn2, leaf1, leaf2, leaf0;
-	public static BufferedImage top0, top1, top2, top3, top4, top5;
 
-	private BufferedImage sprite, out0, out1, out2, out3, out4, leaf, out5, out6, out7, out8;
+	private final Branch branch;
+	private final double TempOffset;
 
-	public static double TEMP_DIFF = 2;
+	private int age, growthTime;
+	private long lastTime = 0L;
 
-	double[] chanceLeaves = { 0.05D, 0.1D, 0.2D, 0.5D, 0.5D, 1.0D, 2.0D, 4.0D, 5.0D, 6.0D, 6.0D, 2.0D, 0.0D, 0.0D, 0.0D,
-			0.0D, 0.0D, 0.01D, 0.02D };
+	private float snow = 0;
 
-	public int age = 0;
-
-	int growthTime;
-	long lastTime = 0L;
-
-	double TempOffset = 0;
-
-	ArrayList<Leaf> leaves;
-
-	int widthflip = 1;
-
-	double debY = 0;
-
-	HashMap<Integer, Integer> branches = new HashMap<Integer, Integer>();
-
-	public static Color fallColor(double t) {
-		int r = (int) (210 * pow(E, -pow(t - 40, 2) / 220) + 45);
-		int g = (int) (200 * (atan((t - 40) / 4) / PI + 0.75));
-		int b = (int) (50 * (atan((t - 40) / 8) / PI + 0.75));
-
-		return new Color(r, g, b);
-	}
-
-	public static Color springColor(double t) {
-		int r = 45;
-		int g = (int) (200 * (atan((t - 40) / 4) / PI + 0.75));
-		int b = (int) (50 * (atan((t - 40) / 8) / PI + 0.75));
-
-		return new Color(r, g, b);
-	}
-
-	public static void init() {
-		BufferedImage sheet = ImageLoader.loadImage("/textures/Statics/Tree.png");
-		BufferedImage lsheet = ImageLoader.loadImage("/textures/Statics/Leaves.png");
-		stump = sheet.getSubimage(0, 126, 36, 18);
-		trunk = sheet.getSubimage(0, 108, 36, 18);
-		trunk2 = sheet.getSubimage(0, 90, 36, 18);
-		branch0 = sheet.getSubimage(0, 54, 36, 18);
-		branch1 = sheet.getSubimage(0, 36, 54, 18);
-		branch2 = sheet.getSubimage(0, 0, 81, 36);
-		branchn0 = sheet.getSubimage(126, 54, 36, 18);
-		branchn1 = sheet.getSubimage(108, 36, 54, 18);
-		branchn2 = sheet.getSubimage(81, 0, 81, 36);
-
-		top0 = sheet.getSubimage(54, 72,108, 72);
-		top1 = sheet.getSubimage(162, 72,108, 72);
-		top2 = sheet.getSubimage(270, 72,108, 72);
-		top3 = sheet.getSubimage(378, 72,108, 72);
-		top4 = sheet.getSubimage(486, 72,108, 72);
-		top5 = sheet.getSubimage(594, 72,108, 72);
-
-		leaf0 = lsheet.getSubimage(72, 54, 108, 90);
-		leaf1 = lsheet.getSubimage(12, 0, 61, 45);
-		leaf2 = lsheet.getSubimage(40, 46, 22, 21);
+	public Tree(Handler handler, double x, double y) {
+		this(handler, x, y, 0);
 	}
 
 	public Tree(Handler handler, double x, double y, int age) {
-		super(handler, x, y, 36, 144, false, age * 2, PlayerItem.AXE);
-		debY = y;
-		if (stump == null) {
-			init();
-		}
-		maxSnowy = 100;
-		snowy = 0;
+		super(handler, x, y, 36, 144, false, max(age * 2, 10), PlayerItem.AXE);
 
-		layer = Public.random(-10.0D, 10.0D);
-
-		leaves = new ArrayList<Leaf>();
+		layer = Public.expandedRand(-10.0D, 10.0D);
 
 		this.age = age;
-		for(int i = 0; i < age / 3; i++)
-			branches.put(i, (int) (Math.round(Public.debugRandom(-0.65, 0.65))*Public.random(1, 3)));
-		updateSprite();
+		branch = new Branch(age+3, 0.95f, 0, 0, (int)(age*0.25)+1, System.nanoTime());
 		updateLeaves();
-		bounds.x = 0;
-		bounds.y = -(int)((90 + (int)(age/3)*18)*((age+4.0)/16.0));
-		bounds.width = (int)(108*((age+4.0)/16.0));
+		float[] b = branch.bounds();
+		bounds.x = (int) b[0];
+		bounds.y = (int) b[1];
 		bounds.height = -bounds.y;
+		height = bounds.height;
+		bounds.width = (int)(b[2]-bounds.x);
+		width = bounds.width;
 		// Go to center of spawn
 		this.x -= bounds.width/2.0;
 
-		if (Math.random() < 0.5D) {
-			widthflip = -1;
-		}
+		growthTime = ((int) Public.expandedRand(-1000.0D, 5000.0D));
 
-		growthTime = ((int) Public.random(-1000.0D, 5000.0D)); 
-
-		TempOffset = Public.random(-10, 10);
-	}
-	
-	boolean l = false;
-
-	private void updateSprite() {
-		sprite = new BufferedImage(108, 90 + (age/3)*18, BufferedImage.TYPE_4BYTE_ABGR);
-		Graphics2D g = sprite.createGraphics();
-		switch(age/3) {
-			case 0:
-				g.drawImage(top5, 0, 0, null);
-				break;
-			case 1:
-				g.drawImage(top4, 0, 0, null);
-				break;
-			case 2:
-				g.drawImage(top3, 0, 0, null);
-				break;
-			case 3:
-				g.drawImage(top2, 0, 0, null);
-				break;
-			case 4:
-				g.drawImage(top1, 0, 0, null);
-				break;
-			default:
-				g.drawImage(top0, 0, 0, null);
-				break;
-		}
-		for(int i = 0; i < age/3; i++) {
-			switch(branches.get(i)) {
-				case 1:
-					branches.put(i, 2);
-					g.drawImage(branch0, 36, 72 + i * 18, null);
-					break;
-				case 2:
-					branches.put(i, 3);
-					g.drawImage(branch1, 36, 72 + i * 18, null);
-					break;
-				case 3:
-					g.drawImage(branch2, 36, 54 + i * 18, null);
-					break;
-				case -1:
-					branches.put(i, -2);
-					g.drawImage(branchn0, 36, 72 + i * 18, null);
-					break;
-				case -2:
-					branches.put(i, -3);
-					g.drawImage(branchn1, 18, 72 + i * 18, null);
-					break;
-				case -3:
-					g.drawImage(branchn2, -9, 54 + i * 18, null);
-					break;
-				default:
-					g.drawImage(trunk, 36, 72 + i * 18, null);
-			}
-		}
-		g.drawImage(stump, 36, 72+(age/3)*18, null);
-
-		out0 = new BufferedImage(sprite.getWidth()+2, sprite.getHeight()+2, BufferedImage.TYPE_4BYTE_ABGR);
-		Graphics2D h = out0.createGraphics();
-		BufferedImage bleach = Tran.bleachImage(sprite, Color.orange);
-		h.drawImage(bleach, 0, 0, null);
-		h.drawImage(bleach, 1, 0, null);
-		h.drawImage(bleach, 2, 0, null);
-		h.drawImage(bleach, 0, 1, null);
-		h.drawImage(bleach, 2, 1, null);
-		h.drawImage(bleach, 0, 2, null);
-		h.drawImage(bleach, 1, 2, null);
-		h.drawImage(bleach, 2, 2, null);
-		h.dispose();
-		out1 = Tran.effectAlpha(out0, 200);
-		out2 = Tran.effectAlpha(out0, 150);
-		out3 = Tran.effectAlpha(out0, 100);
-		out4 = Tran.effectAlpha(out0, 50);
+		TempOffset = Public.expandedRand(-10, 10);
 	}
 
 	private void updateLeaves() {
-		leaf = new BufferedImage(108, 108+(age/3)*18, BufferedImage.TYPE_4BYTE_ABGR);
-		BufferedImage l1 = Tran.effectColor(leaf1, fallColor((game.getEnviornment().getTemp() + TempOffset)));
-		BufferedImage l2 = Tran.effectColor(leaf2, fallColor((game.getEnviornment().getTemp() + TempOffset)));
-		Graphics2D g = leaf.createGraphics();
-		g.drawImage(Tran.effectColor(leaf0, fallColor((game.getEnviornment().getTemp() + TempOffset))), 0, 0, null);
-		for(int i = 0; i < age/3; i++) {
-			switch(branches.get(i)) {
-				case 2:
-					g.drawImage(l1, 40, 64 + i * 18, null);
-					break;
-				case 3:
-					g.drawImage(l2, 47, 54 + i * 18, null);
-					break;
-//				case -2:
-//					g.drawImage(Tran.flip(l1, -1,1), 46, 64 + i * 18, null);
-//					break;
-//				case -3:
-//					g.drawImage(Tran.flip(l2, -1,1), 0, 54 + i * 18, null);
-//					break;
-			}
+		if(game!=null&&game.getWorld()!=null&&game.getEnvironment()!=null) {
+			double temp = game.getEnvironment().getTemp() + TempOffset;
+			branch.updateLeaves(game.foliageColor(temp, snow));
 		}
-		g.dispose();
+	}
 
-//		leaf = Tran.effectColor(leaf, fallColor((game.getEnviornment().getTemp() + TempOffset)));
+	@Override
+	public void interactWithSnowFlake(SnowFlake snowFlake) {
+		snow+=0.01;
+		snow = min(snow, 1);
+		updateLeaves();
 	}
 
 	public void tick() {
-		
-//		System.out.println("snowy : " + snowy);
-		
-		if (game.getWorld().getEnviornment().getTotalTime() - lastTime >= Math.pow(1.9, age+1)*1000 + growthTime) {
-			lastTime = game.getWorld().getEnviornment().getTotalTime();
-			if((age/3)*3 == age)
-				branches.put(age/3, (int) Math.round(Public.debugRandom(-0.65, 0.65)));
-			age += 1;
-			updateSprite();
-			growthTime = ((int) Public.random(-5000.0D - game.getWorld().getEnviornment().getHumidity() * 10.0D,
-					10000.0D));
+		if (game.getWorld().getEnvironment().getTotalTime() - lastTime >= Math.pow(1.5, age+1)*1000 + growthTime) {
+			lastTime = game.getWorld().getEnvironment().getTotalTime();
+			age++;
+			branch.generate(age+3, 0.95f, 0, 0, (int)(age*0.25)+1);
+			growthTime = Public.randInt(-5000.0D - game.getWorld().getEnvironment().getHumidity() * 10.0D,
+					10000.0D);
+			updateLeaves();
 
-			if (age == 16) {
+			if (age == 32) {
 				game.getWorld().kill(this);
 				return;
 			}
 
-			bounds.x = 0;
-			bounds.y = -(int)((90 + (int)(age/3)*18)*((age+4.0)/16.0));
-			bounds.width = (int)(108*((age+4.0)/16.0));
+			float[] b = branch.bounds();
+			bounds.x = (int) b[0];
+			bounds.y = (int) b[1];
 			bounds.height = -bounds.y;
+			height = bounds.height;
+			bounds.width = (int)(b[2]-bounds.x);
+			width = bounds.width;
 		}
 
-		if((game.getEnviornment().getTemp() + TempOffset*2) % TEMP_DIFF == 0)
+		if((game.getEnvironment().getTemp() + TempOffset*2) % TEMP_DIFF == 0)
 			updateLeaves();
-		if ((age < 8) && (getStage() != 0)) {
-			game.getWorld().kill(this);
-		}
 
-		if ((Public.chance(chanceLeaves[getStage()] / 2))) {
+		double temp = game.getEnvironment().getTemp()+TempOffset;
+		if(temp < 25)
+			snow+=0.0001;
+		if (temp > 20 && Public.chance(age/16.0*temp*(-0.01*temp+1.2)-40))
 			game.getWorld().getEntityManager()
-					.addEntity(new Leaf(game, Public.random(x-(age+4)/4.0, x + bounds.width),
-							Public.random(y - 18.0*((age+4)/16.0), y + 90.0*((age+4)/16.0))-bounds.height,
-							(int) ((game.getEnviornment().getTemp() + TempOffset) / TEMP_DIFF)), false);
-		}
+					.addEntity(new Leaf(game, Public.rand(x + bounds.x, x + bounds.x + bounds.width),
+							Public.rand(y+bounds.y, y + bounds.y + bounds.height),
+							game.foliageColor(game.getEnvironment().getTemp()+TempOffset, snow)), false);
 	}
 	public void render(Graphics2D g) {
 		AffineTransform pre = g.getTransform();
-		g.translate((int) Public.xO(x + (widthflip == -1 ? bounds.width : 0)), (int) Public.yO(debY+bounds.y));
-		g.scale((age+4)/16.0*widthflip, (age+4)/16.0);
-		g.drawImage(sprite, 0, 0, null);
-		g.drawImage(leaf, -4, -18, null);
+		g.translate(x, y);
+		g.scale(age+3, age+3);
+		branch.renderLeavesOutline(g, x, y, 0);
+		branch.renderLeaves(g, x, y, 0);
+		try {
+			int sx = game.getEnvironment().sunX() + 9;
+			int sy = game.getEnvironment().sunY() + 9;
+			Composite pre_comp = g.getComposite();
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) Math.max(1 - Public.dist(centerX(), centerY(), sx, sy) / (5 * 18), 0)));
+			branch.renderLeavesLight(g, x, y, 0);
+			g.setComposite(pre_comp);
+		} catch(NullPointerException e) {
+			// ignore
+		}
+
+		branch.render(g, x, y, 0);
 		g.setTransform(pre);
 	}
 	
-	public void renderLight(Graphics2D g, int opacity) {
+	public void renderLight(Graphics2D g, float opacity) {
 		AffineTransform pre = g.getTransform();
-		g.translate((int) Public.xO(x + (widthflip == -1 ? bounds.width : 0) - widthflip), (int) Public.yO(debY+bounds.y - 1));
-		g.scale((age+4)/16.0*widthflip, (age+4)/16.0);
-//		g.translate((int) Public.xO(x - 1), (int) Public.yO(debY+bounds.y-1));
-//		g.scale((age+4)/16.0, (age+4)/16.0);
-		if(opacity>200)
-			g.drawImage(out0, 0, 0, null);
-		else if(opacity>150)
-			g.drawImage(out1, 0, 0, null);
-		else if(opacity>100)
-			g.drawImage(out2, 0, 0, null);
-		else if(opacity>50)
-			g.drawImage(out3, 0, 0, null);
-		else if(opacity>0)
-			g.drawImage(out4, 0, 0, null);
+		g.translate(x, y);
+		g.scale(age+3, age+3);
+		Composite pre_comp = g.getComposite();
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+		if(game.getEnvironment().getTemp() + TempOffset > 20)
+			branch.renderLeavesOutlineLight(g, x, y, 0);
+		branch.renderLight(g, x, y, 0);
+		g.setComposite(pre_comp);
 		g.setTransform(pre);
-	}
-
-	private int getStage() {
-		double temp = game.getWorld().getEnviornment().getTemp() + TempOffset;
-		int day = game.getWorld().getEnviornment().rohundo;
-
-//    if ((day < 151) && (day > 59)) {
-//      if (day < 65)
-//        return 12;
-//      if (day < 90)
-//        return 15;
-//      if (day < 110)
-//        return 16;
-//      if (day < 120) {
-//        return 17;
-//      }
-//      return 18;
-//    }
-		if (day > 40) {
-			// 11 Stages between Green and bare
-			if (temp > 66)
-				return 0;
-			if (temp > 60)
-				return 1;
-			if (temp > 54)
-				return 2;
-			if (temp > 48)
-				return 3;
-			if (temp > 42)
-				return 4;
-			if (temp > 36)
-				return 5;
-			if (temp > 30)
-				return 6;
-			if (temp > 24)
-				return 7;
-			if (temp > 18)
-				return 8;
-			if (temp > 12)
-				return 9;
-			if (temp > 6)
-				return 10;
-			if (temp > 0)
-				return 11;
-			else {
-				if (snowy > 6)
-					return 13;
-				else if (snowy > 2)
-					return 12;
-				else
-					return 11;
-			}
-		} else if (day < 41) {
-			if (temp > 64)
-				return 0;
-			if (temp > 54)
-				return 18;
-			if (temp > 44)
-				return 17;
-			if (temp > 34)
-				return 16;
-			if (temp > 24)
-				return 15;
-			else {
-				if (snowy > 6)
-					return 13;
-				else if (snowy > 2)
-					return 12;
-				else
-					return 11;
-			}
-		}
-		return 0;
 	}
 
 	public int getAge() {
 		return age;
 	}
 
-	public void setAge(int age) {
-		this.age = age;
-		updateSprite();
+	@Override
+	public boolean canCurrentlySpawn(Handler game) {
+		return game.getEnvironment().getTemp() > 32.0D;
 	}
 
-	public class Leaf extends StaticEntity {
+	public static class Leaf extends Entity {
+		@Serial
 		private static final long serialVersionUID = 1L;
-		
-		double rotation = 270.0D;
-		double spiralOff = Public.random(0.0D, 1.0D);
 
-		double[] spiralDiff = { 5.0D, 3.0D, 1.0D, 3.0D, 5.0D, 6.0D, 7.0D, 6.0D };
+		private final int widthFlip;
+		private final BufferedImage leaf;
+		private final long start;
+		private final Noise walker;
 
-		int widthFlip = 1;
+		private double rotation = 0, carriedXVel = 0, carriedYVel = 0;
 
-		int state = 1;
-
-		int stage;
-
-		int frame = 0;
-//		BufferedImage[][] frames = PublicAssets.leaves;
-		BufferedImage[] leaves = new BufferedImage[8];
-		long timer = 0L;
-
-		long age = 0L;
-		public boolean left;
-		public boolean right;
-		public boolean top;
-		public boolean bottom;
-		public boolean down;
-		public boolean lefts;
-		public boolean rights;
-		public boolean tops;
-		public boolean bottoms;
-		double xMove = 0.0D;
-		double yMove = 0.0D;
-		double weight = Public.random(0.1D, 0.5D);
-		boolean frame2already;
-
-		long start;
-		
-		public Leaf(Handler handler, double x, double y, int stage) {
-			super(handler, x, y, 12, 12, false, 1, PlayerItem.NONE);
-			
+		public Leaf(Handler handler, double x, double y, Color color) {
+			super(handler, x, y, 12, 12, false, false, false, false);
+			walker = new Noise(System.nanoTime());
 			start = System.currentTimeMillis();
 
-			BufferedImage full = Tran.effectColor(ImageLoader.loadImage("/textures/statics/Shrubbery/Leaves.png"), Tree.fallColor(game.getEnviornment().getTemp()));
-			for(int i = 0; i < 8; i++) {
-				leaves[i] = full.getSubimage(i*12,0, 12, 12);
-			}
-
-			this.stage = stage;
-			if (stage <= 0) {
-				this.stage = 0;
-				handler.getWorld().kill(this);
-			}
+			leaf = Tran.effectColor(ImageLoader.loadImage("/textures/Statics/Shrubbery/Leaves.png"), color).getSubimage(0,0,12,12);
 			layer = -1;
+			widthFlip = Public.chance(50) ? - 1 : 1;
+			bounds.x = -6;
+			bounds.y = -6;
 		}
 
 		public void render(Graphics2D g) {
-			frame = ((int) Public.range(0.0D, 6.0D, frame));
-			g.drawImage(Tran.flip(leaves[frame], widthFlip, 1), (int) (x - game.xOffset()),
-					(int) (y - game.yOffset()), null);
+			AffineTransform p = g.getTransform();
+			g.translate(x, y);
+			g.rotate(rotation);
+			g.drawImage(Tran.flip(leaf, widthFlip, 1), -6, -6, null);
+			g.setTransform(p);
 		}
 
-		boolean backforth;
-
 		public void tick() {
-			checkCol();
-
-			double wind = game.getWind();
-
-			if ((state != 0) && (state != 1)) {
-				widthFlip = (wind > 0.0D ? 1 : -1);
-			}
-			if (state == 2) {
-				if (widthFlip == 1) {
-					rotation += spiralOff + spiralDiff[frame];
-				} else {
-					rotation -= spiralOff + spiralDiff[frame];
-				}
-				if (frame == 2) {
-					if (frame2already) {
-						state = 3;
-					} else
-						frame2already = true;
-				}
-			}
-			if (state == 3) {
-				if (timer > 100L) {
-					rotation += Public.random(-5.0D, 5.0D);
-
-					if (widthFlip == 1) {
-						if (Public.identifyRange(-70.0D, 70.0D, rotation)) {
-							if (rotation > 90.0D) {
-								rotation -= 5.0D;
-							} else
-								rotation += 5.0D;
-						}
-					} else if (Public.identifyRange(110.0D, 250.0D, rotation)) {
-						if (rotation > 250.0D) {
-							rotation -= 5.0D;
-						} else {
-							rotation += 5.0D;
-						}
-					}
-					timer = 0L;
-
-					if (Public.chance(0.1D)) {
-						state = 2;
-					}
-				}
-				timer += 1L;
-			}
-
-			if (state == 0) {
-				frame = 2;
-				rotation = 0.0D;
-
-				if (((wind > 0.0D) && (!right)) || ((wind < 0.0D) && (!left))) {
-					x += wind / 10.0D;
-				}
-				if (!bottom) {
-					state = 3;
-					timer = 200L;
-				}
-			}
-
-			if ((!Public.over(wind, game.getWorld().getEnviornment().getMaxWind(),
-					game.getWorld().getEnviornment().getMaxWind(), 0.1D + weight / 2.0D))
-					|| (Public.angle(rotation)[1] < weight)) {
-				state = 1;
-			}
-
-			if (bottom) {
-				state = 0;
-			}
-			if ((state != 0) && (state != 1)) {
-				if (((!right) && (Public.angle(rotation)[0] > 0.0D)) || ((!left) && (Public.angle(rotation)[0] < 0.0D)))
-					x += Public.angle(rotation)[0] * Math.abs(wind);
-				if (((!bottom) && (Public.angle(rotation)[1] > 0.0D)) || ((!top) && (Public.angle(rotation)[1] < 0.0D)))
-					y += Public.angle(rotation)[1] * 5.0D + weight;
-			} else if (state == 1) {
-				widthFlip = 1;
-
-				if (Public.over(wind, game.getWorld().getEnviornment().getMaxWind(),
-						game.getWorld().getEnviornment().getMaxWind(), 0.2D)) {
-					state = 2;
-				}
-
-				if (!bottoms) {
-					if ((frame == 0) && (backforth)) {
-						yMove = (Math.random() / 5.0D);
-						xMove = (Math.random() / 5.0D);
-					} else if (((frame == 1) || (frame == 2)) && (backforth)) {
-						yMove = (Math.random() / 10.0D);
-						xMove = (Math.random() / 5.0D);
-					} else if (((frame == 3) || (frame == 4)) && (backforth)) {
-						yMove = (-Math.random() / 10.0D);
-						xMove = (Math.random() / 10.0D);
-					} else if ((frame == 3) || (frame == 4)) {
-						yMove = (Math.random() / 5.0D);
-						xMove = (-Math.random() / 5.0D);
-					} else if ((frame == 1) || (frame == 2)) {
-						yMove = (Math.random() / 5.0D);
-						xMove = (-Math.random() / 5.0D);
-					} else if (frame == 0) {
-						yMove = (-Math.random() / 10.0D);
-						xMove = (-Math.random() / 10.0D);
-					}
-					if (xMove + game.getWind() / 10.0D > 0.0D) {
-						if (!right) {
-							x += game.getWind() / 10.0D + xMove * 4.0D;
-						}
-					} else if ((xMove + game.getWind() / 10.0D < 0.0D) && (!left)) {
-						x += game.getWind() / 10.0D + xMove * 4.0D;
-					}
-
-					if (right) {
-						x -= 1.0D;
-					}
-					if (left) {
-						x += 1.0D;
-					}
-
-					yMove += 0.001D;
-
-					if (!bottom) {
-						y += yMove * 5.0D + weight;
-					}
-
-					if (timer > 15L) {
-						if (frame == 0) {
-							backforth = true;
-						} else if (frame >= 4) {
-							backforth = false;
-						}
-						if (backforth) {
-							frame += 1;
-						} else {
-							frame -= 1;
-						}
-						timer = 0L;
-					}
-					timer += 1L;
-				} else {
-					state = 0;
-				}
-			}
-
-			if (state != 1) {
-				setFrame();
-			}
-
-			game.getWorld().outOfBounds(this);
-
 			if (System.currentTimeMillis()-start > 10000) {
 				game.getWorld().kill(this);
 			}
-		}
 
-		private void setFrame() {
-			double r = rotation;
-			if(r >= 360.0D)
-				r %= 360.0D;
-			while (r < 0.0D)
-				r += 360.0D;
-			if ((r >= 247.5D) && (r < 292.5D)) {
-				frame = 0;
-			} else if ((r >= 292.5D) && (r < 337.5D)) {
-				frame = 1;
-			} else if ((r >= 337.5D) || (r < 22.5D)) {
-				frame = 2;
-			} else if ((r >= 22.5D) && (r < 67.5D)) {
-				frame = 3;
-			} else if ((r >= 67.5D) && (r < 112.5D)) {
-				frame = 4;
-			} else if ((r >= 112.5D) && (r < 157.5D)) {
-				frame = 5;
-			} else if ((r >= 157.5D) && (r < 202.5D)) {
-				frame = 6;
-			} else if ((r >= 202.5D) && (r < 247.5D))
-				frame = 7;
-		}
-
-		public boolean collisionWithTile(int x, int y) {
-			return World.getTile(x, y).isSolid();
-		}
-
-		public boolean collisionTile(int x, int y) {
-			return World.getTile((int) Math.floor(x / Tile.TILEWIDTH), (int) Math.floor(y / Tile.TILEHEIGHT)).isTop();
-		}
-
-		public boolean collisionWithDown(int x, int y) {
-			return (World.getTile(x, y).isSolid()) || (World.getTile(x, y).isTop());
-		}
-
-		public void checkCol() {
-			down = false;
-			left = false;
-			right = false;
-			top = false;
-			bottom = false;
-			lefts = false;
-			rights = false;
-			tops = false;
-			bottoms = false;
-
-			int ty = (int) ((y + bounds.y + bounds.height) / Tile.TILEHEIGHT);
-			if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-					|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
-					|| (checkCollision(0.0F, 0.0F))) {
-				bottom = true;
-			} else if ((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-					|| (collisionWithDown((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))) {
-				if (y + bounds.y + bounds.height < ty * Tile.TILEHEIGHT + 4) {
-					down = true;
-				}
-
-				if (y + bounds.y + bounds.height <= ty * Tile.TILEHEIGHT + 1) {
-					bottoms = true;
-					bottom = true;
+			double wind = game.getWind(x, y);
+			double currentRotation = (walker.get1(System.nanoTime()*1.0e-9))*PI*2;
+			double xVel = cos(currentRotation)*max(wind, 0.1);
+			double yVel = sin(currentRotation)*max(wind, 0.1)+0.4;
+			carriedXVel+=cos(currentRotation)*0.01+wind*0.01;
+			carriedYVel+=sin(currentRotation)*0.01;
+			for(Entity e : game.getEntityManager().getEntities()) {
+				if(e instanceof Creature&&e.getCollision(0, 1+((Creature) e).getyMove()).contains(x, y)) {
+					carriedXVel += ((Creature) e).getxMove();
+					carriedYVel += -0.5 + ((Creature) e).getyMove();
 				}
 			}
-			ty = (int) ((y + bounds.y + bounds.height + 2.0D) / Tile.TILEHEIGHT);
-			if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-					|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
-					|| (checkCollision(0.0F, 1.0F))
-					|| (((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-							|| (collisionWithDown((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty)))
-							&& (y + bounds.y + bounds.height <= ty * Tile.TILEHEIGHT + 1))) {
-				bottoms = true;
+			if(yVel != 0 && (World.getTile((int)((x+xVel)/Tile.WIDTH), (int)((y+yVel)/Tile.HEIGHT)).isSolid() ||
+					(World.getTile((int)((x+xVel)/Tile.WIDTH), (int)((y+yVel)/Tile.HEIGHT)).isTop() && yVel > 0))) {
+				xVel*=0.8; // Slower on ground
+				if(yVel > 0) {
+					y = floor((y + yVel) / Tile.HEIGHT) * Tile.HEIGHT;
+					carriedYVel	= min(carriedYVel, 0);
+				}
+				else {
+					y = floor((y + yVel) / Tile.HEIGHT + 1) * Tile.HEIGHT;
+					carriedYVel	= max(carriedYVel, 0);
+				}
+				yVel = 0;
+				currentRotation = 0;
+			} else if(xVel!= 0 && World.getTile((int)((x+xVel)/Tile.WIDTH), (int)((y+yVel)/Tile.HEIGHT)).isSolid()) {
+				yVel*=0.8; // Slower on wall
+				if(xVel > 0) {
+					carriedXVel	= min(carriedXVel, 0);
+					x = floor((x + xVel) / Tile.HEIGHT) * Tile.HEIGHT;
+				}
+				else {
+					carriedXVel	= max(carriedXVel, 0);
+					x = floor((x + xVel) / Tile.HEIGHT + 1) * Tile.HEIGHT;
+				}
+				xVel = 0;
+				currentRotation = PI*0.5;
 			}
+			carriedXVel*=0.8;
+			carriedYVel*=0.8;
+			rotation = rotation * 0.9 + currentRotation * 0.1;
+			x+=xVel+carriedXVel;
+			y+=yVel+carriedYVel;
 
-			ty = (int) ((y + bounds.y) / Tile.TILEHEIGHT);
-			if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-					|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
-					|| (checkCollision(0.0F, 0.0F))) {
-				top = true;
-			}
-			ty = (int) ((y + bounds.y - 2.0D) / Tile.TILEHEIGHT);
-			if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-					|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
-					|| (checkCollision(0.0F, -1.0F))) {
-				tops = true;
-			}
-
-			int tx = (int) ((x + bounds.x + bounds.width) / Tile.TILEWIDTH);
-			if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-					|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.TILEHEIGHT))
-					|| (checkCollision(1.0F, 0.0F))) {
-				right = true;
-			}
-			tx = (int) ((x + bounds.x + bounds.width + 2.0D) / Tile.TILEWIDTH);
-			if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-					|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.TILEHEIGHT))
-					|| (checkCollision(1.0F, 0.0F))) {
-				rights = true;
-			}
-
-			tx = (int) ((x + bounds.x) / Tile.TILEWIDTH);
-			if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-					|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.TILEHEIGHT))
-					|| (checkCollision(0.0F, 0.0F))) {
-				left = true;
-			}
-			tx = (int) ((x + bounds.x - 2.0D) / Tile.TILEWIDTH);
-			if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-					|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.TILEHEIGHT))
-					|| (checkCollision(-1.0F, 0.0F))) {
-				lefts = true;
-			}
 		}
 	}
 
-	public String outString() {
+	public static class Branch {
+		private ArrayList<Branch> children;
+		private float globalScale, localScale, rotation, offset;
+		private Random random;
+		private final long seed;
+		private BufferedImage leaves, leavesOutline, lightLeaves, lightLeavesOutline;
+		public Branch(float globalScale, float localScale, float offset, float rotation, int steps, long seed) {
+			this.seed = seed;
+			generate(globalScale, localScale, offset, rotation, steps);
+		}
+
+		public void generate(float globalScale, float localScale, float offset, float rotation, int steps) {
+			random = new Random(seed);
+			children = new ArrayList<>();
+			this.globalScale = globalScale;
+			this.localScale = localScale;
+			this.rotation = rotation;
+			this.offset = offset;
+			if(steps < -4)
+				return;
+			float nextRotRange = 23.f;
+			if(steps > 0) { // Main trunk
+				children.add(new Branch(globalScale * 0.95f, 0.95f, random.nextFloat(-0.02f, 0.04f), random.nextFloat(-1.f, 2.f), steps-1, seed+1));
+				if(random.nextDouble()<0.1f) {
+					boolean right = random.nextBoolean();
+					children.add(new Branch(globalScale * 0.8f, 0.8f, right? 0.6f : -0.6f, (right ? nextRotRange : -nextRotRange) + random.nextFloat(-1.f, 2.f), steps - 1, seed+2));
+				}
+			} else {
+				float newScale = 0.95f;
+
+				for(int i = 0, n = random.nextDouble()<(-4-steps)*-0.04 ? 2 : 1; i < n; i++) {
+					float newRot = random.nextFloat(0.1f);
+					newRot*=newRot;
+					newRot = (random.nextBoolean() ? -45 : 45) * (0.1f-newRot);
+					if(i == 1)
+						newRot*=10;
+
+					children.add(new Branch(globalScale * newScale, newScale, newRot/90.f*newScale*0.4f, newRot, steps - 1, seed+1+i));
+					newScale = random.nextFloat(0.4f, 0.5f);
+				}
+			}
+		}
+
+		public float[] bounds(float rotation) {
+			float[] out = new float[3];
+			float up = globalScale * (float)abs(cos((rotation+this.rotation)*PI/180.0)*1);
+			float right = globalScale * (float)abs(cos((rotation+this.rotation)*PI/180.0)+sin((rotation+this.rotation)*PI/180.0));
+			out[0] = -right;
+			out[1] = -up;
+			out[2] = right;
+			for(Branch b: children) {
+				float[] res = b.bounds(rotation+this.rotation);
+				out[0] = min(out[0], res[0]);
+				out[1] = min(out[1], -up + res[1]);
+				out[2] = max(out[2], res[2]);
+			}
+			return out;
+		}
+
+		public float[] bounds() {
+			return bounds(0);
+		}
+
+		public void updateLeaves(Color color) {
+			if(children.isEmpty())
+				drawLeaves(color);
+			else for(Branch c : children)
+				c.updateLeaves(color);
+		}
+
+		public void drawLeaves(Color color) {
+			float scale = this.globalScale/18.f;
+			random.setSeed(this.seed);
+			leaves = new BufferedImage((int)(18*10*scale), (int)(18*10*scale), BufferedImage.TYPE_4BYTE_ABGR);
+			leavesOutline = new BufferedImage((int)(18*10*scale), (int)(18*10*scale), BufferedImage.TYPE_4BYTE_ABGR);
+			Graphics2D g = leaves.createGraphics();
+			Graphics2D o = leavesOutline.createGraphics();
+			o.setColor(new Color(150.f/65536.f*color.getRed(), 150.f/65536.f*color.getGreen(), 150.f/65536.f*color.getBlue()));
+			g.translate(18*5*scale, 18*5*scale);
+			o.translate(18*5*scale, 18*5*scale);
+			ArrayList<Double> points = new ArrayList<>();
+			for(int i = 0, n = random.nextInt(15, 20); i < n; i++) {
+				double radius = random.nextDouble(27*scale, 45*scale);
+				double angle = random.nextDouble(PI*2.0);
+				double v = (45 * scale) - radius;
+				double x = cos(angle) * 2 * v - radius;
+				double y = sin(angle) * 2 * v - radius;
+				points.add(x);
+				points.add(y);
+				points.add(radius);
+				o.fillOval((int)(x-2), (int)(y-2), (int)(radius*2)+4, (int)(radius*2)+4);
+			}
+			for(int i = 0; i < points.size(); i+=3) {
+				int x = points.get(i).intValue();
+				int y = points.get(i+1).intValue();
+				int radius = points.get(i+2).intValue();
+				g.setColor(new Color(197.f/65536.f*color.getRed(), 197.f/65536.f*color.getGreen(), 197.f/65536.f*color.getBlue()));
+				g.fillOval(x, y, radius*2, radius*2);
+			}
+			for(int i = 0; i < points.size(); i+=3) {
+				int x = points.get(i).intValue();
+				int y = points.get(i+1).intValue();
+				int radius = points.get(i+2).intValue();
+				g.setColor(new Color(211.f/65536.f*color.getRed(), 211.f/65536.f*color.getGreen(), 211.f/65536.f*color.getBlue()));
+				g.fillOval(x+1, y+1, radius*2-5, radius*2-5);
+			}
+			for(int i = 0; i < points.size(); i+=3) {
+				int x = points.get(i).intValue();
+				int y = points.get(i+1).intValue();
+				int radius = points.get(i+2).intValue();
+				g.setColor(new Color(231.f/65536.f*color.getRed(), 231.f/65536.f*color.getGreen(), 231.f/65536.f*color.getBlue()));
+				g.fillOval(x+2, y+2, radius*2-10, radius*2-10);
+			}
+			for(int i = 0; i < points.size(); i+=3) {
+				int x = points.get(i).intValue();
+				int y = points.get(i+1).intValue();
+				int radius = points.get(i+2).intValue();
+				g.setColor(new Color(240.f/65536.f*color.getRed(), 240.f/65536.f*color.getGreen(), 240.f/65536.f*color.getBlue()));
+				g.fillOval(x+4, y+4, radius*2-20, radius*2-20);
+			}
+			g.dispose();
+			o.dispose();
+
+			lightLeaves = Tran.litUp(leaves);
+			lightLeavesOutline = Tran.litUp(leavesOutline);
+		}
+
+		public void renderLeavesOutline(Graphics2D g, double worldX, double worldY, double globalRot) {
+			AffineTransform pre = g.getTransform();
+			globalRot+=rotation;
+			worldX+=cos(globalRot)*globalScale*0.875;
+			worldY+=sin(globalRot)*globalScale*0.875;
+			transformation(g, worldX, worldY);
+			if(children.isEmpty()) {
+				g.translate(-0.5, -1);
+				g.drawImage(leavesOutline, -6, -6, 12, 12, null);
+				g.translate(0.5, 1);
+			}
+			g.translate(0, -0.875);
+			for(Branch b : children)
+				b.renderLeavesOutline(g, worldX, worldY, globalRot);
+			g.setTransform(pre);
+		}
+		public void renderLeavesOutlineLight(Graphics2D g, double worldX, double worldY, double globalRot) {
+			AffineTransform pre = g.getTransform();
+			globalRot+=rotation;
+			worldX+=cos(globalRot)*globalScale*0.875;
+			worldY+=sin(globalRot)*globalScale*0.875;
+			transformation(g,worldX, worldY);
+			if(children.isEmpty()) {
+				g.translate(-0.5, -1);
+				g.drawImage(lightLeavesOutline, -6, -6, 12, 12, null);
+				g.translate(0.5, 1);
+			}
+			g.translate(0, -0.875);
+			for(Branch b : children)
+				b.renderLeavesOutlineLight(g, worldX, worldY, globalRot);
+			g.setTransform(pre);
+		}
+		public void renderLeaves(Graphics2D g, double worldX, double worldY, double globalRot) {
+			AffineTransform pre = g.getTransform();
+			globalRot+=rotation;
+			worldX+=cos(globalRot)*globalScale*0.875;
+			worldY+=sin(globalRot)*globalScale*0.875;
+			transformation(g, worldX, worldY);
+			if(children.isEmpty()) {
+				g.translate(-0.5, -1);
+				g.drawImage(leaves, -6, -6, 12, 12, null);
+				g.translate(0.5, 1);
+			}
+			g.translate(0, -0.875);
+			for(Branch b : children)
+				b.renderLeaves(g, worldX, worldY, globalRot);
+			g.setTransform(pre);
+		}
+
+		public void renderLeavesLight(Graphics2D g, double worldX, double worldY, double globalRot) {
+			AffineTransform pre = g.getTransform();
+			globalRot+=rotation;
+			worldX+=cos(globalRot)*globalScale*0.875;
+			worldY+=sin(globalRot)*globalScale*0.875;
+			transformation(g, worldX, worldY);
+			if(children.isEmpty()) {
+				g.translate(-0.5, -1);
+				g.drawImage(lightLeaves, -6, -6, 12, 12, null);
+				g.translate(0.5, 1);
+			}
+			g.translate(0, -0.875);
+			for(Branch b : children)
+				b.renderLeavesLight(g, worldX, worldY, globalRot);
+			g.setTransform(pre);
+		}
+		public void render(Graphics2D g, double worldX, double worldY, double globalRot) {
+			AffineTransform pre = g.getTransform();
+			globalRot+=rotation;
+			worldX+=cos(globalRot)*globalScale*0.875;
+			worldY+=sin(globalRot)*globalScale*0.875;
+			transformation(g, worldX, worldY);
+			g.translate(-0.5, -1);
+			g.drawImage(segmentBottom, 0, 1, 1, 1, null);
+			g.drawImage(segment, 0, 0, 1, 1, null);
+			g.drawImage(segmentTop, 0, -1, 1, 1, null);
+			g.translate(0.5, 1-0.875);
+			for(Branch b : children)
+				b.render(g, worldX, worldY, globalRot);
+			g.setTransform(pre);
+		}
+
+		public void renderLight(Graphics2D g, double worldX, double worldY, double globalRot) {
+			AffineTransform pre = g.getTransform();
+			globalRot+=rotation;
+			worldX+=cos(globalRot)*globalScale*0.875;
+			worldY+=sin(globalRot)*globalScale*0.875;
+			transformation(g, worldX, worldY);
+			g.translate(-0.5-1.0/20.0, -1-1.0/20.0);
+			g.drawImage(segmentLight, 0, 0, 1, 1, null);
+			g.drawImage(segmentTopLight, 0, -1, 1, 1, null);
+			g.translate(0.5+1.0/20.0, 1+1.0/20.0-0.875);
+			for(Branch b : children)
+				b.renderLight(g, worldX, worldY, globalRot);
+			g.setTransform(pre);
+		}
+
+		private void transformation(Graphics2D g, double x, double y) {
+			g.translate(offset*0.5, 0);
+			g.scale(localScale, localScale);
+			g.rotate(rotation*PI/180.0);
+			g.rotate(ArvopiaLauncher.game.handler.getWind(x, y)*0.015);
+		}
+	}
+
+	public String toString() {
 		return "Tree " + x + " " + y + " " + layer + " " + age;
 	}
 

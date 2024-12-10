@@ -13,9 +13,9 @@ import com.zandgall.arvopia.tiles.Tile;
 import com.zandgall.arvopia.utils.Public;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Map;
@@ -53,11 +53,11 @@ public class Template extends NPC {
 
 		this.quests = quests;
 
-		texture = com.zandgall.arvopia.gfx.ImageLoader.loadImage("/textures/NPCs/Villagers/Varient" + type + ".png");
+		texture = com.zandgall.arvopia.gfx.ImageLoader.loadImage("/textures/NPCs/Villagers/Variant" + type + ".png");
 
 		set = new Assets(texture, 36, 54, name);
 
-		layer = com.zandgall.arvopia.utils.Public.debugRandom(-0.01D, 0.01D);
+		layer = com.zandgall.arvopia.utils.Public.rand(-0.01D, 0.01D);
 
 		MAX_HEALTH = 20;
 		health = 20.0D;
@@ -101,11 +101,11 @@ public class Template extends NPC {
 		
 		this.quests = quests;
 
-		texture = com.zandgall.arvopia.gfx.ImageLoader.loadImage("/textures/NPCs/Villagers/Varient" + type + ".png");
+		texture = com.zandgall.arvopia.gfx.ImageLoader.loadImage("/textures/NPCs/Villagers/Variant" + type + ".png");
 
 		set = new Assets(texture, 36, 54, name);
 
-		layer = com.zandgall.arvopia.utils.Public.debugRandom(-0.01D, 0.01D);
+		layer = com.zandgall.arvopia.utils.Public.rand(-0.01D, 0.01D);
 
 		MAX_HEALTH = 20;
 		health = 20.0D;
@@ -197,9 +197,9 @@ public class Template extends NPC {
 
 	public void aiMove() {
 		if ((right) && (r)) {
-			int tx = (int) ((x + getxMove() + bounds.x + bounds.width + 2.0D) / Tile.TILEWIDTH);
+			int tx = (int) ((x + getxMove() + bounds.x + bounds.width + 2.0D) / Tile.WIDTH);
 
-			if (!collisionWithTile(tx, (int) (y + bounds.y - 36.0D) / Tile.TILEHEIGHT)) {
+			if (!collisionWithTile(tx, (int) (y + bounds.y - 36.0D) / Tile.HEIGHT)) {
 				u = true;
 			} else {
 				r = false;
@@ -207,9 +207,9 @@ public class Template extends NPC {
 				u = false;
 			}
 		} else if ((left) && (l)) {
-			int tx = (int) ((x + getxMove() + bounds.x) / Tile.TILEWIDTH + 2.0D);
+			int tx = (int) ((x + getxMove() + bounds.x) / Tile.WIDTH + 2.0D);
 
-			if (!collisionWithTile(tx, (int) (y + bounds.y - 36.0D) / Tile.TILEHEIGHT)) {
+			if (!collisionWithTile(tx, (int) (y + bounds.y - 36.0D) / Tile.HEIGHT)) {
 				u = true;
 			} else {
 				r = true;
@@ -244,13 +244,13 @@ public class Template extends NPC {
 			aitimer = 0L;
 		}
 
-		int ty = (int) ((y + yMove + bounds.y + bounds.height) / Tile.TILEHEIGHT);
+		int ty = (int) ((y + yMove + bounds.y + bounds.height) / Tile.HEIGHT);
 		if (!checkOffs(-20, 0, -20, 72, true, false) && !checkOffs(-20, 0, -20, 72, false, false)
-				&& (y + bounds.y + bounds.height < ty * Tile.TILEHEIGHT + 4)) {
+				&& (y + bounds.y + bounds.height < ty * Tile.HEIGHT + 4)) {
 			r = true;
 			l = false;
 		} else if (!checkOffs(24, 0, 24, 72, true, false) && !checkOffs(-24, 0, -24, 72, false, false)
-				&& (y + bounds.y + bounds.height < ty * Tile.TILEHEIGHT + 4)) {
+				&& (y + bounds.y + bounds.height < ty * Tile.HEIGHT + 4)) {
 			r = false;
 			l = true;
 		}
@@ -271,29 +271,32 @@ public class Template extends NPC {
 	}
 
 	public boolean checkOff(int tX, int tY, boolean lr, boolean tb) {
-		int ty = (int) ((y + yMove + bounds.y + bounds.height + tY) / Tile.TILEHEIGHT);
+		int ty = (int) ((y + yMove + bounds.y + bounds.height + tY) / Tile.HEIGHT);
 		if (tb)
-			ty = (int) ((y + yMove + bounds.y + tY) / Tile.TILEHEIGHT);
-		int tx = (int) ((x + bounds.x + bounds.width + tX) / Tile.TILEWIDTH);
+			ty = (int) ((y + yMove + bounds.y + tY) / Tile.HEIGHT);
+		int tx = (int) ((x + bounds.x + bounds.width + tX) / Tile.WIDTH);
 		if (lr)
-			tx = (int) ((x + bounds.x + tX) / Tile.TILEWIDTH);
+			tx = (int) ((x + bounds.x + tX) / Tile.WIDTH);
 		return collisionWithDown(tx, ty);
 	}
 
 	public void render(Graphics2D g) {
-		g.drawImage(com.zandgall.arvopia.gfx.transform.Tran.flip(getFrame(), widthFlip, 1), (int) (x - game.xOffset()),
-				(int) (y - game.yOffset()), null);
-		
-		if ((t.speeches.getSpeech(t.speechindex)!="~end~") && (game.getEntityManager().getPlayer().closestNPC == this)) {
-			
-			if(Math.sin(game.getGameTime()/200)>0) {
+		AffineTransform p = g.getTransform();
+		g.translate(x, y);
+
+		g.drawImage(Tran.flip(getFrame(), widthFlip, 1), 0, 0, null);
+
+		if (t.speeches.getSpeech(t.speechindex)!="~end~" && game.getEntityManager().getPlayer().closestNPC == this) {
+
+			if(Math.sin(game.getGameTime()/200.0)>0) {
 				g.setFont(Public.runescape.deriveFont(20f));
-				
-				Tran.drawOutlinedText(g, Public.xO(x+width/2-10), Public.yO(y), " C ", 1, Color.white, Color.black);
+
+				Tran.drawOutlinedText(g, width/2.0-10, 0, " C ", 1, Color.white, Color.black);
 			}
-			
+
 			g.setFont(Public.defaultFont);
 		}
+		g.setTransform(p);
 	}
 
 	public BufferedImage getFrame() {
@@ -320,7 +323,7 @@ public class Template extends NPC {
 		return new Point(3, 9);
 	}
 
-	public String outString() {
+	public String toString() {
 		String content = "Template " + x + " " + y + " " + type + " " + name.replaceAll(" ", "~") + " " + layer + " "
 				+ speech.length + " ";
  

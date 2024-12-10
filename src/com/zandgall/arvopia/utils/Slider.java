@@ -107,7 +107,7 @@ public class Slider {
 			hovered = false;
 		}
 
-		if ((hovered && (mouseLeft) && ((game.getMouse().isDragged()) || (game.getMouse().isClicked()))) || using) {
+		if ((hovered && ((mouseLeft && game.getMouse().isDragged()) || (game.getMouse().isLeftClicked()))) || using) {
 			using = (used == null || used == this);
 			if (used == null)
 				used = this;
@@ -124,7 +124,6 @@ public class Slider {
 	}
 
 	public void render(Graphics g) {
-		g.setFont(Public.defaultFont);
 		/*
 		 * g.setColor(Color.black); g.drawRect(x - 1, y - 1, 101, 16);
 		 * g.setColor(Color.darkGray); g.fillRect(x, y, 100, 15); if (!hovered) {
@@ -147,6 +146,7 @@ public class Slider {
 			g.drawImage(tab, (int) (x + val - 7), y - 7, null);
 
 		if (info) {
+			g.setFont(Public.defaultFont);
 			g.setColor(Color.black);
 			if (max == 1 && min == 0)
 				g.drawString(name + " " + getWholeValue(), x + 10, y + 30);

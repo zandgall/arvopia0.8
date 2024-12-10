@@ -16,9 +16,9 @@ import com.zandgall.arvopia.tiles.Tile;
 import com.zandgall.arvopia.utils.FileLoader;
 import com.zandgall.arvopia.utils.Public;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,12 +42,12 @@ public class Lia extends NPC {
 	boolean d = false;
 
 	public Lia(Handler handler, double x, double y) {
-		super(handler, x, y, Creature.DEFAULT_SPEED, "Lia", new String[] { "Welcome to Arvopia " + Reporter.user + "! (CLICK)",
+		super(handler, x-18, y-54, Creature.DEFAULT_SPEED, "Lia", new String[] { "Welcome to Arvopia " + Reporter.user + "! (CLICK)",
 				"Please walk around and enjoy yourself!", "Hey, while you're at it,", "could you get me some wood?",
 				"10 logs will do!", "Thanks so much!", "You see, that's how quests work", "Have fun exploring!" });
 
-		if (FileLoader.readFile(Game.prefix + "/Arvopia/03.arv").contains(Quest.getWoodForLia.name)) {
-			if (FileLoader.readFile(Game.prefix + "/Arvopia/04.arv").contains(Quest.getWoodForLia.name)) {
+		if (FileLoader.readFile(Game.prefix + "/03.arv").contains(Quest.getWoodForLia.name)) {
+			if (FileLoader.readFile(Game.prefix + "/04.arv").contains(Quest.getWoodForLia.name)) {
 				resetSpeech(new String[] { "Welcome back to Arvopia " + Reporter.user + "!" });
 			} else
 				resetSpeech(new String[] { "Welcome back to Arvopia " + Reporter.user + "!",
@@ -159,13 +159,13 @@ public class Lia extends NPC {
 		setUseSpeech(true);
 	}
 	
-	public boolean alwaysTick() {
+	public boolean shouldTick() {
 		return true;
 	}
 
 	public void tick() {
 		if (start) {
-			y = ((game.getWorld().getLowest(x) - 4) * Tile.TILEHEIGHT);
+			y = ((game.getWorld().getLowest(x) - 4) * Tile.HEIGHT);
 			start = false;
 		}
 		still.tick();
@@ -216,7 +216,7 @@ public class Lia extends NPC {
 			Achievement.award(Achievement.disrespectful);
 			setHealth(20);
 			dead = false;
-			y = ((game.getWorld().getLowest(x) - 4) * Tile.TILEHEIGHT);
+			y = ((game.getWorld().getLowest(x) - 4) * Tile.HEIGHT);
 		}
 
 		if (isDone()) {
@@ -242,9 +242,9 @@ public class Lia extends NPC {
 		boolean[] bools = follow(game.getEntityManager().getPlayer(), this);
 
 		if ((right) && (r)) {
-			int tx = (int) ((x + getxMove() + bounds.x + bounds.width) / Tile.TILEWIDTH);
+			int tx = (int) ((x + getxMove() + bounds.x + bounds.width) / Tile.WIDTH);
 
-			if (!collisionWithTile(tx, (int) (y + bounds.y - 36.0D) / Tile.TILEHEIGHT)) {
+			if (!collisionWithTile(tx, (int) (y + bounds.y - 36.0D) / Tile.HEIGHT)) {
 				u = true;
 			} else {
 				r = false;
@@ -252,9 +252,9 @@ public class Lia extends NPC {
 				u = false;
 			}
 		} else if ((left) && (l)) {
-			int tx = (int) ((x + getxMove() + bounds.x) / Tile.TILEWIDTH);
+			int tx = (int) ((x + getxMove() + bounds.x) / Tile.WIDTH);
 
-			if (!collisionWithTile(tx, (int) (y + bounds.y - 36.0D) / Tile.TILEHEIGHT)) {
+			if (!collisionWithTile(tx, (int) (y + bounds.y - 36.0D) / Tile.HEIGHT)) {
 				u = true;
 			} else {
 				r = true;
@@ -288,14 +288,14 @@ public class Lia extends NPC {
 			jumping = false;
 		}
 		
-		if(!game.getWorld().SAFETOWALK(x-20, y+height/2)) {
-			if(game.getWorld().SAFETOWALK(x-110, y+height/2, 90)) {
+		if(!game.getWorld().safeToWalk(x-20, y+height/2)) {
+			if(game.getWorld().safeToWalk(x-110, y+height/2, 90)) {
 				u = true;
 			} else {
 				l = false;
 			}
-		} else if(!game.getWorld().SAFETOWALK(x+20, y+height/2)) {
-			if(game.getWorld().SAFETOWALK(x+20, y+height/2, 90)) {
+		} else if(!game.getWorld().safeToWalk(x+20, y+height/2)) {
+			if(game.getWorld().safeToWalk(x+20, y+height/2, 90)) {
 				u = true;
 			} else {
 				r = false;
@@ -347,21 +347,22 @@ public class Lia extends NPC {
 	}
 
 	public void render(Graphics2D g) {
-		g.drawImage(Tran.flip(getFrame(), (widthFlip == 0 ? 1:widthFlip), 1), (int) (x - game.xOffset()),
-				(int) (y - game.yOffset()), null);
-		
-		if ((t.speeches.getSpeech(t.speechindex) != "~end~")
-				&& (game.getEntityManager().getPlayer().closestNPC == this)) {
+		AffineTransform p = g.getTransform();
+		g.translate(x, y);
 
-			if (Math.sin(game.getGameTime() / 200) > 0) {
+		g.drawImage(Tran.flip(getFrame(), widthFlip, 1), 0, 0, null);
+
+		if (t.speeches.getSpeech(t.speechindex)!="~end~" && game.getEntityManager().getPlayer().closestNPC == this) {
+
+			if(Math.sin(game.getGameTime()/200.0)>0) {
 				g.setFont(Public.runescape.deriveFont(20f));
 
-				Tran.drawOutlinedText(g, Public.xO(x + width / 2 - 10), Public.yO(y), " C ", 1, Color.white,
-						Color.black);
+				Tran.drawOutlinedText(g, width/2.0-10, 0, " C ", 1, Color.white, Color.black);
 			}
 
 			g.setFont(Public.defaultFont);
 		}
+		g.setTransform(p);
 	}
 
 	public boolean mapable() {
@@ -374,9 +375,5 @@ public class Lia extends NPC {
 
 	public Point mapSize() {
 		return new Point(3, 9);
-	}
-
-	public String toString() {
-		return "Lia " + x + " " + y + " " + use.use;
 	}
 }

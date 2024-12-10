@@ -2,22 +2,21 @@ package com.zandgall.arvopia.entity.creatures;
 
 import com.zandgall.arvopia.Console;
 import com.zandgall.arvopia.Handler;
-import com.zandgall.arvopia.enviornment.Light;
+import com.zandgall.arvopia.environment.Light;
 import com.zandgall.arvopia.gfx.Animation;
 import com.zandgall.arvopia.gfx.PublicAssets;
 import com.zandgall.arvopia.gfx.transform.Tran;
 import com.zandgall.arvopia.items.PlayerItem;
 import com.zandgall.arvopia.items.tools.Sword;
-import com.zandgall.arvopia.items.tools.Tool;
 import com.zandgall.arvopia.items.tools.Torch;
 import com.zandgall.arvopia.tiles.Tile;
 import com.zandgall.arvopia.utils.Public;
 import com.zandgall.arvopia.water.Water;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class Cannibal extends Creature {
@@ -59,6 +58,70 @@ public class Cannibal extends Creature {
 	public boolean alpha;
 	public double walkSpeed;
 
+	public Cannibal(Handler handler, double x, double y) {
+		super(null, x-9, y-47, 18, 47, true, DEFAULT_SPEED, DEFAULT_ACCELERATION, (int) MAX_SPEED, false, false,
+				DEFAULT_JUMP_FORCE, DEFAULT_JUMP_CARRY, "Cannibal");
+
+		walkSpeed = speed;
+
+		attack = new Rectangle((int) x - width / 2, (int) y, 72, 54);
+
+		health = 10.0D;
+		MAX_HEALTH = 10;
+
+		layer = Public.expandedRand(-3.0D, -1.0D);
+
+		attackReady = true;
+		attacking = false;
+		attackDelay = 60;
+
+		timer = 0L;
+		attackTimer = 0L;
+
+		if (Public.chance(10)) {
+			if(game.getWorld()!=null&&game.getEntityManager()!=null&&game.getPlayer()!=null)
+				currentTool = game.getPlayer().getItem("Torch");
+			delayRange = 15;
+			attackDelay = 15;
+			damage = 1;
+		} else if (Math.random() < 0.2D) {
+			if(game.getWorld()!=null&&game.getEntityManager()!=null&&game.getPlayer()!=null)
+				currentTool = game.getPlayer().getItem("Sword");
+			delayRange = 15;
+			attackDelay = 15;
+			damage = 2;
+		} else {
+			currentTool = null;
+			delayRange = 15;
+			attackDelay = 15;
+			damage = 1;
+		}
+
+		this.lives = 1;
+
+		torch = new Torch(handler);
+		sword = new Sword(handler);
+
+		light = new Light(game, 0, 0, 10, 50, Color.orange);
+
+		bounds.x = 12;
+		bounds.y = 8;
+		bounds.width = 10;
+		bounds.height = 45;
+
+		jump = PublicAssets.cjump;
+		still = PublicAssets.cstill;
+		walk = PublicAssets.cwalk;
+		crouch = PublicAssets.ccrouch;
+
+		punch = PublicAssets.cpunch;
+		airKick = PublicAssets.cairKick;
+
+		hold = PublicAssets.chold;
+
+		stab = PublicAssets.cstab;
+	}
+
 	public Cannibal(Handler handler, double x, double y, double speed, int lives, boolean alpha) {
 		super(handler, x, y, 18, 47, true, speed, DEFAULT_ACCELERATION, (int) MAX_SPEED, false, false,
 				DEFAULT_JUMP_FORCE, DEFAULT_JUMP_CARRY, "Cannibal");
@@ -70,7 +133,7 @@ public class Cannibal extends Creature {
 		health = 10.0D;
 		MAX_HEALTH = 10;
 
-		layer = Public.random(-3.0D, -1.0D);
+		layer = Public.expandedRand(-3.0D, -1.0D);
 
 		attackReady = true;
 		attacking = false;
@@ -139,107 +202,97 @@ public class Cannibal extends Creature {
 				inWater = true;
 			}
 		}
-		int ty = (int) ((y + yMove + bounds.y + bounds.height) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
+		int ty = (int) ((y + yMove + bounds.y + bounds.height) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))
 				|| (checkCollision(0.0F, yMove))) {
 			bottom = true;
-		} else if ((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithDown((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))) {
-			if (y + bounds.y + bounds.height < ty * Tile.TILEHEIGHT + 4) {
+		} else if ((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithDown((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))) {
+			if (y + bounds.y + bounds.height < ty * Tile.HEIGHT + 4) {
 				down = true;
 			}
 
-			if ((y + bounds.y + bounds.height <= ty * Tile.TILEHEIGHT + 1) && (yMove >= 0.0F)) {
+			if ((y + bounds.y + bounds.height <= ty * Tile.HEIGHT + 1) && (yMove >= 0.0F)) {
 				bottoms = true;
 				bottom = true;
 			}
 		}
-		ty = (int) ((y + yMove + bounds.y + bounds.height + 2.0D) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
+		ty = (int) ((y + yMove + bounds.y + bounds.height + 2.0D) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))
 				|| (checkCollision(0.0F, yMove + 1.0F))
-				|| (((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-						|| (collisionWithDown((int) ((x + bounds.x + bounds.width + 2.0D) / Tile.TILEWIDTH), ty)))
-						&& (y + bounds.y + bounds.height <= ty * Tile.TILEHEIGHT + 1) && (!jumping))) {
+				|| (((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+						|| (collisionWithDown((int) ((x + bounds.x + bounds.width + 2.0D) / Tile.WIDTH), ty)))
+						&& (y + bounds.y + bounds.height <= ty * Tile.HEIGHT + 1) && (!jumping))) {
 			bottoms = true;
 		}
 
-		ty = (int) ((y + yMove + bounds.y) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
+		ty = (int) ((y + yMove + bounds.y) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))
 				|| (checkCollision(0.0F, yMove))) {
 			top = true;
 		}
-		ty = (int) ((y + yMove + bounds.y - 2.0D) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
+		ty = (int) ((y + yMove + bounds.y - 2.0D) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))
 				|| (checkCollision(0.0F, yMove - 1.0F))) {
 			tops = true;
 		}
 
-		int tx = (int) ((x + getxMove() + bounds.x + bounds.width) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.TILEHEIGHT))
+		int tx = (int) ((x + getxMove() + bounds.x + bounds.width) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.HEIGHT))
 				|| (checkCollision(getxMove() + 1.0F, 0.0F))) {
 			right = true;
 		}
-		tx = (int) ((x + getxMove() + bounds.x + bounds.width + 2.0D) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.TILEHEIGHT))
+		tx = (int) ((x + getxMove() + bounds.x + bounds.width + 2.0D) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.HEIGHT))
 				|| (checkCollision(getxMove() + 1.0F, 0.0F))) {
 			rights = true;
 		}
 
-		tx = (int) ((x + getxMove() + bounds.x) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.TILEHEIGHT))
+		tx = (int) ((x + getxMove() + bounds.x) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.HEIGHT))
 				|| (checkCollision(getxMove(), 0.0F))) {
 			left = true;
 		}
-		tx = (int) ((x + getxMove() + bounds.x - 2.0D) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.TILEHEIGHT))
+		tx = (int) ((x + getxMove() + bounds.x - 2.0D) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.HEIGHT))
 				|| (checkCollision(getxMove() - 1.0F, 0.0F))) {
 			lefts = true;
 		}
 	}
 
 	public void render(Graphics2D g) {
-		if (currentTool != null) {
-			if (getFrame() != stab.getFrame()) {
+		AffineTransform p = g.getTransform();
+		g.translate(x, y);
+
+		if (currentTool != null && getFrame() != stab.getFrame())
 				g.drawImage(Tran.flip(currentTool.world(), -widthFlip, 1),
-						(int) (x - game.getGameCamera().getxOffset()) + getToolxoffset(),
-						(int) (y - game.getGameCamera().getyOffset()) + getToolyoffset(), null);
-//				currentTool.custom1((int) Public.xO(x + getToolxoffset() + currentTool.world().getWidth()),
-//						(int) Public.yO(y));
-			} else {
-//				currentTool.custom1((int) Public.xO(x + getToolxoffset() + currentTool.getFrame().getWidth()),
-//						(int) Public.yO(y));
-			}
-		}
+						getToolxoffset(), getToolyoffset(), null);
 
-		g.drawImage(Tran.flip(getFrame(), -widthFlip, 1), (int) Public.xO(x), (int) Public.yO(y), null);
+		g.drawImage(Tran.flip(getFrame(), -widthFlip, 1), 0, 0, null);
 
-		if (getFrame() == stab.getFrame()) {
-			g.drawImage(Tran.flip(currentTool.world(), -widthFlip, 1), (int) Public.xO(x) + getToolxoffset(),
-					(int) Public.yO(y) + getToolyoffset(), null);
-		}
-		if (health < MAX_HEALTH) {
-			showHealthBar(g);
-		}
+		if (getFrame() == stab.getFrame())
+			g.drawImage(Tran.flip(currentTool.world(), -widthFlip, 1), getToolxoffset(), getToolyoffset(), null);
+		g.setTransform(p);
 	}
 
 	public int getToolxoffset() {
@@ -424,7 +477,7 @@ public class Cannibal extends Creature {
 					game.log("Im alpha now! MWAHAHAH!!");
 					game.getPlayer().getItem("Torch").light.turnOn();
 					currentTool = game.getPlayer().getItem("Torch");
-					game.getEnviornment().getLightManager().addLight(light);
+					game.getEnvironment().getLightManager().addLight(light);
 					delayRange = 15;
 					attackDelay = 15;
 					damage = 1;
@@ -545,12 +598,12 @@ public class Cannibal extends Creature {
 			
 			if ((currentTool != null) && (currentTool.hasLight) && (!light.isOn())) {
 				
-				Console.log(game.getEnviornment().getLightManager().getList().contains(light), light.isOn(), light.getX(), light.getY());
+				Console.log(game.getEnvironment().getLightManager().getList().contains(light), light.isOn(), light.getX(), light.getY());
 				
 				light.turnOn();
 				
-				if(!game.getEnviornment().getLightManager().getList().contains(light)) {
-					game.getEnviornment().getLightManager().addLight(light);
+				if(!game.getEnvironment().getLightManager().getList().contains(light)) {
+					game.getEnvironment().getLightManager().addLight(light);
 					Console.log("Added light to list");
 				}
 				
@@ -616,7 +669,7 @@ public class Cannibal extends Creature {
 		game.getWorld().getEntityManager().getEntities().remove(this);
 	}
 
-	public String outString() {
+	public String toString() {
 		return "Cannibal " + x + " " + y + " " + layer + " " + walkSpeed + " " + lives + " " + alpha;
 	}
 

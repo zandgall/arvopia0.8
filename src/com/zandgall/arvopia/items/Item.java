@@ -11,9 +11,9 @@ import com.zandgall.arvopia.gfx.ImageLoader;
 import com.zandgall.arvopia.tiles.Tile;
 import com.zandgall.arvopia.utils.Public;
 import com.zandgall.arvopia.worlds.World;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -77,7 +77,7 @@ public class Item implements Serializable {
 			yMove = (-(Math.random() * 5.0D));
 		}
 		timer = 0L;
-		rand = Public.random(0.5, 0.75);
+		rand = Public.expandedRand(0.5, 0.75);
 		if (Math.random() < 0.5D) {
 			direction = false;
 		} else {
@@ -153,7 +153,7 @@ public class Item implements Serializable {
 		i.description="Used to keep you dry in the rain";
 		p.items.put("Umbrella", i);
 
-		System.out.println("PLAYERITEMS: " + p.items.size() + " " + game.getPlayer().items.size());
+		System.out.println("PLAYERITEMS: " + p.items.size() + " " + p.items.size());
 
 		// In world items
 
@@ -263,12 +263,12 @@ public class Item implements Serializable {
 					yMove = (-rand / 10.0D);
 					xMove = (-rand / 10.0D);
 				}
-				if (xMove + game.getWind() / 10.0D > 0.0D) {
+				if (xMove + game.getWind(x, y) / 10.0D > 0.0D) {
 					if (!right) {
-						x += game.getWind() / 10.0D + xMove;
+						x += game.getWind(x, y) / 10.0D + xMove;
 					}
-				} else if ((xMove + game.getWind() / 10.0D < 0.0D) && (!left)) {
-					x += game.getWind() / 10.0D + xMove;
+				} else if ((xMove + game.getWind(x, y) / 10.0D < 0.0D) && (!left)) {
+					x += game.getWind(x, y) / 10.0D + xMove;
 				}
 
 				if (right) {
@@ -297,15 +297,15 @@ public class Item implements Serializable {
 				}
 			} else {
 				if (direction) {
-					int tx = (int) (x + bounds.width) / Tile.TILEWIDTH;
-					if ((!collisionWithTile(tx, (int) y / Tile.TILEHEIGHT))
-							&& (!collisionWithTile(tx, (int) (y + bounds.height) / Tile.TILEHEIGHT))) {
+					int tx = (int) (x + bounds.width) / Tile.WIDTH;
+					if ((!collisionWithTile(tx, (int) y / Tile.HEIGHT))
+							&& (!collisionWithTile(tx, (int) (y + bounds.height) / Tile.HEIGHT))) {
 						x += 1.0D;
 					}
 				} else {
-					int tx = (int) x / Tile.TILEWIDTH;
-					if ((!collisionWithTile(tx, (int) y / Tile.TILEHEIGHT))
-							&& (!collisionWithTile(tx, (int) (y + bounds.height) / Tile.TILEHEIGHT))) {
+					int tx = (int) x / Tile.WIDTH;
+					if ((!collisionWithTile(tx, (int) y / Tile.HEIGHT))
+							&& (!collisionWithTile(tx, (int) (y + bounds.height) / Tile.HEIGHT))) {
 						x -= 1.0D;
 					}
 				}
@@ -326,61 +326,61 @@ public class Item implements Serializable {
 		tops = false;
 		bottoms = false;
 
-		int ty = (int) ((y + yMove + bounds.y + bounds.height) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 1.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 1.0D) / Tile.TILEWIDTH), ty))) {
+		int ty = (int) ((y + yMove + bounds.y + bounds.height) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 1.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 1.0D) / Tile.WIDTH), ty))) {
 			bottom = true;
-		} else if ((collisionWithDown((int) ((x + bounds.x + 1.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithDown((int) ((x + bounds.x + bounds.width - 1.0D) / Tile.TILEWIDTH), ty))) {
-			if (y + bounds.y + bounds.height < ty * Tile.TILEHEIGHT + 4) {
+		} else if ((collisionWithDown((int) ((x + bounds.x + 1.0D) / Tile.WIDTH), ty))
+				|| (collisionWithDown((int) ((x + bounds.x + bounds.width - 1.0D) / Tile.WIDTH), ty))) {
+			if (y + bounds.y + bounds.height < ty * Tile.HEIGHT + 4) {
 				down = (yMove >= 0.0D);
 			}
 
-			if ((y + bounds.y + bounds.height <= ty * Tile.TILEHEIGHT + 1) && (yMove >= 0.0D)) {
+			if ((y + bounds.y + bounds.height <= ty * Tile.HEIGHT + 1) && (yMove >= 0.0D)) {
 				bottoms = true;
 				bottom = true;
 			}
 		}
 
-		ty = (int) ((y + yMove + bounds.y + bounds.height + 2.0D) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
-				|| (((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-						|| (collisionWithDown((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty)))
-						&& (y + bounds.y + bounds.height <= ty * Tile.TILEHEIGHT + 1))) {
+		ty = (int) ((y + yMove + bounds.y + bounds.height + 2.0D) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))
+				|| (((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+						|| (collisionWithDown((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty)))
+						&& (y + bounds.y + bounds.height <= ty * Tile.HEIGHT + 1))) {
 			bottoms = true;
 		}
 
-		ty = (int) ((y + yMove + bounds.y) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))) {
+		ty = (int) ((y + yMove + bounds.y) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))) {
 			top = true;
 		}
-		ty = (int) ((y + yMove + bounds.y - 2.0D) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))) {
+		ty = (int) ((y + yMove + bounds.y - 2.0D) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))) {
 			tops = true;
 		}
 
-		int tx = (int) ((x + xMove + bounds.x + bounds.width) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.TILEHEIGHT))) {
+		int tx = (int) ((x + xMove + bounds.x + bounds.width) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.HEIGHT))) {
 			right = true;
 		}
-		tx = (int) ((x + xMove + bounds.x + bounds.width + 2.0D) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.TILEHEIGHT))) {
+		tx = (int) ((x + xMove + bounds.x + bounds.width + 2.0D) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.HEIGHT))) {
 			rights = true;
 		}
 
-		tx = (int) ((x + xMove + bounds.x) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.TILEHEIGHT))) {
+		tx = (int) ((x + xMove + bounds.x) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.HEIGHT))) {
 			left = true;
 		}
-		tx = (int) ((x + xMove + bounds.x - 2.0D) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.TILEHEIGHT))) {
+		tx = (int) ((x + xMove + bounds.x - 2.0D) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.HEIGHT))) {
 			lefts = true;
 		}
 	}
@@ -390,9 +390,9 @@ public class Item implements Serializable {
 	}
 
 	public boolean checkFloor() {
-		int ty = (int) (y + yMove + bounds.height) / Tile.TILEHEIGHT;
-		return (collisionWithDown((int) (x + bounds.width) / Tile.TILEWIDTH, ty))
-				&& (collisionWithDown((int) x / Tile.TILEWIDTH, ty));
+		int ty = (int) (y + yMove + bounds.height) / Tile.HEIGHT;
+		return (collisionWithDown((int) (x + bounds.width) / Tile.WIDTH, ty))
+				&& (collisionWithDown((int) x / Tile.WIDTH, ty));
 	}
 
 	protected boolean collisionWithTile(int x, int y) {
@@ -413,14 +413,17 @@ public class Item implements Serializable {
 				bounds.height);
 	}
 
-	public void render(Graphics g, boolean box) {
+	public void render(Graphics2D g, boolean box) {
 		if (game == null)
 			return;
-		render(g, (int) (x - game.getGameCamera().getxOffset()), (int) (y - game.getGameCamera().getyOffset()));
+		AffineTransform p = g.getTransform();
+		g.translate(x, y);
 
-		if (box) {
-			showBox(g, (int) (x - game.getGameCamera().getxOffset()), (int) (y - game.getGameCamera().getyOffset()));
-		}
+		render(g, 0, 0);
+		if (box)
+			showBox(g, 0, 0);
+
+		g.setTransform(p);
 	}
 
 	public void showBox(Graphics g, int x, int y) {

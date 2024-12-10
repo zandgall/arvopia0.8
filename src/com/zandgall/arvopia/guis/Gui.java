@@ -1,5 +1,6 @@
 package com.zandgall.arvopia.guis;
 
+import com.zandgall.arvopia.ArvopiaLauncher;
 import com.zandgall.arvopia.Handler;
 import java.awt.Graphics;
 import java.io.Serializable;
@@ -10,6 +11,8 @@ public abstract class Gui implements Serializable {
 
 	public Gui(Handler game) {
 		this.game = game;
+		if(game==null)
+			this.game = ArvopiaLauncher.game.handler;
 	}
 
 	public abstract void tick();

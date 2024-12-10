@@ -41,7 +41,7 @@ public class ArrowButton {
 	public void tick(MouseManager mouse) {
 		hovered = (mouse.getMouseX() > x && mouse.getMouseX() < x + 40 && mouse.getMouseY() > y
 				&& mouse.getMouseY() < y + 40);
-		on = (mouse.isClicked() && hovered);
+		on = (mouse.isLeftClicked() && hovered);
 	}
 
 	public boolean isOn() {

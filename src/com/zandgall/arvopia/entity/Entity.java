@@ -1,5 +1,6 @@
 package com.zandgall.arvopia.entity;
 
+import com.zandgall.arvopia.ArvopiaLauncher;
 import com.zandgall.arvopia.Game;
 import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.entity.creatures.Cannibal;
@@ -9,11 +10,11 @@ import com.zandgall.arvopia.entity.moveableStatics.MoveableStatic;
 import com.zandgall.arvopia.entity.statics.House;
 import com.zandgall.arvopia.entity.statics.Shrubbery;
 import com.zandgall.arvopia.entity.statics.Tree.Leaf;
+import com.zandgall.arvopia.environment.weather.SnowFlake;
 import com.zandgall.arvopia.gfx.transform.Tran;
 import com.zandgall.arvopia.utils.ClassLoading;
 import com.zandgall.arvopia.utils.Public;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -43,13 +44,13 @@ public abstract class Entity implements Serializable, Cloneable {
 	public boolean NPC = false;
 
 	public boolean dead;
-	public int snowy = 0;
-	public int maxSnowy = 10;
 	public int ticks = 0;
 
 	public Entity(Handler handler, double x, double y, int width, int height, boolean solid, boolean creature,
 			boolean particle, boolean staticEntity) {
-		game = handler;
+		if(handler==null)
+			game = ArvopiaLauncher.game.handler;
+		else game = handler;
 		this.x = x;
 		this.y = y;
 		this.height = height;
@@ -64,7 +65,8 @@ public abstract class Entity implements Serializable, Cloneable {
 
 		bounds = new Rectangle(0, 0, width, height);
 	}
-	
+
+
 	public boolean alwaysTick() {
 		return false;
 	}
@@ -82,7 +84,7 @@ public abstract class Entity implements Serializable, Cloneable {
 
 	public abstract void render(Graphics2D g);
 
-	public void renderLight(Graphics2D g, int opacity) {
+	public void renderLight(Graphics2D g, float opacity) {
 		
 	}
 	
@@ -207,7 +209,7 @@ public abstract class Entity implements Serializable, Cloneable {
 		Entity b = (Entity) e.get(0);
 
 		for (Entity i : e) {
-			if ((i != this) && !(i instanceof MoveableStatic) && !(i instanceof AreaAdders) && !(i instanceof Leaf)) {
+			if ((i != this) && !(i instanceof MoveableStatic) && !(i instanceof AreaAdder) && !(i instanceof Leaf)) {
 //				if (distance(i.centerX(), i.centerY(), x, y) < distance(b.centerX(), b.centerY(), x, y)) {
 				if (((x-i.centerX())*(x-i.centerX())+(y-i.centerY())*(y-i.centerY())) < ((x-b.centerX())*(x-b.centerX())+(y-b.centerY())*(y-b.centerY())))
 					b = i;
@@ -223,7 +225,7 @@ public abstract class Entity implements Serializable, Cloneable {
 		ArrayList<Entity> e = game.getEntityManager().getEntities();
 		Entity b = null;
 		for (int v = 0; v < e.size(); v++) {
-			if (!e.get(v).creature && (e.get(v)!=this)&& e.get(v).x>game.xOffset()&&e.get(v).y>game.yOffset()&&e.get(v).x<game.xOffset()+game.width&&e.get(v).y<game.yOffset()+game.height && !(e.get(v) instanceof MoveableStatic) && !(e.get(v) instanceof AreaAdders) && !(e.get(v) instanceof House) && !(e.get(v) instanceof Leaf)) {
+			if (!e.get(v).creature && (e.get(v)!=this)&& e.get(v).x>game.xOffset()&&e.get(v).y>game.yOffset()&&e.get(v).x<game.xOffset()+game.width&&e.get(v).y<game.yOffset()+game.height && !(e.get(v) instanceof MoveableStatic) && !(e.get(v) instanceof AreaAdder) && !(e.get(v) instanceof House) && !(e.get(v) instanceof Leaf)) {
 				if (b == null || ((x-e.get(v).centerX())*(x-e.get(v).centerX())+(y-e.get(v).centerY())*(y-e.get(v).centerY())) < ((x-b.centerX())*(x-b.centerX())+(y-b.centerY())*(y-b.centerY())))
 					b = e.get(v);
 			}
@@ -258,13 +260,13 @@ public abstract class Entity implements Serializable, Cloneable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void loadJar(String jarfile, Handler handler, EntityManager e) {
+	public static void loadJar(String jarfile) {
 		try {
 			ArrayList<Class<?>> objects = ClassLoading.getClasses(jarfile);
 
 			for (Class<?> out : objects) {
 				if(Entity.class.isAssignableFrom(out)) {
-					e.adders.add(new EntityAdder(e, (Class<? extends Entity>) out));
+					EntityManager.entityEntries.put(out.getName(), new EntityEntry((Class<? extends Entity>) out));
 //					System.out.println("Mod class " + out.getClass());
 				}
 			}
@@ -272,11 +274,7 @@ public abstract class Entity implements Serializable, Cloneable {
 			ex.printStackTrace();
 		}
 	}
-	
-	public BufferedImage getStaticImage() {
-		return new BufferedImage(36, 36, BufferedImage.TYPE_4BYTE_ABGR);
-	}
-	
+
 	public NPC getClosestNPC(double x, double y) {
 //		System.out.println(e.isEmpty());
 		ArrayList<Entity> e = game.getEntityManager().getEntities();
@@ -297,14 +295,12 @@ public abstract class Entity implements Serializable, Cloneable {
 
 		ArrayList<Creature> list = new ArrayList<Creature>();
 
-		Comparator<Creature> c = new Comparator<Creature>() {
-			public int compare(Creature a, Creature b) {
-				if (distance(x, y, a.centerX() * Game.scale, a.centerY() * Game.scale) < distance(x, y,
-						b.centerX() * Game.scale, b.centerY() * Game.scale)) {
-					return -1;
-				}
-				return 1;
+		Comparator<Creature> c = (a, b) -> {
+			if (distance(x, y, a.centerX() * Game.scale, a.centerY() * Game.scale) < distance(x, y,
+					b.centerX() * Game.scale, b.centerY() * Game.scale)) {
+				return -1;
 			}
+			return 1;
 		};
 
 		for (Entity i : e) {
@@ -329,11 +325,11 @@ public abstract class Entity implements Serializable, Cloneable {
 	}
 
 	public double centerX() {
-		return x + bounds.x + bounds.width / 2;
+		return x + bounds.x + bounds.width / 2.0;
 	}
 
 	public double centerY() {
-		return y + bounds.y + bounds.height / 2;
+		return y + bounds.y + bounds.height / 2.0;
 	}
 
 	public Creature getClosestFromList(double x, double y, ArrayList<Creature> e) {
@@ -342,12 +338,12 @@ public abstract class Entity implements Serializable, Cloneable {
 
 		Creature out = e.get(0);
 
-		for (Entity i : e) {
-			if ((i.creature) && (i != this)) {
+		for (Creature i : e) {
+			if (i != this) {
 				Creature b = out;
 				if ((distance(i.centerX() * Game.scale, i.centerY() * Game.scale, x,
 						y) < distance(b.centerX() * Game.scale, b.centerY() * Game.scale, x, y))) {
-					out = (Creature) i;
+					out = i;
 				}
 			}
 		}
@@ -360,13 +356,10 @@ public abstract class Entity implements Serializable, Cloneable {
 
 		Creature out = e.get(0);
 
-		for (Entity i : e) {
-			if ((i.creature)) {
-				Creature b = out;
-				if ((i.distance(i.centerX() * Game.scale, i.centerY() * Game.scale, x,
-						y) < i.distance(b.centerX() * Game.scale, b.centerY() * Game.scale, x, y))) {
-					out = (Creature) i;
-				}
+		for (Creature i : e) {
+			if ((i.distance(i.centerX() * Game.scale, i.centerY() * Game.scale, x,
+					y) < i.distance(out.centerX() * Game.scale, out.centerY() * Game.scale, x, y))) {
+				out = i;
 			}
 		}
 		return out;
@@ -391,18 +384,14 @@ public abstract class Entity implements Serializable, Cloneable {
 		Cannibal b;
 		if ((e.size() > 0) && (((Entity) e.get(0)).getClass() == Cannibal.class)) {
 			b = (Cannibal) e.get(0);
-		} else if (e.size() < 0) {
-			return null;
 		}
 		ArrayList<Cannibal> list = new ArrayList<Cannibal>();
 
-		Comparator<Cannibal> c = new Comparator<Cannibal>() {
-			public int compare(Cannibal a, Cannibal b) {
-				if (distance(a.getX(), a.getY(), x, y) < distance(b.getX(), b.getY(), x, y)) {
-					return -1;
-				}
-				return 1;
+		Comparator<Cannibal> c = (a, b1) -> {
+			if (distance(a.getX(), a.getY(), x, y) < distance(b1.getX(), b1.getY(), x, y)) {
+				return -1;
 			}
+			return 1;
 		};
 
 		for (Entity i : e) {
@@ -433,7 +422,7 @@ public abstract class Entity implements Serializable, Cloneable {
 	}
 
 	public Cannibal getAlphaCannibal(double x, double y, int amount) {
-		Entity output = null;
+		Cannibal output = null;
 
 		for (Entity e : game.getWorld().getEntityManager().getEntities()) {
 			if (e.getClass() == Cannibal.class) {
@@ -443,7 +432,7 @@ public abstract class Entity implements Serializable, Cloneable {
 				}
 			}
 		}
-		return (Cannibal) output;
+		return output;
 	}
 
 	public Entity getEntity(double xMove, double d) {
@@ -526,10 +515,6 @@ public abstract class Entity implements Serializable, Cloneable {
 	public void reset() {
 	}
 
-	public boolean spawnable() {
-		return true;
-	}
-	
 	public void showBox(Graphics2D g) {
 		if (!creature) {
 			if (isSolid) {
@@ -538,17 +523,17 @@ public abstract class Entity implements Serializable, Cloneable {
 				g.setColor(Color.green);
 			}
 
-			g.drawRect((int) (x + bounds.x - game.getGameCamera().getxOffset()),
-					(int) (y + bounds.y - game.getGameCamera().getyOffset()), bounds.width, bounds.height);
+			g.drawRect((int) (x + bounds.x),
+					(int) (y + bounds.y), bounds.width, bounds.height);
 		}
 
 		if (creature) {
 			Creature c = (Creature) this;
 
-			int left = (int) (x + bounds.x - game.getGameCamera().getxOffset());
-			int right = (int) (x + bounds.x + bounds.width - game.getGameCamera().getxOffset());
-			int top = (int) (y + bounds.y - game.getGameCamera().getyOffset());
-			int bottom = (int) (y + bounds.y + bounds.height - game.getGameCamera().getyOffset());
+			int left = (int) (x + bounds.x);
+			int right = (int) (x + bounds.x + bounds.width);
+			int top = (int) (y + bounds.y);
+			int bottom = (int) (y + bounds.y + bounds.height);
 
 			if (c.lefts) {
 				g.setColor(Color.red);
@@ -578,8 +563,7 @@ public abstract class Entity implements Serializable, Cloneable {
 	}
 
 	protected double distance(double x1, double y1, double x2, double y2) {
-		double d = Math.sqrt(Math.pow(x2 - x1, 2.0D) + Math.pow(y2 - y1, 2.0D));
-		return d;
+		return Math.sqrt(Math.pow(x2 - x1, 2.0D) + Math.pow(y2 - y1, 2.0D));
 	}
 
 	public void kill() {
@@ -603,11 +587,10 @@ public abstract class Entity implements Serializable, Cloneable {
 		return new Point(0, 0);
 	}
 
-	public String outString() {
-		System.out.println(this.getClass().getSimpleName());
+	public String toString() {
 		if(this.getClass().getName().startsWith("com.zandgall.arvopia"))
-			return this.getClass().getSimpleName() + " " + x + " " + y + " " + layer;
-		else return this.getClass().getName()+" " + x + " " + y + " " + layer;
+			return this.getClass().getSimpleName() + " (" + x + ", " + y + ") " + layer;
+		else return this.getClass().getName()+" (" + x + ", " + y + ") " + layer;
 	}
 
 	public Entity clone() {
@@ -619,4 +602,20 @@ public abstract class Entity implements Serializable, Cloneable {
 		return null;
 	}
 
+	public boolean shouldRender() {
+		return x + width >= game.xOffset() && y + height >= game.yOffset()
+				&& x < game.xOffset() + game.width && y < game.yOffset() + game.width;
+	}
+
+	public boolean shouldTick() {
+		return x + width >= game.xOffset() && y + height >= game.yOffset()
+				&& x < game.xOffset() + game.width && y < game.yOffset() + game.width;
+	}
+
+	public boolean canCurrentlySpawn(Handler handler) {
+		return true;
+	}
+
+	public void interactWithSnowFlake(SnowFlake snowFlake) {
+	}
 }

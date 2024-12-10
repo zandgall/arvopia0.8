@@ -45,7 +45,7 @@ public class ArraySlider {
 			hovered = false;
 		}
 
-		if ((mouseLeft) && ((game.getMouse().isDragged()) || (game.getMouse().isClicked()))) {
+		if (((mouseLeft&&game.getMouse().isDragged()) || (game.getMouse().isLeftClicked()))) {
 			if (hv) {
 				if ((mouseX > x - 1) && (mouseX < x + 101) && (mouseY > y - 5) && (mouseY < y + 10)) {
 					val = (mouseX - x);

@@ -17,9 +17,8 @@ public class Chart {
 	int height;
 	Slice[] slices;
 
-	public Chart(double[] vals, String[] components, java.awt.Color[] colors, String name, int x, int y, int width,
-			int height) {
-		this.vals = vals;
+	public Chart(String[] components, java.awt.Color[] colors, String name, int x, int y, int width,
+				 int height) {
 		this.name = name;
 		this.x = x;
 		this.y = y;
@@ -27,15 +26,15 @@ public class Chart {
 		this.height = height;
 		this.components = components;
 
-		slices = new Slice[vals.length];
+		slices = new Slice[components.length];
 		for (int i = 0; i < slices.length; i++) {
-			slices[i] = new Slice(vals[i], components[i], colors[i]);
+			slices[i] = new Slice(1, components[i], colors[i]);
 		}
 	}
 
-	public void update(double[] vals) {
+	public void update(double[] values) {
 		for (int i = 0; i < slices.length; i++) {
-			slices[i].value = vals[i];
+			slices[i].value = values[i];
 		}
 	}
 

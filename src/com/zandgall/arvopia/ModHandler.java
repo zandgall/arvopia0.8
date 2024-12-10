@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 
 public class ModHandler {
 	
-	public static ArrayList<Class<?>> mods = new ArrayList<Class<?>>();
+	public static ArrayList<Class<?>> mods = new ArrayList<>();
 	
 	public static void loadMods(String jarfile) {
 		try {
@@ -22,7 +22,7 @@ public class ModHandler {
 	
 	public static Class<?> getClass(String name) {
 		for(Class<?> c: mods) {
-			if(c.getName()==name) {
+			if(c.getName().equals(name)) {
 				return c;
 			}
 		}
@@ -30,7 +30,7 @@ public class ModHandler {
 	}
 	
 	public static ArrayList<Class<?>> getPackage(String packageName) {
-		ArrayList<Class<?>> out = new ArrayList<Class<?>>();
+		ArrayList<Class<?>> out = new ArrayList<>();
 
 		for(Class<?> c: mods) {
 			if(c.getName().startsWith(packageName))
@@ -69,21 +69,11 @@ public class ModHandler {
 	}
 	
 	public static Object construct(Class<?> c, Object[] arg, Class<?>...type) throws Exception {
-		try {
-			return c.getConstructor(type).newInstance(arg);
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			throw e;
-		}
+		return c.getConstructor(type).newInstance(arg);
 	}
 	
 	public static Object construct(Class<?> c, Class<?>[] type, Object... arg) throws Exception {
-		try {
-			return c.getConstructor(type).newInstance(arg);
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			throw e;
-		}
+		return c.getConstructor(type).newInstance(arg);
 	}
 		
 }

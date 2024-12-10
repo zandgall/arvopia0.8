@@ -72,11 +72,13 @@ public class PublicAssets {
 		shrubbery[0] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Grass.png").getSubimage(0, 0, 18, 18);
 		shrubbery[1] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Grass.png").getSubimage(18, 0, 18, 18);
 		shrubbery[2] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Grass.png").getSubimage(36, 0, 18, 18);
-		shrubbery[3] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Fern.png");
-		shrubbery[4] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Dandylion.png");
-		shrubbery[5] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Bush.png").getSubimage(0, 0, 38, 39);
-		shrubbery[6] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Bush.png").getSubimage(39, 17, 20, 22);
-		shrubbery[7] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Bush.png").getSubimage(49, 20, 20, 19);
+		shrubbery[3] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Grass.png").getSubimage(54, 0, 18, 18);
+		shrubbery[4] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Fern.png");
+		shrubbery[5] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Dandelion.png");
+		shrubbery[6] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Bush.png").getSubimage(0, 0, 38, 39);
+		shrubbery[7] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Bush.png").getSubimage(39, 17, 20, 22);
+		shrubbery[8] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Bush.png").getSubimage(49, 20, 20, 19);
+		shrubbery[12] = ImageLoader.loadImage("/textures/Statics/Shrubbery/Dandelion Top.png");
 
 		snowyGrassEntity = ImageLoader.loadImage("/textures/Statics/Shrubbery/SnowGrassOverlay.png");
 

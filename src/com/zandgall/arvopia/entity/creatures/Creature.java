@@ -3,13 +3,12 @@ package com.zandgall.arvopia.entity.creatures;
 import com.zandgall.arvopia.ArvopiaLauncher;
 import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.entity.Entity;
-import com.zandgall.arvopia.entity.EntityAdder;
+import com.zandgall.arvopia.entity.EntityEntry;
 import com.zandgall.arvopia.entity.EntityManager;
 import com.zandgall.arvopia.entity.creatures.npcs.NPC;
 import com.zandgall.arvopia.gfx.Animation;
 import com.zandgall.arvopia.gfx.ImageLoader;
 import com.zandgall.arvopia.particles.Damage;
-import com.zandgall.arvopia.state.OptionState;
 import com.zandgall.arvopia.tiles.Bridge;
 import com.zandgall.arvopia.tiles.Tile;
 import com.zandgall.arvopia.utils.BevelIndent;
@@ -17,9 +16,8 @@ import com.zandgall.arvopia.utils.ClassLoading;
 import com.zandgall.arvopia.utils.FileLoader;
 import com.zandgall.arvopia.utils.Public;
 import com.zandgall.arvopia.worlds.World;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -63,7 +61,7 @@ public abstract class Creature extends Entity {
 
 	public double xVol;
 	public double yVol, jumpForce, jumpCarry;
-	protected boolean flies;
+	public boolean flies;
 	public int MAX_HEALTH;
 	protected long walkTimer;
 
@@ -92,7 +90,7 @@ public abstract class Creature extends Entity {
 
 	public boolean sounded = false;
 
-	int soundIndex = (int) Public.random(0, 2);
+	int soundIndex = (int) Public.expandedRand(0, 2);
 
 	public void initSounds() {
 		sounded = true;
@@ -122,54 +120,34 @@ public abstract class Creature extends Entity {
 		int offX = (int) (x - (Math.floor(x / 18) * 18));
 		int offY = (int) (y - (Math.floor(y / 18) * 18));
 
-		boolean ycheck = offY > t.getY(offX);
-
-		return t.isSolid() && ycheck;
+		return t.isSolid();
 	}
 
 	public boolean collisionLeft() {
-
-		boolean out = false;
-
-		int offX = (int) ((x + bounds.x + xMove)
-				- (Math.floor((x + bounds.x + xMove) / 1) * 18));
 
 		for (double i = 0.1; i < 0.8; i += 0.1) {
 			Tile t = World.getTile((int) ((x + bounds.x + xMove) / 18),
 					(int) ((y + bounds.y + bounds.height * i) / 18));
 
-			int offY = (int) ((y + bounds.y + bounds.height * i)
-					- (Math.floor((y + bounds.y + bounds.height * i) / 18) * 18));
-
-			boolean ycheck = offY > t.getY(offX);
-			out = out || (t.isSolid() && ycheck);
+			if(t.isSolid())
+				return true;
 		}
-		return out;
+		return false;
 	}
 
 	public boolean collisionRight() {
-
-		boolean out = false;
-
-		int offX = (int) ((x + bounds.x + xMove + bounds.width)
-				- (Math.floor((x + bounds.x + xMove + bounds.width) / 18) * 18));
-
 		for (double i = 0.1; i < 0.8; i += 0.1) {
 			Tile t = World.getTile((int) ((x + bounds.x + xMove + bounds.width) / 18),
 					(int) ((y + bounds.y + bounds.height * i) / 18));
-
-			int offY = (int) ((y + bounds.y + bounds.height * i)
-					- (Math.floor((y + bounds.y + bounds.height * i) / 18) * 18));
-
-			boolean ycheck = offY > t.getY(offX);
-			out = out || (t.isSolid() && ycheck);
+			if(t.isSolid())
+				return true;
 		}
-		return out;
+		return false;
 	}
 
 	public boolean collisionBottom() {
 
-		int tyv = (int) ((y + yMove + bounds.y + bounds.height) / Tile.TILEHEIGHT);
+		int tyv = (int) ((y + yMove + bounds.y + bounds.height) / Tile.HEIGHT);
 
 		int x1 = (int) ((x + bounds.x) / 18);
 		int x2 = (int) ((x + bounds.x + bounds.width) / 18);
@@ -177,25 +155,13 @@ public abstract class Creature extends Entity {
 		Tile t = World.getTile(x1, tyv);
 		Tile t1 = World.getTile(x2, tyv);
 
-		int offX = (int) (x + bounds.x - (x1 * 18));
-		int offX1 = (int) (x + bounds.x + bounds.width - (x2 * 18));
-
-//		int offY = Math.min(t.getY(offX), t1.getY(offX1));
-//
-//		if (!(t.isSolid() || t.isTop()))
-//			offY = t1.getY(offX1);
-//		if (!(t1.isSolid() || t1.isTop()))
-//			offY = t.getY(offX);
-//
-//		boolean ycheck = y + yMove + bounds.y + bounds.height >= offY;
-
-		return ((t.isSolid() || (t.isTop() && yMove >= 0)) && y + yMove + bounds.y + bounds.height >= t.getY(offX)) ||
-				((t1.isSolid() || (t1.isTop() && yMove >= 0)) && y + yMove + bounds.y + bounds.height >= t1.getY(offX1));
+		return ((t.isSolid() || (t.isTop() && yMove >= 0))) ||
+				((t1.isSolid() || (t1.isTop() && yMove >= 0)));
 	}
 
 	public boolean collisionBottoms() {
 
-		int tyv = (int) ((y + yMove + bounds.y + bounds.height + 2) / Tile.TILEHEIGHT);
+		int tyv = (int) ((y + yMove + bounds.y + bounds.height + 2) / Tile.HEIGHT);
 
 		int x1 = (int) ((x + bounds.x) / 18);
 		int x2 = (int) ((x + bounds.x + bounds.width) / 18);
@@ -206,17 +172,8 @@ public abstract class Creature extends Entity {
 		int offX = (int) (x + bounds.x - (x1 * 18));
 		int offX1 = (int) (x + bounds.x + bounds.width - (x2 * 18));
 
-//		int offY = Math.min(t.getY(offX), t1.getY(offX1));
-
-//		if (!(t.isSolid() || t.isTop()))
-//			offY = t1.getY(offX1);
-//		if (!(t1.isSolid() || t1.isTop()))
-//			offY = t.getY(offX);
-
-//		boolean ycheck = y + yMove + bounds.y + bounds.height + 2 >= offY;
-
-		return ((t.isSolid() || (t.isTop() && yMove >= 0)) && y + yMove + bounds.y + bounds.height+2 >= t.getY(offX)) ||
-				((t1.isSolid() || (t1.isTop() && yMove >= 0)) && y + yMove + bounds.y + bounds.height+2 >= t1.getY(offX1));
+		return ((t.isSolid() || (t.isTop() && yMove >= 0))) ||
+				((t1.isSolid() || (t1.isTop() && yMove >= 0)));
 	}
 
 	public boolean collisionWithDown(double x, double y) {
@@ -226,9 +183,7 @@ public abstract class Creature extends Entity {
 		int offX = (int) (x - (Math.floor(x / 18) * 18));
 		int offY = (int) (y - (Math.floor(y / 18) * 18));
 
-		boolean ycheck = offY >= t.getY(offX);
-
-		return (t.isSolid() || t.isTop()) && ycheck;
+		return (t.isSolid() || t.isTop());
 	}
 
 	public boolean collisionWithTile(int x, int y) {
@@ -236,7 +191,7 @@ public abstract class Creature extends Entity {
 	}
 
 	public static boolean collisionTile(int x, int y) {
-		return World.getTile((int) Math.floor(x / Tile.TILEWIDTH), (int) Math.floor(y / Tile.TILEHEIGHT)).isTop();
+		return World.getTile((int) Math.floor(x / Tile.WIDTH), (int) Math.floor(y / Tile.HEIGHT)).isTop();
 	}
 
 	public boolean collisionWithDown(int x, int y) {
@@ -317,17 +272,17 @@ public abstract class Creature extends Entity {
 			walkTimer = 0L;
 
 			// Choose 1 or 2 for the sound to play
-			int i = (int) Public.random(1.0D, 2.0D);
+			int i = (int) Public.expandedRand(1.0D, 2.0D);
 
 			String file = "";
 
 			// If this tile selected is solid
 			if (tile.isSolid()) {
-				if (getShrub(0.0F, 0.0F).snowy > 3) {
-					file = "SnowWalk";
-				} else {
+//				if (getShrub(0.0F, 0.0F).snowy > 3) {
+//					file = "SnowWalk";
+//				} else {
 					file = "GrassWalk";
-				}
+//				}
 			} else if (tile instanceof Bridge) {
 				file = "WoodWalk";
 			}
@@ -353,7 +308,7 @@ public abstract class Creature extends Entity {
 //			rat = (System.currentTimeMillis()-last)/13.2;
 
 		if (getxMove() > 0.0F) {
-			int tx = (int) (x + getxMove() + bounds.x + bounds.width) / Tile.TILEWIDTH;
+			int tx = (int) (x + getxMove() + bounds.x + bounds.width) / Tile.WIDTH;
 			if (!right) {
 				x += (inWater ? xMove / 2.0 : xMove)*rat;
 //				x = Math.round(x);
@@ -361,12 +316,12 @@ public abstract class Creature extends Entity {
 				if (colRight(getxMove(), 0.0)) {
 					x = getEntity(xMove, 0.0).getX() + getEntity(xMove, 0.0f).getbounds().x - bounds.x - bounds.width;
 				} else if (right) {
-					x = (tx * Tile.TILEWIDTH - bounds.x - bounds.width - 1);
+					x = (tx * Tile.WIDTH - bounds.x - bounds.width - 1);
 				}
 				xVol = 0.0D;
 			}
 		} else if (getxMove() < 0.0F) {
-			int tx = (int) (x + getxMove() + bounds.x) / Tile.TILEWIDTH;
+			int tx = (int) (x + getxMove() + bounds.x) / Tile.WIDTH;
 			if (!left) {
 				x += (inWater ? xMove / 2.0F : xMove)*rat;
 //				x = Math.round(x);
@@ -374,23 +329,11 @@ public abstract class Creature extends Entity {
 				if (colLeft(getxMove(), 0.0F)) {
 					x = getEntity(xMove, 0.0F).getX() + getEntity(xMove, 0.0F).getbounds().width - bounds.x;
 				} else if (left) {
-					x = (tx * Tile.TILEWIDTH + 18 - bounds.x + 1);
+					x = (tx * Tile.WIDTH + 18 - bounds.x + 1);
 				}
 				xVol = 0.0D;
 			}
 		}
-	}
-
-	protected int getTileYOffset() {
-		int tyv = (int) (y + yMove + bounds.y + bounds.height) / Tile.TILEHEIGHT;
-
-		Tile t = World.getTile((int) ((x + bounds.x) / 18), tyv);
-		Tile t1 = World.getTile((int) ((x + bounds.x + bounds.width) / 18), tyv);
-
-		int offX = (int) (x + bounds.x - (Math.floor((x + bounds.x) / 18) * 18));
-		int offX1 = (int) ((x + bounds.x + bounds.width) - (Math.floor((x + bounds.x + bounds.width) / 18) * 18));
-		int offY = Math.min(t.getY(offX), t1.getY(offX1));
-		return offY;
 	}
 
 	public void moveY() {
@@ -402,9 +345,7 @@ public abstract class Creature extends Entity {
 
 		checkCol();
 
-		int tyv = (int) (y + yMove + bounds.y + bounds.height) / Tile.TILEHEIGHT;
-
-		int offY = getTileYOffset();
+		int tyv = (int) (y + yMove + bounds.y + bounds.height) / Tile.HEIGHT;
 
 		if (!bottom) {
 			yVol = ((double) (yVol + GRAVITY));
@@ -412,9 +353,9 @@ public abstract class Creature extends Entity {
 			if (yMove > 0 && colBottom(0.0F, yMove))
 				y = (getEntity(0.0f, yMove).getY() + getEntity(0.0f, yMove).getbounds().y - bounds.y - bounds.height);
 			else if (down) {
-				y = (tyv * Tile.TILEHEIGHT - bounds.y - bounds.height + offY);
+				y = (tyv * Tile.HEIGHT - bounds.y - bounds.height);
 			} else if (bottom) {
-				y = (tyv * Tile.TILEHEIGHT - bounds.y - bounds.height - 1 + offY);
+				y = (tyv * Tile.HEIGHT - bounds.y - bounds.height - 1);
 			}
 			yVol = 0.0F;
 		}
@@ -425,13 +366,13 @@ public abstract class Creature extends Entity {
 			if (yMove > 0 && colBottom(0.0F, yMove))
 				y = (getEntity(0.0f, yMove).getY() + getEntity(0.0f, yMove).getbounds().y - bounds.y - bounds.height);
 			else if (bottom) {
-				y = (tyv * Tile.TILEHEIGHT - bounds.y - bounds.height - 1 + offY);
+				y = (tyv * Tile.HEIGHT - bounds.y - bounds.height - 1);
 			}
 			yVol = 0.0F;
 		}
 
 		if (yMove < 0.0F) {
-			int ty = (int) (y + yMove + bounds.y) / Tile.TILEHEIGHT;
+			int ty = (int) (y + yMove + bounds.y) / Tile.HEIGHT;
 			if (!top) {
 				y += yMove;
 			} else {
@@ -442,7 +383,7 @@ public abstract class Creature extends Entity {
 					yVol = Math.max(2, -yVol);
 					yMove = Math.max(2, -yMove);
 				} else if (top) {
-					y = (ty * Tile.TILEHEIGHT + Tile.TILEHEIGHT - bounds.y);
+					y = (ty * Tile.HEIGHT + Tile.HEIGHT - bounds.y);
 				}
 			}
 		}
@@ -457,19 +398,19 @@ public abstract class Creature extends Entity {
 		checkCol();
 
 		if (yMove > 0.0F) {
-			int ty = (int) (y + yMove + bounds.y + bounds.height) / Tile.TILEHEIGHT;
+			int ty = (int) (y + yMove + bounds.y + bounds.height) / Tile.HEIGHT;
 			if (!bottom) {
 				y += (inWater ? yMove / 2.0F : yMove);
 			} else {
-				y = (ty * Tile.TILEHEIGHT - bounds.y - bounds.height - 1);
+				y = (ty * Tile.HEIGHT - bounds.y - bounds.height - 1);
 				yVol = 0.0F;
 			}
 		} else if (yMove < 0.0F) {
-			int ty = (int) (y + yMove + bounds.y) / Tile.TILEHEIGHT;
+			int ty = (int) (y + yMove + bounds.y) / Tile.HEIGHT;
 			if (!top) {
 				y += (inWater ? yMove / 2.0F : yMove);
 			} else {
-				y = (ty * Tile.TILEHEIGHT + Tile.TILEHEIGHT - bounds.y);
+				y = (ty * Tile.HEIGHT + Tile.HEIGHT - bounds.y);
 				yVol = 0.0F;
 			}
 		}
@@ -545,12 +486,12 @@ public abstract class Creature extends Entity {
 			healthGreen.affectImage(Color.green);
 		}
 
-		int Y = (int) (y + bounds.y - game.getGameCamera().getyOffset());
+		int Y = (int) (y + bounds.y);
 
 //		int width = Math.min(Math.max(5 * MAX_HEALTH, 20), 50);
 		int width = healthBody.getImage().getWidth();
 
-		int X = (int) (x + bounds.x + bounds.width / 2 - game.getGameCamera().getxOffset() - width / 2 + 5.0D);
+		int X = (int) (x + bounds.x + bounds.width / 2 - width / 2 + 5.0D);
 
 //		g.setColor(Color.red);
 //		g.fillRect(X, Y - 20, width, 10);
@@ -572,8 +513,8 @@ public abstract class Creature extends Entity {
 
 		for (int h = xoff; h < width; h++) {
 			for (int v = yoff; v < height; v++) {
-				int tx = (int) ((x + bounds.x + bounds.width / 2) / Tile.TILEWIDTH) + h;
-				int ty = (int) ((y + bounds.y + bounds.height) / Tile.TILEHEIGHT) + v;
+				int tx = (int) ((x + bounds.x + bounds.width / 2) / Tile.WIDTH) + h;
+				int ty = (int) ((y + bounds.y + bounds.height) / Tile.HEIGHT) + v;
 
 				if (collisionWithDown(tx, ty)) {
 					is = false;
@@ -616,9 +557,9 @@ public abstract class Creature extends Entity {
 
 		if (((following.getY() < follower.getY() - 36 || (following.getY() < follower.getY() && !follower.bottoms))
 				&& (!(l || r)
-						|| ArvopiaLauncher.game.handler.getWorld().SAFETOWALK(follower.getX() - 20,
+						|| ArvopiaLauncher.game.handler.getWorld().safeToWalk(follower.getX() - 20,
 								follower.getY() + follower.height, follower.height)
-						|| ArvopiaLauncher.game.handler.getWorld().SAFETOWALK(follower.getX() + follower.width + 20,
+						|| ArvopiaLauncher.game.handler.getWorld().safeToWalk(follower.getX() + follower.width + 20,
 								follower.getY() + follower.height, follower.height)))
 				|| (follower.right && r) || (follower.left && l))
 			u = true;
@@ -661,13 +602,13 @@ public abstract class Creature extends Entity {
 				}
 
 			for (Creature out : creatures)
-				e.adders.add(new EntityAdder(e, out));
+				e.entityEntries.put(out.name, new EntityEntry(out));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
-	public static void loadModCreature(String directory, Handler handler, EntityManager e) {
+	public static void loadModCreature(String directory, Handler handler) {
 		try {
 			long pre = System.currentTimeMillis();
 			String name = FileLoader.readFile(directory + "/name.txt").replaceAll(" ", "");
@@ -679,7 +620,7 @@ public abstract class Creature extends Entity {
 			out.initSounds();
 
 //			e.adders.add(new EntityAdder(handler, directory, name));
-			e.adders.add(new EntityAdder(e, out));
+			EntityManager.entityEntries.put(out.name, new EntityEntry(out));
 
 			pre = System.currentTimeMillis() - pre;
 			handler.log("~~~~~~LOADED MOD NPC ~~~ " + name + " ~~~ ");

@@ -7,11 +7,7 @@ import com.zandgall.arvopia.guis.Gui;
 import com.zandgall.arvopia.guis.PlayerGui;
 import com.zandgall.arvopia.quests.Achievement;
 import com.zandgall.arvopia.quests.AchievementManager;
-import com.zandgall.arvopia.utils.ConditionalMusic;
-import com.zandgall.arvopia.utils.FileChooser;
-import com.zandgall.arvopia.utils.FileLoader;
-import com.zandgall.arvopia.utils.Slider;
-import com.zandgall.arvopia.utils.Utils;
+import com.zandgall.arvopia.utils.*;
 import com.zandgall.arvopia.worlds.World;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -60,25 +56,25 @@ public class GameState extends State {
 		music = new ArrayList<ConditionalMusic>();
 		music.add(new ConditionalMusic(handler, new String[] { "Songs/Thunderstorm.ogg" }) {
 			public boolean playable(Handler g) {
-				return g.getEnviornment().precipitation && g.getEnviornment().stormy;
+				return g.getEnvironment().precipitation && g.getEnvironment().stormy;
 			}
 		});
 		music.add(new ConditionalMusic(handler, new String[] { "Songs/Playtime.ogg", "Songs/SweetGuitar.ogg" }) {
 			public boolean playable(Handler g) {
-				return g.getEnviornment().getHours() > 5 && g.getEnviornment().getHours() < 20
-						&& !g.getEnviornment().precipitation && !g.getEnviornment().stormy;
+				return g.getEnvironment().getHours() > 5 && g.getEnvironment().getHours() < 20
+						&& !g.getEnvironment().precipitation && !g.getEnvironment().stormy;
 			}
 		});
 		music.add(new ConditionalMusic(handler,
 				new String[] { "Songs/StarsInTheNight.ogg", "Songs/SpaceIsAMirror.ogg" }) {
 			public boolean playable(Handler g) {
-				return (g.getEnviornment().getHours() <= 5 || g.getEnviornment().getHours() >= 20)
-						&& !g.getEnviornment().precipitation && !g.getEnviornment().stormy;
+				return (g.getEnvironment().getHours() <= 5 || g.getEnvironment().getHours() >= 20)
+						&& !g.getEnvironment().precipitation && !g.getEnvironment().stormy;
 			}
 		});
 		music.add(new ConditionalMusic(handler, new String[] { "Songs/Raindrops.ogg" }) {
 			public boolean playable(Handler g) {
-				return g.getEnviornment().precipitation && !g.getEnviornment().stormy;
+				return g.getEnvironment().precipitation && !g.getEnvironment().stormy;
 			}
 		});
 
@@ -92,7 +88,7 @@ public class GameState extends State {
 		if (open) {
 			FileChooser fileGet = new FileChooser();
 
-			String i = fileGet.getFile(Game.prefix + "/Arvopia");
+			String i = fileGet.getFile(Game.prefix);
 
 			if (i.length() > 0) {
 				loadWorld(i);
@@ -115,7 +111,7 @@ public class GameState extends State {
 		if (world.save == "") {
 			FileChooser fileSet = new FileChooser();
 
-			String i = fileSet.saveFile(Game.prefix + "/Arvopia/Saves");
+			String i = fileSet.saveFile(Game.prefix + "/Saves");
 
 			if(!new File(i).isDirectory())
 				world.saveWorld(i);
@@ -127,7 +123,7 @@ public class GameState extends State {
 	public void openSave() {
 		FileChooser fileGet = new FileChooser();
 
-		String i = fileGet.getFile(Game.prefix + "/Arvopia/Saves");
+		String i = fileGet.getFile(Game.prefix + "/Saves");
 
 		if (i.length() > 0) {
 			loadWorld(i);
@@ -163,28 +159,17 @@ public class GameState extends State {
 		world.percentDone = 0.0D;
 		loadingWorld = true;
 		ready = false;
-		
+
+		if(world.getType()=="Pack")
+			handler.loadMod(path + "/mods");
 		Initiator.aworldInit(handler, world);
 
 		handler.getGame().stable = false;
 	}
 
-	public void generateWorld(int width, int height, float foliage, float stones, float insects, float creatures,
-			float cannibals, int caves) {
-		handler.log("Generating world...");
-		world = new World(handler, width, height, foliage, stones, insects, creatures, cannibals, caves);
-		world.percentDone = 0.0D;
-		loadingWorld = true;
-		ready = false;
-
-		Initiator.aworldInit(handler, world);
-		
-		handler.getGame().stable = false;
-	}
-	
-	public void generateWorld(ArrayList<Slider> sliders) {
-		handler.log("Generating world...");
-		world = new World(handler, sliders);
+	public void generateWorld(long seed, ArrayList<Slider> sliders) {
+		handler.getGame().initMessage("Generating world...");
+		world = new World(handler, seed, sliders);
 		world.percentDone = 0.0D;
 		loadingWorld = true;
 		ready = false;
@@ -198,7 +183,8 @@ public class GameState extends State {
 		if (!loadingWorld) {
 			long pre = System.nanoTime();
 			world.tick();
-			world.spawing();
+			if(Public.chance(1))
+				world.spawnEntities();
 			worldt = (System.nanoTime() - pre);
 		}
 		if (!ready) {
@@ -251,7 +237,7 @@ public class GameState extends State {
 	public void render(Graphics2D g) {
 		if (ready) {
 			long pre = System.nanoTime();
-			world.render(g, handler.getGame().get2D());
+			world.render(g);
 			worldtr = (System.nanoTime() - pre);
 			pre = System.nanoTime();
 			if (!world.getEntityManager().getPlayer().viewCrafting) {

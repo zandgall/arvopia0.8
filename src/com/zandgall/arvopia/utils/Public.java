@@ -5,7 +5,6 @@ import com.zandgall.arvopia.gfx.transform.Tran;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.io.ObjectInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -127,11 +126,11 @@ public class Public {
 		return new Color(255 - c.getRed(), 255 - c.getGreen(), 255 - c.getBlue());
 	}
 
-	public static double random(double min, double max) {
+	public static double expandedRand(double min, double max) {
 		return Math.random() * (max - min + 0.9999D) + min;
 	}
 
-	public static double debugRandom(double min, double max) {
+	public static double rand(double min, double max) {
 		return Math.random() * (max - min) + min;
 	}
 
@@ -218,14 +217,6 @@ public class Public {
 			digital = new Font("Arial", 1, 12);
 		}
 
-//		try {
-//			fipps = Font.createFont(0, new java.io.File("Fonts/Fipps-Regular.otf"));
-//			fipps = fipps.deriveFont(1, 12.0F);
-//		} catch (java.awt.FontFormatException | java.io.IOException e) {
-//			e.printStackTrace();
-//			fipps = new Font("Arial", 1, 12);
-//		}
-
 		fipps = new Font("Century Gothic", Font.PLAIN, 20);
 		defaultFont = new Font("Arial", 0, 12);
 		defaultBoldFont = new Font("Arial", Font.BOLD, 12);
@@ -266,11 +257,16 @@ public class Public {
 	
 	public static Object[] clone(Object... o) {
 		Object[] out = new Object[o.length];
-		for(int i = 0; i<o.length; i++) {
-			out[i]=o[i];
-		}
+		System.arraycopy(o, 0, out, 0, o.length);
 		
 		return out;
 	}
-	
+
+	public static int randInt(double low, double high) {
+		return (int)((Math.random()*(high-low))+low);
+	}
+
+	public static int randInt(double high) {
+		return randInt(0, high);
+	}
 }

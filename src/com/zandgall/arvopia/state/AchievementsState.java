@@ -16,6 +16,7 @@ import com.zandgall.arvopia.utils.Utils;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 public class AchievementsState extends State {
 	double scroll;
@@ -151,11 +152,11 @@ public class AchievementsState extends State {
 			Tran.TEXT_MODE = 0;
 		}
 
-		g.setTransform(handler.getGame().getDefaultTransform());
+		g.setTransform(new AffineTransform());
 
 		g.setColor(Color.white);
 		g.setFont(new Font("Arial", 1, 20));
-		Tran.drawOutlinedText(g, 10d, handler.getHeight()-10, "Game points: " + (Utils.parseInt(FileLoader.readFile(Game.prefix + "/Arvopia/00.arv")) + Utils.parseInt(FileLoader.readFile(Game.prefix + "/Arvopia/02.arv"))), 1, Color.black, Color.white);
+		Tran.drawOutlinedText(g, 10d, handler.getHeight()-10, "Game points: " + (Utils.parseInt(FileLoader.readFile(Game.prefix + "/00.arv")) + Utils.parseInt(FileLoader.readFile(Game.prefix + "/02.arv"))), 1, Color.black, Color.white);
 		Tran.drawOutlinedText(g, 10d, 150, "Quests:", 1, Color.black, Color.white); 
 
 		back.render(g);

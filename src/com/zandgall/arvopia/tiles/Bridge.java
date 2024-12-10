@@ -1,74 +1,35 @@
 package com.zandgall.arvopia.tiles;
 
 import com.zandgall.arvopia.Handler;
+import com.zandgall.arvopia.gfx.Assets;
+import com.zandgall.arvopia.gfx.ImageLoader;
+
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 public class Bridge extends Tile {
-	public int index, gx = 0, gy = 0;
 
-	public Bridge(int index, int id) {
-		super(com.zandgall.arvopia.gfx.PublicAssets.bridge[index], id);
-		this.index = index;
-		if ((index == 2) || (index == 5) || (index == 7)) {
-			TILEHEIGHT = 8;
+	public Bridge(BufferedImage image, String id) {
+		super(image, id);
+		top_solid = true;
+	}
+
+	public static void loadAllBridgeTiles() {
+		Assets sheet = new Assets(ImageLoader.loadImage("/textures/Tiles/Bridge.png"), 18, 18, "Bridge");
+		Assets kernelSheet = new Assets(ImageLoader.loadImage("/textures/Tiles/bridgereference.png"), 3, 3, "bridgereference");
+		for(int i = 0; i < 4; i++ ){
+			for(int j = 0; j < 2; j++) {
+				Bridge b = new Bridge(sheet.get(i, j), "BRIDGE" + (i*16 + j));
+				BufferedImage k = kernelSheet.get(i, j);
+				b.setValidityKernel(
+						k.getRGB(0, 0), k.getRGB(1, 0), k.getRGB(2, 0),
+						k.getRGB(0, 1), Color.YELLOW.getRGB(), k.getRGB(2, 1),
+						k.getRGB(0, 2), k.getRGB(1, 2), k.getRGB(2, 2));
+			}
 		}
-		
-		switch(index) {
-		case 0:
-			gx=0;
-			gy=0;
-			break;
-		case 1:
-			gx=1;
-			gy=0;
-			break;
-		case 2:
-			gx=1;
-			gy=1;
-			break;
-		case 3:
-			gx=0;
-			gy=1;
-			break;
-		case 4:
-			gx=2;
-			gy=0;
-			break;
-		case 5:
-			gx=2;
-			gy=1;
-			break;
-		case 6:
-			gx=3;
-			gy=0;
-			break;
-		case 7:
-			gx=3;
-			gy=1;
-			break;
-		}
-			
-	}
-
-	public void tick(Handler game, int x, int y) {
-	}
-
-	public boolean isTop() {
-		if ((index == 2) || (index == 5) || (index == 7)) {
-			return true;
-		}
-		return false;
-	}
-
-	public void init() {
-	}
-
-	public void reset() {
 	}
 
 	public Color getColor() {
-		if ((index == 2) || (index == 5) || (index == 7))
-			return Color.orange;
-		return new Color(100, 50, 10);
+		return Color.orange;
 	}
 }

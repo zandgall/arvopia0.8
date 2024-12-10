@@ -63,10 +63,10 @@ public class Trading extends Gui implements Serializable {
 		this.name = name;
 
 		if (body == null) {
-			body = new BevelPlatform(4, 2, game.getWidth() - 100, game.getHeight() - 100);
+			body = new BevelPlatform(4, 2, this.game.getWidth() - 100, this.game.getHeight() - 100);
 			icon = new BevelPlatform(4, 2, 150, 150, 200, 100);
-			indent = new BevelIndent(4, 2, game.getWidth() - 275, 120);
-			responseindent= new BevelIndent(4, 2, game.getWidth() - 350, 130);
+			indent = new BevelIndent(4, 2, this.game.getWidth() - 275, 120);
+			responseindent= new BevelIndent(4, 2, this.game.getWidth() - 350, 130);
 			buttonindent = new BevelIndent(4, 2, 230, 130, 255, 0);
 		}
 
@@ -77,9 +77,9 @@ public class Trading extends Gui implements Serializable {
 			out += text.toCharArray()[i];
 			String[] o = out.split("\n");
 			if (text.toCharArray()[i] == ' ' && Tran.measureString(o[o.length - 1],
-					Public.runescape.deriveFont(Font.PLAIN, 18)).x >= game.getWidth() - 340)
+					Public.runescape.deriveFont(Font.PLAIN, 18)).x >= this.game.getWidth() - 340)
 				out += "\n";
-			else if (Tran.measureString(o[o.length - 1], Public.runescape.deriveFont(Font.PLAIN, 18)).x >= game
+			else if (Tran.measureString(o[o.length - 1], Public.runescape.deriveFont(Font.PLAIN, 18)).x >= this.game
 					.getWidth() - 300)
 				out += "\n";
 		}

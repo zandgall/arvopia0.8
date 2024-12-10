@@ -29,7 +29,7 @@ public class Wolf extends BasicTemplate {
 		bounds.width = 36;
 		bounds.height = 53;
 		BufferedImage img = ImageLoader.loadImage("/textures/Creatures/Wolf.png");
-		double ratio = Public.debugRandom(0.8, 1.0);
+		double ratio = Public.rand(0.8, 1.0);
 		Color effect = new Color((int) (ratio * 255), (int) (ratio * 255), (int) (ratio * 255));
 		img = Tran.effectColor(img, effect);
 		Assets wolf = new Assets(img, 72, 54, "wolf");

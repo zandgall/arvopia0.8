@@ -12,14 +12,11 @@ import com.zandgall.arvopia.gfx.Assets;
 import com.zandgall.arvopia.gfx.ImageLoader;
 import com.zandgall.arvopia.gfx.SerialImage;
 import com.zandgall.arvopia.gfx.transform.Tran;
-import com.zandgall.arvopia.guis.Dialogue;
 import com.zandgall.arvopia.guis.Inventory;
 import com.zandgall.arvopia.guis.Menu;
-import com.zandgall.arvopia.guis.Trading;
 import com.zandgall.arvopia.input.KeyManager;
 import com.zandgall.arvopia.input.MouseManager;
 import com.zandgall.arvopia.items.PlayerItem;
-import com.zandgall.arvopia.state.CustomizationState;
 import com.zandgall.arvopia.state.TitleState;
 import com.zandgall.arvopia.tiles.Tile;
 import com.zandgall.arvopia.utils.Public;
@@ -30,7 +27,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -68,10 +65,8 @@ public class Player extends Creature {
 	}
 
 	public PlayerItem getItem(String name) {
-		for (String s : items.keySet()) {
-			if (s.equals(name))
-				return items.get(s);
-		}
+		if(items.containsKey(name))
+			return items.get(name);
 		return null;
 	}
 
@@ -536,11 +531,11 @@ public class Player extends Creature {
 
 			if (KeyManager.checkBind("Debug")) {
 				game.log("Marked X: " + Math.round(x) + ", Y: "
-						+ Math.round(y + bounds.y + bounds.height - Tile.TILEHEIGHT) + " Tile: ("
-						+ Math.round(x / Tile.TILEWIDTH) + ", "
-						+ Math.round((y + bounds.y + bounds.getHeight()) / Tile.TILEHEIGHT - 1.0D) + ")"
-						+ " Tile full X Y: (" + Math.round(x / Tile.TILEWIDTH) * Tile.TILEWIDTH + ", "
-						+ Math.round((y + bounds.y + bounds.getHeight()) / Tile.TILEHEIGHT - 1.0D) * Tile.TILEHEIGHT
+						+ Math.round(y + bounds.y + bounds.height - Tile.HEIGHT) + " Tile: ("
+						+ Math.round(x / Tile.WIDTH) + ", "
+						+ Math.round((y + bounds.y + bounds.getHeight()) / Tile.HEIGHT - 1.0D) + ")"
+						+ " Tile full X Y: (" + Math.round(x / Tile.WIDTH) * Tile.WIDTH + ", "
+						+ Math.round((y + bounds.y + bounds.getHeight()) / Tile.HEIGHT - 1.0D) * Tile.HEIGHT
 						+ ")");
 				game.log("X and Y offset: " + game.getGameCamera().getxOffset() + ", "
 						+ game.getGameCamera().getyOffset());
@@ -728,17 +723,16 @@ public class Player extends Creature {
 
 	public void render(Graphics2D g) {
 
+		AffineTransform p = g.getTransform();
+		g.translate(x, y);
+
+
 //		SmartCostume.setDefault();
-		
+
 		checkCol();
 
-		if (currentItem != null) {
-
-			if (currentItem.hasLight && !currentItem.light.isOn()) {
+		if (currentItem != null && currentItem.hasLight && !currentItem.light.isOn())
 				currentItem.light.setOn(true);
-			}
-
-		}
 
 //		if (currentItem == null)
 //			for (String s : items.keySet()) {
@@ -749,13 +743,13 @@ public class Player extends Creature {
 
 		FrameGrabber.game = game;
 		FrameGrabber.p = this;
-		
-		g.drawImage(FrameGrabber.frame, (int) Math.round(Public.xO(x-35)), (int) Math.round(Public.yO(y-22)), null);
 
-		g.drawImage(FrameGrabber.accessories, (int) Math.round(Public.xO(x-35)), (int) Math.round(Public.yO(y-22)), null);
-		
+		g.drawImage(FrameGrabber.frame, -35, -22, null);
+
+		g.drawImage(FrameGrabber.accessories, -35, -22, null);
+
 //		g.drawImage(getFrame(), (int) Public.xO(x-35), (int) Public.yO(y-22), null);
-//		
+//
 //		g.drawImage(Tran.flipNS(getAccessories(), widthFlip, 1), (int) Public.xO(x-35), (int) Public.yO(y-22), null);
 
 //			if ((currentItem != null) && ((getFrame() == stab.getFrame()) || (getFrame() == smash.getFrame()))) {
@@ -763,19 +757,13 @@ public class Player extends Creature {
 //						(int) Public.yO(y) + getToolyoffset(), null);
 //			}
 
-		if (closest != null) {
-			if (closest.creature) {
-				Creature c = (Creature) closest;
-				c.showHealthBar(g);
-			} else {
+		g.setTransform(p);
+		if (closest != null)
+			if (closest.creature)
+				((Creature) closest).showHealthBar(g);
+			else
 				closest.showBox(g);
-			}
-		}
 		// closestNPC
-
-		if (health < MAX_HEALTH) {
-			showHealthBar(g);
-		}
 	}
 
 	public void renScreens(Graphics2D g) {
@@ -900,24 +888,26 @@ public class Player extends Creature {
 		inWater = false;
 		touchingWater = false;
 
+		if(game.getWorld()==null)
+			return;
 		if(game.getWorld().getWaterManager()!=null&&game.getWorld().getWaterManager().getWater()!=null)
-		for (Water w : game.getWorld().getWaterManager().getWater()) {
-			if (w.box().contains(getCollision(0.0F, 0.0F))) {
-				inWater = true;
+			for (Water w : game.getWorld().getWaterManager().getWater()) {
+				if (w.box().contains(getCollision(0.0F, 0.0F))) {
+					inWater = true;
+				}
+				if (w.box().intersects(getCollision(0.0F, 0.0F))) {
+					touchingWater = true;
+				}
 			}
-			if (w.box().intersects(getCollision(0.0F, 0.0F))) {
-				touchingWater = true;
-			}
-		}
 		int ty;
 		bottom = (collisionBottom() || colBottom(0.0F, yMove));
 		bottoms = bottom || collisionBottoms();
 //		bottom = bottoms;
 //		if(!bottoms)
 //			Console.log(collisionBottoms() || colBottom(0.0F, yMove));
-		ty = (int) ((y + yMove + bounds.y)/Tile.TILEHEIGHT);
-		top = ((collisionWithTile((int) ((x + bounds.x + 2.0D)/Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D)/Tile.TILEWIDTH), ty)) || colTop(0, yMove));
+		ty = (int) ((y + yMove + bounds.y)/Tile.HEIGHT);
+		top = ((collisionWithTile((int) ((x + bounds.x + 2.0D)/Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D)/Tile.WIDTH), ty)) || colTop(0, yMove));
 		tops = top;
 
 //		int tx = (int) ((x + getxMove() + bounds.x + bounds.width));
@@ -958,6 +948,10 @@ public class Player extends Creature {
 
 	public int getWidthFlip() {
 		return widthFlip;
+	}
+
+	public boolean shouldTick() {
+		return true;
 	}
 
 }

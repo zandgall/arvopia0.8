@@ -3,6 +3,7 @@ package com.zandgall.arvopia.items;
 import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.entity.creatures.Player;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,7 +29,7 @@ public class ItemManager implements Serializable {
 		}
 	}
 
-	public void render(java.awt.Graphics g, boolean box) {
+	public void render(Graphics2D g, boolean box) {
 		for (Item i : items)
 			i.render(g, box);
 	}

@@ -23,7 +23,6 @@ import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.SinglePixelPackedSampleModel;
 import java.awt.image.WritableRaster;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ import javax.imageio.ImageIO;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
 
 import com.zandgall.arvopia.utils.Public;
 
@@ -49,6 +47,7 @@ public class Tran extends Canvas {
 
 	public static BufferedImage nullimage = new BufferedImage(100, 100, BufferedImage.TYPE_4BYTE_ABGR);
 
+	public static final int TEXT_MODE_BASELINE = 0, TEXT_MODE_TOP = 1;
 	public static int TEXT_MODE = 0; // 0: y=baseline; 1: y=top
 
 	public static BufferedImage interpolate(BufferedImage img, int amount) {
@@ -60,10 +59,9 @@ public class Tran extends Canvas {
 	}
 
 	public static BufferedImage effectColor(BufferedImage img, Color c, Color shadowModifier, int target) {
-		BufferedImage copy = img;
 		ColorEffect ce = new ColorEffect(c, shadowModifier, target);
 		ce.setMode(ColorFilter.NONE);
-		return effectImage(ce, copy);
+		return effectImage(ce, img);
 	}
 
 	public static BufferedImage effectColor(BufferedImage img, Color c, Color shadowModifier) {
@@ -224,8 +222,7 @@ public class Tran extends Canvas {
 		BufferedImage newImage = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
 		for (int x = 0; x < w; x++) {
 			for (int y = 0; y < h; y++) {
-				Color c = filter.filter(x, y, img, img.getRGB(x, y));
-				newImage.setRGB(x, y, c.getRGB());
+				newImage.setRGB(x, y, filter.filter(x, y, img, img.getRGB(x, y)).getRGB());
 			}
 		}
 
@@ -262,6 +259,23 @@ public class Tran extends Canvas {
 			}
 		}
 
+		return out;
+	}
+
+	public static BufferedImage litUp(BufferedImage src) {
+		BufferedImage bleached = bleachImage(src, Color.orange);
+		BufferedImage out = new BufferedImage(src.getWidth()+2, src.getHeight()+2, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g = out.createGraphics();
+		g.drawImage(bleached, 0, 0, null);
+		g.drawImage(bleached, 1, 0, null);
+		g.drawImage(bleached, 2, 0, null);
+		g.drawImage(bleached, 0, 1, null);
+		g.drawImage(bleached, 1, 1, null);
+		g.drawImage(bleached, 2, 1, null);
+		g.drawImage(bleached, 0, 2, null);
+		g.drawImage(bleached, 1, 2, null);
+		g.drawImage(bleached, 2, 2, null);
+		g.dispose();
 		return out;
 	}
 
@@ -386,20 +400,15 @@ public class Tran extends Canvas {
 
 	public static BufferedImage bleachImage(BufferedImage img, Color c) {
 
-		int x = 0, y = 0, w = img.getWidth(), h = img.getHeight();
-
+		int x, y, w = img.getWidth(), h = img.getHeight();
 		BufferedImage copy = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
-
-		for (x = 0; x < w; x++) {
+		int rgb = c.getRGB() & 0x00ffffff;
+		for (x = 0; x < w; x++)
 			for (y = 0; y < h; y++) {
-				int alpha = accurateRGB(img.getRGB(x, y)).getAlpha();
-				Color newColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
-				setColor(copy, x, y, newColor);
+				int next = img.getRGB(x, y) & 0xff000000;
+				copy.setRGB(x, y, rgb + next);
 			}
-		}
-
 		return copy;
-
 	}
 
 	public static BufferedImage getOutline(BufferedImage img, Color c) {
@@ -431,42 +440,18 @@ public class Tran extends Canvas {
 	}
 
 	public static BufferedImage blendImages(BufferedImage a, BufferedImage b, float rat) {
-		BufferedImage out;
 
 		int w = Math.min(a.getWidth(), b.getWidth());
 		int h = Math.min(a.getHeight(), b.getHeight());
 
-		out = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
+		BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
 
-		float nRat = 1.0f - rat;
-
-		for (int x = 0; x < w; x++) {
-			for (int y = 0; y < h; y++) {
-				int argb = a.getRGB(x, y);
-				int aa = (argb >> 24) & 0xff;
-				int ar = (argb >> 16) & 0xff;
-				int ag = (argb >> 8) & 0xff;
-				int ab = (argb) & 0xff;
-//				Color aC = new Color(ar, ag, ab, aa);
-
-				int brgb = b.getRGB(x, y);
-				int ba = (brgb >> 24) & 0xff;
-				int br = (brgb >> 16) & 0xff;
-				int bg = (brgb >> 8) & 0xff;
-				int bb = (brgb) & 0xff;
-//				Color bC = new Color(br, bg, bb, ba);
-
-				int red = (int) (ar * rat + br * nRat);
-				int green = (int) (ag * rat + bg * nRat);
-				int blue = (int) (ab * rat + bb * nRat);
-				int alpha = (int) (aa * rat + ba * nRat);
-
-				int color = (alpha << 24) | (red << 16) | (green << 8) | blue;
-
-				out.setRGB(x, y, color);
-
-			}
-		}
+		Graphics2D g = out.createGraphics();
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, rat));
+		g.drawImage(a, 0, 0, null);
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f - rat));
+		g.drawImage(b, 0, 0, null);
+		g.dispose();
 
 		return out;
 	}
@@ -570,7 +555,7 @@ public class Tran extends Canvas {
 	}
 
 	public static Color randomColor() {
-		return new Color((int) Public.random(0, 255), (int) Public.random(0, 255), (int) Public.random(0, 255));
+		return new Color((int) Public.expandedRand(0, 255), (int) Public.expandedRand(0, 255), (int) Public.expandedRand(0, 255));
 	}
 
 	public static BufferedImage flip(BufferedImage image, int width, int height) {
@@ -936,6 +921,26 @@ public class Tran extends Canvas {
 
 	}
 
+	public static class ShadowBrightColorEffect extends ColorFilter {
+
+		private Color dark, bright;
+
+		public ShadowBrightColorEffect(Color dark, Color bright) {
+			this.dark = dark;
+			this.bright = bright;
+		}
+
+		@Override
+		public Color filter(int x, int y, BufferedImage src, int rgbi) {
+			float ratio = 1-(rgbi&0xff)/255.f;
+			Color out = new Color((int)(ratio*dark.getRed()+(1-ratio)*bright.getRed()),
+					(int)(ratio*dark.getGreen()+(1-ratio)*bright.getGreen()),
+					(int)(ratio*dark.getBlue()+(1-ratio)*bright.getBlue()),
+					(rgbi>>24)&0xff);
+			return out;
+		}
+	}
+
 }
 
 class ColorEffect extends ColorFilter {
@@ -944,8 +949,6 @@ class ColorEffect extends ColorFilter {
 	float rs, gs, bs;
 
 	boolean shade = false;
-
-	public static int contrast = 0;
 
 	public int target;
 
@@ -983,9 +986,9 @@ class ColorEffect extends ColorFilter {
 		} else if (mode == 2) {
 			oc = (int) Public.range(0, 255, orr + org + orb);
 		} else if (mode == 3) {
-			oc = Math.max(orr, Math.max(org, orb)) * 3;
+			oc = oc * 3;
 		} else if (mode == 4) {
-			oc = (int) Public.Map((orr + org + orb) / 3.0, Math.max(orr, Math.max(org, orb)), 0, 255, 0);
+			oc = (int) Public.Map((orr + org + orb) / 3.0, oc, 0, 255, 0);
 		}
 
 		if (mode != -1) {
@@ -1011,7 +1014,7 @@ class ColorEffect extends ColorFilter {
 //		int b = (int) (orb * bf);
 
 		if (shade) {
-			// Creates shadow varients
+			// Creates shadow variants
 			int crs = (int) (orr * rs);
 			int cgs = (int) (org * gs);
 			int cbs = (int) (orb * bs);

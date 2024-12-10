@@ -19,7 +19,7 @@ class GifSequenceWriter {
 	protected IIOMetadata imageMetaData;
 
 	public GifSequenceWriter(ImageOutputStream outputStream, int imageType, int timeBetweenFramesMS,
-			boolean loopContinuously) throws IIOException, IOException {
+			boolean loopContinuously) throws IOException {
 		gifWriter = getWriter();
 		imageWriteParam = gifWriter.getDefaultWriteParam();
 		ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(imageType);
@@ -50,7 +50,7 @@ class GifSequenceWriter {
 
 		int loop = loopContinuously ? 0 : 1;
 
-		child.setUserObject(new byte[] { 1, (byte) (loop & 0xFF), (byte) (loop >> 8 & 0xFF) });
+		child.setUserObject(new byte[] { 1, (byte) (loop & 0xFF), (byte) (loop << 8 & 0xFF) });
 		appEntensionsNode.appendChild(child);
 
 		imageMetaData.setFromTree(metaFormatName, root);
@@ -69,11 +69,10 @@ class GifSequenceWriter {
 	}
 
 	private static ImageWriter getWriter() throws IIOException {
-		Iterator<ImageWriter> iter = ImageIO.getImageWritersBySuffix("gif");
-		if (!iter.hasNext()) {
+		Iterator<ImageWriter> iterator = ImageIO.getImageWritersBySuffix("gif");
+		if (!iterator.hasNext())
 			throw new IIOException("No GIF Image Writers Exist");
-		}
-		return (ImageWriter) iter.next();
+		return iterator.next();
 	}
 
 	private static IIOMetadataNode getNode(IIOMetadataNode rootNode, String nodeName) {

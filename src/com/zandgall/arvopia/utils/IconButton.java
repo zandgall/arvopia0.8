@@ -68,7 +68,7 @@ public class IconButton {
 		boolean mouseRight = game.getMouse().isRight();
 		if ((mouseX > x - 1) && (mouseX < x + width + 1) && (mouseY > y - 1) && (mouseY < y + height + 1) && !locked) {
 			if ((mouseLeft && game.getMouse().wasClicked())) {
-				game.getMouse().setClicked(false);
+				game.getMouse().setLeftClicked(false);
 				on = true;
 				data = false;
 			} else if (mouseRight) {
@@ -93,7 +93,7 @@ public class IconButton {
 		boolean mouseRight = game.getMouse().isRight();
 		if ((mouseX > x - 1) && (mouseX < x + width + 1) && (mouseY > y - 1) && (mouseY < y + height + 1) && !locked) {
 			if ((mouseLeft && game.getMouse().wasClicked())) {
-				game.getMouse().setClicked(false);
+				game.getMouse().setLeftClicked(false);
 				on = true;
 				data = false;
 			} else if (mouseRight || game.getMouse().STILLTIMER>100) {

@@ -1,13 +1,10 @@
 package com.zandgall.arvopia.worlds;
 
+import com.zandgall.arvopia.*;
 import com.zandgall.arvopia.Console;
-import com.zandgall.arvopia.Game;
-import com.zandgall.arvopia.Handler;
-import com.zandgall.arvopia.Initiator;
-import com.zandgall.arvopia.Reporter;
-import com.zandgall.arvopia.entity.AreaAdders;
+import com.zandgall.arvopia.entity.AreaAdder;
 import com.zandgall.arvopia.entity.Entity;
-import com.zandgall.arvopia.entity.EntityAdder;
+import com.zandgall.arvopia.entity.EntityEntry;
 import com.zandgall.arvopia.entity.EntityManager;
 import com.zandgall.arvopia.entity.creatures.Bee;
 import com.zandgall.arvopia.entity.creatures.Butterfly;
@@ -15,19 +12,16 @@ import com.zandgall.arvopia.entity.creatures.Cannibal;
 import com.zandgall.arvopia.entity.creatures.Creature;
 import com.zandgall.arvopia.entity.creatures.basic.*;
 import com.zandgall.arvopia.entity.creatures.Player;
-import com.zandgall.arvopia.entity.creatures.npcs.Fawncier;
-import com.zandgall.arvopia.entity.creatures.npcs.Frizzy;
+import com.zandgall.arvopia.entity.creatures.npcs.Lia;
 import com.zandgall.arvopia.entity.creatures.npcs.Template;
+import com.zandgall.arvopia.entity.creatures.npcs.Villager;
 import com.zandgall.arvopia.entity.moveableStatics.Cloud;
-import com.zandgall.arvopia.entity.statics.Flower;
-import com.zandgall.arvopia.entity.statics.Shrubbery;
-import com.zandgall.arvopia.entity.statics.Stone;
-import com.zandgall.arvopia.entity.statics.Tree;
-import com.zandgall.arvopia.enviornment.Enviornment;
-import com.zandgall.arvopia.enviornment.LightingEffects;
+import com.zandgall.arvopia.entity.statics.*;
+import com.zandgall.arvopia.environment.Environment;
 import com.zandgall.arvopia.gfx.ImageLoader;
 import com.zandgall.arvopia.gfx.PublicAssets;
 import com.zandgall.arvopia.gfx.transform.Tran;
+import com.zandgall.arvopia.guis.Inventory;
 import com.zandgall.arvopia.input.KeyManager;
 import com.zandgall.arvopia.items.Item;
 import com.zandgall.arvopia.items.ItemManager;
@@ -40,8 +34,6 @@ import com.zandgall.arvopia.state.GameState;
 import com.zandgall.arvopia.state.OptionState;
 import com.zandgall.arvopia.state.State;
 import com.zandgall.arvopia.tiles.Tile;
-import com.zandgall.arvopia.tiles.backtile.Backtile;
-import com.zandgall.arvopia.tiles.build.Building;
 import com.zandgall.arvopia.utils.Button;
 import com.zandgall.arvopia.utils.FileLoader;
 import com.zandgall.arvopia.utils.Noise;
@@ -50,489 +42,115 @@ import com.zandgall.arvopia.utils.Slider;
 import com.zandgall.arvopia.utils.Utils;
 import com.zandgall.arvopia.water.WaterManager;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.RasterFormatException;
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 
 public class World implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 1125716483561321653L;
 
 	public int state = 0;
 
-	public long entities = 1;
-	public long items = 1;
-	public long enviorn = 1;
-	public long water = 1;
-	public long tilet = 1;
-	public long entitiesr = 1;
-	public long itemsr = 1;
-	public long enviorr = 1;
-	public long waterr = 1;
-	public long tiler = 1;
+	// Loading and drawing time
+	public long entities = 1, items = 1, enviorn = 1, water = 1, tilet = 1, entitiesr = 1, itemsr = 1, enviorr = 1,
+			waterr = 1, tiler = 1;
 
-	public long preload = 1;
-	public long varsload = 1;
-	public long tilesload = 1;
-	public long customload = 1;
-	public long backgroundload = 1;
-	public long addingload = 1;
-	public long postload = 1;
+	// Loading time
+	public long preload, varsload = 1, tilesload = 1, customload = 1, backgroundload = 1, addingload = 1, postload = 1;
 
+	// Spawning time
 	public long sFlowers = 1, sStones = 1, sTrees = 1, sOther = 1;
 
-	private Enviornment enviornment;
+	private Environment environment;
 	private Handler handler;
-	private static int width;
-	private static int height;
-	private int spawnx;
-	private int spawny;
-	private static String[][] tiles;
-	private static String[][] backtiles;
-	public int bee;
-	public int butterfly;
-	public int fox, wolf, bear, bat, skunk, fairy;
-	public int stone0;
-	public int stone1;
-	public int stone2;
-	public int flower0;
-	public int flower1;
-	public int flower2;
-	public int youngTrees;
-	public int midTrees;
-	public int oldTrees;
-	public int cloud0;
-	public int cloud1;
-	public int cloud2;
-	public int cloud3;
-	public int cloudY;
-	public int cannibal;
+
+	private static int width, height;
+
+	private int spawnx, spawny;
+
+	static String[][] tiles;
+	static String[][] backtiles;
+
+	private int bee;
+	private int butterfly;
+	private int fox;
+	private int wolf;
+	private int bear;
+	private int bat;
+	private int skunk;
+	private int fairy;
+	private int stone0;
+	private int stone1;
+	private int stone2;
+	private int flower0;
+	private int flower1;
+	private int flower2;
+	private int youngTrees;
+	private int midTrees;
+	private int oldTrees;
+	private int cloud0;
+	private int cloud1;
+	private int cloud2;
+	private int cloud3;
+	private int cloudY;
+	private int cannibal;
 	private int maxBee;
 	private int maxButterfly;
-	private int maxFox, maxWolf, maxBear, maxBat, maxSkunk, maxFairy;
+	private int maxFox;
+	private int maxWolf;
+	private int maxBear;
+	private int maxBat;
+	private int maxSkunk;
+	private int maxFairy;
 	private int maxStone;
 	private int maxFlower;
 	private int maxTrees;
 	private int maxCannibals;
-	
 	public int shrubbery = 0;
-	int rencount = 0;
 
-	boolean waitingForCreature;
+	private int render_count = 0;
 
-	private Button respawn;
+	private boolean waitingForCreature;
+
+	private final Button respawn;
 
 	private boolean dead;
 
-	private EntityManager entityManager;
-//	Mapper<String, Integer> entitiesData;
-	java.util.Map<String, Integer> maxEntities, origEntities;
+	private ItemManager itemManager;
+	private WaterManager waterManager;
+	private ParticleManager particleManager;
+	private final EntityManager entityManager;
+	private final HashMap<String, Integer> entityCaps, entityCount;
 
 	public Entity center;
 
 	private boolean Box = false;
 
 	private boolean loading;
-	public double percentDone = 0.0D;
+	public double percentDone;
 
-	private ArrayList<ArrayList<Integer>> heights;
-
-	private ArrayList<ArrayList<Integer>> tops;
+	private ArrayList<ArrayList<Integer>> heights, tops;
 
 	private ArrayList<ArrayList<ArrayList<Integer>>> shrubs; // x-->index--> y, id
 
-	com.zandgall.arvopia.entity.creatures.npcs.Lia Lia;
 
-	private ItemManager itemManager;
+	private final Map map;
 
-	private WaterManager waterManager;
-
-	private ParticleManager particleManager;
+	private ArrayList<BufferedImage> backgroundImages, backgroundSnowOverlays;
 
 	public String save = "";
+	private String type = "World", path = "";
 
-	Map map;
-
-	BufferedImage background;
-
-	ArrayList<BufferedImage> backgroundImages;
-	ArrayList<BufferedImage> backgroundSnowOverlays;
-	BufferedImage foreground;
-
-	BufferedImage backgroundSnowOverlay;
-
-//	ArrayList<Building> builtTiles;
-
-	String type = "World", path = "";
-
-	public World(Handler handler, String path) {
-		
-		handler.getGame().initMessage("Starting world...");
-		
-		long pre = System.nanoTime();
-		this.handler = handler;
-		percentDone = 0.0D;
-		
-		map = new Map(handler);
-		
-		handler.getGame().initMessage("Creating player...");
-		
-		Player p = new Player(handler, 100.0D, 0.0D, false, 2.0D, 3);
-		
-		handler.getGame().initMessage("Starting Entity managing...");
-		
-		entityManager = new EntityManager(handler, p);
-		
-//		entitiesData = new Mapper<String, Integer>();
-		maxEntities = new HashMap<String, Integer>();
-		origEntities = new HashMap<String, Integer>();
-		
-		handler.getGame().initMessage("Starting Items, water, and particles...");
-		
-		itemManager = new ItemManager(handler, entityManager.getPlayer());
-		waterManager = new WaterManager(handler);
-		particleManager = new ParticleManager(handler);
-
-//		builtTiles = new ArrayList<Building>();
-		
-		handler.getGame().initMessage("...");
-
-		center = entityManager.getPlayer();
-		waitingForCreature = false;
-
-		loading = true;
-
-		respawn = new Button(handler, handler.getWidth() / 2, handler.getHeight() / 2, "Respawns the character",
-				"Respawn", 1);
-
-		com.zandgall.arvopia.entity.creatures.Creature.init();
-
-		handler.getGame().initMessage("Loading mods...");
-		
-		handler.loadMods(entityManager);
-
-		handler.getGame().initMessage("Loading world...");
-		preload = System.nanoTime() - pre;
-		handler.log("\t\t\t" + entityManager.adders.size());
-		this.path = path;
-		System.out.println("\t\t\tPacking " + path);
-		if (path == "generation") {
-			generateWorld(true, 200, 100, 1f, 1f, 1f, 1f, 0.2f, 2);
-			type = "Generation";
-		} else if (path.contains("/Pack")) {
-			handler.loadMod(path + "/mods", entityManager);
-			loadWorld(path + "/world.arv");
-			type = "Pack";
-		} else {
-			loadWorld(path);
-		}
-
-		enviornment.setupStars();
-
-		pre = System.nanoTime();
-		Tile.set(width, height);
-
-//		entityManager.addEntity(GnomePackage.addGnome(handler, (width - 20) * 18,
-//				getLowest(Public.range(0.0D, width * Tile.TILEWIDTH, (width - 20) * Tile.TILEWIDTH)) * Tile.TILEHEIGHT), true);
-
-		handler.getGame().initMessage("Loading Custom Entities...");
-		postload = System.nanoTime() - pre;
-		pre = System.nanoTime();
-
-		addShrubbery(10);
-
-		addTrees(youngTrees, 0, 5);
-		addTrees(midTrees, 6, 10);
-		addTrees(oldTrees, 11, 15);
-
-		addCloud(cloud0, 0);
-		addCloud(cloud1, 1);
-		addCloud(cloud2, 2);
-		addCloud(cloud3, 3);
-		addFox(fox);
-		addWolf(wolf);
-		addBear(bear);
-		addBat(bat);
-		addSkunk(skunk);
-		addFairy(fairy);
-		addBee(bee, 100000L);
-		addButterfly(butterfly, 100000L);
-		addStone(stone0, 0);
-		addStone(stone1, 1);
-		addStone(stone2, 2);
-		addFlower(flower0, 2);
-		addFlower(flower1, 1);
-		addFlower(flower2, 0);
-		addCannibalTribe(cannibal, (int) (Math.random()*width*18));
-
-		for (EntityAdder a : entityManager.adders) {
-			if (origEntities.get(a.name) != null) {
-				addEntities(origEntities.get(a.name), a);
-			}
-		}
-
-		entityManager.getPlayer().setX(spawnx);
-		entityManager.getPlayer().setY(spawny);
-
-		handler.getGame().initMessage("Loading Background...");
-		addingload = System.nanoTime() - pre;
-		pre = System.nanoTime();
-
-//		entityManager.addEntity(NPC.loadMODNPC("C:/Arvopia/Mods", handler, spawnx, spawny - 40), true);
-
-		backgroundImages = new ArrayList<BufferedImage>();
-		backgroundSnowOverlays = new ArrayList<BufferedImage>();
-
-		BufferedImage[] bg1 = createBackground(3);
-		backgroundImages.add(bg1[0]);
-		backgroundSnowOverlays.add(bg1[1]);
-		Noise.init((long) Public.random(0, 100000));
-		BufferedImage[] bg2 = createBackground(4);
-		backgroundImages.add(bg2[0]);
-		backgroundSnowOverlays.add(bg2[1]);
-		Noise.init((long) Public.random(0, 100000));
-		BufferedImage[] bg3 = createBackground(5);
-		backgroundImages.add(bg3[0]);
-		backgroundSnowOverlays.add(bg3[1]);
-		backgroundload = System.nanoTime() - pre;
-		try {
-			ImageIO.write(bg1[0], "png", new File("C:\\Arvopia\\bg0.png"));
-			ImageIO.write(bg2[0], "png", new File("C:\\Arvopia\\bg1.png"));
-			ImageIO.write(bg3[0], "png", new File("C:\\Arvopia\\bg2.png"));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public World(Handler handler, int width, int height, float foliage, float stones, float insects, float creatures,
-			float cannibals, int caves) {
-		long pre = System.nanoTime();
-		this.handler = handler;
-		percentDone = 0.0D;
-
-		map = new Map(handler);
-
-		entityManager = new EntityManager(handler, new Player(handler, 100.0D, 0.0D, false, 2.0D, 3));
-//		entitiesData = new Mapper<String, Integer>();
-		maxEntities = new HashMap<String, Integer>();
-		origEntities = new HashMap<String, Integer>();
-		itemManager = new ItemManager(handler, entityManager.getPlayer());
-		waterManager = new WaterManager(handler);
-		particleManager = new ParticleManager(handler);
-
-//		builtTiles = new ArrayList<Building>();
-
-		center = entityManager.getPlayer();
-		waitingForCreature = false;
-
-		loading = true;
-
-		respawn = new Button(handler, handler.getWidth() / 2 - 50, handler.getHeight() / 2 - 25, 100, 25,
-				"Respawns the character", "Respawn");
-
-		com.zandgall.arvopia.entity.creatures.Creature.init();
-
-		preload = System.nanoTime() - pre;
-
-		type = "Generation";
-		generateWorld(true, width, height, foliage, stones, insects, creatures, cannibals, caves);
-
-		pre = System.nanoTime();
-		Tile.set(width, height);
-
-		enviornment.setupStars();
-
-		highestTile();
-
-		handler.loadMods(entityManager);
-
-//		entityManager.addEntity(GnomePackage.addGnome(handler, (width - 20) * 18,
-//				getLowest(Public.range(0.0D, width * Tile.TILEWIDTH, (width - 20) * Tile.TILEWIDTH)) * Tile.TILEHEIGHT), true);
-
-		handler.getGame().initMessage("Loading Custom Entities...");
-		postload = System.nanoTime() - pre;
-		pre = System.nanoTime();
-
-		addShrubbery(10);
-
-		addTrees(youngTrees, 0, 5);
-		addTrees(midTrees, 6, 10);
-		addTrees(oldTrees, 11, 15);
-
-		addCloud(cloud0, 0);
-		addCloud(cloud1, 1);
-		addCloud(cloud2, 2);
-		addCloud(cloud3, 3);
-		addFox(fox);
-		addWolf(wolf);
-		addBear(bear);
-		addBat(bat);
-		addSkunk(skunk);
-		addFairy(fairy);
-		addBee(bee, 100000L);
-		addButterfly(butterfly, 100000L);
-		addStone(stone0, 0);
-		addStone(stone1, 1);
-		addStone(stone2, 2);
-		addFlower(flower0, 2);
-		addFlower(flower1, 1);
-		addFlower(flower2, 0);
-		entityManager.getPlayer().setX(spawnx);
-		entityManager.getPlayer().setY(spawny);
-
-		for (EntityAdder a : entityManager.adders) {
-			if (origEntities.containsKey(a.name)) {
-				addEntities(origEntities.get(a.name), a);
-			}
-		}
-
-		handler.getGame().initMessage("Making Background...");
-		addingload = System.nanoTime() - pre;
-		pre = System.nanoTime();
-
-		backgroundImages = new ArrayList<BufferedImage>();
-		backgroundSnowOverlays = new ArrayList<BufferedImage>();
-
-		BufferedImage[] bg1 = createBackground(3);
-		backgroundImages.add(bg1[0]);
-		backgroundSnowOverlays.add(bg1[1]);
-		Noise.init((long) Public.random(0, 100000));
-		BufferedImage[] bg2 = createBackground(4);
-		backgroundImages.add(bg2[0]);
-		backgroundSnowOverlays.add(bg2[1]);
-		Noise.init((long) Public.random(0, 100000));
-		BufferedImage[] bg3 = createBackground(5);
-		backgroundImages.add(bg3[0]);
-		backgroundSnowOverlays.add(bg3[1]);
-		try {
-			ImageIO.write(bg1[0], "png", new File("C:\\Arvopia\\bg0.png"));
-			ImageIO.write(bg2[0], "png", new File("C:\\Arvopia\\bg1.png"));
-			ImageIO.write(bg3[0], "png", new File("C:\\Arvopia\\bg2.png"));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		backgroundload = System.nanoTime() - pre;
-	}
-
-	public World(Handler handler, ArrayList<Slider> sliders) {
-		long pre = System.nanoTime();
-		this.handler = handler;
-		percentDone = 0.0D;
-
-		map = new Map(handler);
-
-		entityManager = new EntityManager(handler, new Player(handler, 100.0D, 0.0D, false, 2.0D, 3));
-//		entitiesData = new Mapper<String, Integer>();
-		maxEntities = new HashMap<String, Integer>();
-		origEntities = new HashMap<String, Integer>();
-		itemManager = new ItemManager(handler, entityManager.getPlayer());
-		waterManager = new WaterManager(handler);
-		particleManager = new ParticleManager(handler);
-
-//		builtTiles = new ArrayList<Building>();
-
-		center = entityManager.getPlayer();
-		waitingForCreature = false;
-
-		loading = true;
-
-		respawn = new Button(handler, handler.getWidth() / 2 - 50, handler.getHeight() / 2 - 25, 100, 25,
-				"Respawns the character", "Respawn");
-
-		com.zandgall.arvopia.entity.creatures.Creature.init();
-
-		preload = System.nanoTime() - pre;
-
-		type = "Generation";
-		generateWorld(true, sliders);
-
-		pre = System.nanoTime();
-		Tile.set(width, height);
-
-		enviornment.setupStars();
-
-		highestTile();
-
-		handler.loadMods(entityManager);
-
-//		entityManager.addEntity(GnomePackage.addGnome(handler, (width - 20) * 18,
-//				getLowest(Public.range(0.0D, width * Tile.TILEWIDTH, (width - 20) * Tile.TILEWIDTH)) * Tile.TILEHEIGHT), true);
-
-		handler.getGame().initMessage("Loading Custom Entities...");
-		postload = System.nanoTime() - pre;
-		pre = System.nanoTime();
-
-		addShrubbery(10);
-
-		addTrees(youngTrees, 0, 5);
-		addTrees(midTrees, 6, 10);
-		addTrees(oldTrees, 11, 15);
-
-		addCloud(cloud0, 0);
-		addCloud(cloud1, 1);
-		addCloud(cloud2, 2);
-		addCloud(cloud3, 3);
-		addFox(fox);
-		addWolf(wolf);
-		addBear(bear);
-		addBat(bat);
-		addSkunk(skunk);
-		addFairy(fairy);
-		addBee(bee, 100000L);
-		addButterfly(butterfly, 100000L);
-		addStone(stone0, 0);
-		addStone(stone1, 1);
-		addStone(stone2, 2);
-		addFlower(flower0, 2);
-		addFlower(flower1, 1);
-		addFlower(flower2, 0);
-		entityManager.getPlayer().setX(spawnx);
-		entityManager.getPlayer().setY(spawny);
-
-		for (EntityAdder a : entityManager.adders) {
-			if (origEntities.containsKey(a.name)) {
-				addEntities(origEntities.get(a.name), a);
-			}
-		}
-
-		handler.getGame().initMessage("Making Background...");
-		addingload = System.nanoTime() - pre;
-		pre = System.nanoTime();
-
-		backgroundImages = new ArrayList<BufferedImage>();
-		backgroundSnowOverlays = new ArrayList<BufferedImage>();
-
-		BufferedImage[] bg1 = createBackground(3);
-		backgroundImages.add(bg1[0]);
-		backgroundSnowOverlays.add(bg1[1]);
-		Noise.init((long) Public.random(0, 100000));
-		BufferedImage[] bg2 = createBackground(4);
-		backgroundImages.add(bg2[0]);
-		backgroundSnowOverlays.add(bg2[1]);
-		Noise.init((long) Public.random(0, 100000));
-		BufferedImage[] bg3 = createBackground(5);
-		backgroundImages.add(bg3[0]);
-		backgroundSnowOverlays.add(bg3[1]);
-		try {
-			ImageIO.write(bg1[0], "png", new File("C:\\Arvopia\\bg0.png"));
-			ImageIO.write(bg2[0], "png", new File("C:\\Arvopia\\bg1.png"));
-			ImageIO.write(bg3[0], "png", new File("C:\\Arvopia\\bg2.png"));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		backgroundload = System.nanoTime() - pre;
-	}
+	public static WorldImageUpdater imageCreator = null;
 
 	public World(Handler handler) {
 		long pre = System.nanoTime();
@@ -541,289 +159,125 @@ public class World implements Serializable {
 
 		map = new Map(handler);
 
-		entityManager = new EntityManager(handler, new Player(handler));
-//		entitiesData = new Mapper<String, Integer>();
-		maxEntities = new HashMap<String, Integer>();
-		origEntities = new HashMap<String, Integer>();
-//		itemManager = new ItemManager(handler);
-//		waterManager = new WaterManager(handler);
-//		particleManager = new ParticleManager(handler);
+		Creature.init();
+		entityManager = new EntityManager(handler, new Player(handler, 100.0D, 0.0D, false, 2.0D, 3));
+		Inventory.ForgeHandler.init(handler, entityManager.getPlayer());
+		itemManager = new ItemManager(handler, entityManager.getPlayer());
+		waterManager = new WaterManager(handler);
+		particleManager = new ParticleManager(handler);
+		entityCaps = new HashMap<>();
+		entityCount = new HashMap<>();
 
-		handler.loadMods(entityManager);
+		center = entityManager.getPlayer();
 
-//		builtTiles = new ArrayList<Building>();
-
-//		center = entityManager.getPlayer();
 		waitingForCreature = false;
-
 		loading = true;
-
 		respawn = new Button(handler, handler.getWidth() / 2 - 50, handler.getHeight() / 2 - 25, 100, 25,
 				"Respawns the character", "Respawn");
 
-//		com.zandgall.arvopia.entity.creatures.Creature.init();
-
 		preload = System.nanoTime() - pre;
 
-		enviornment = new Enviornment(handler);
+		environment = new Environment(handler);
+		environment.setupStars();
+
+//		if(imageCreator!=null)
+//			try {
+//				imageCreator.join();
+//			} catch(InterruptedException e) {
+//				e.printStackTrace();
+//			}
+
+		if(imageCreator==null)
+			imageCreator = new WorldImageUpdater();
 	}
 
-	public void generateWorld(boolean beginning) {
-
-		if (beginning) {
-			GameState gset = (GameState) State.getState();
-			gset.setLoadingPhase(1);
-			State.setState(gset);
+	public World(Handler handler, String path) {
+		this(handler);
+		handler.getGame().initMessage("Loading world...");
+		this.path = path;
+		if (path.contains("/Pack")) {
+			loadWorld(path + "/World.arv");
+			type = "Pack";
+		} else {
+			loadWorld(path);
 		}
-		handler.getGame().initMessage("Loading Variables...");
+
+		WorldImageUpdater.update();
 
 		long pre = System.nanoTime();
+		Tile.resetSnowiness();
 
-		width = (int) Public.random(100.0D, 300.0D);
-		height = (int) Public.random(50.0D, 100.0D);
-
-		stone0 = ((int) Public.random(width / 50, width / 40));
-		stone1 = ((int) Public.random(width / 50, width / 40));
-		stone2 = ((int) Public.random(width / 50, width / 40));
-		flower0 = ((int) Public.random(width / 50, width / 40));
-		flower1 = ((int) Public.random(width / 50, width / 40));
-		flower2 = ((int) Public.random(width / 50, width / 40));
-		youngTrees = ((int) Public.random(width / 50, width / 40));
-		midTrees = ((int) Public.random(width / 50, width / 40));
-		oldTrees = ((int) Public.random(width / 45, width / 30));
-
-		bee = ((int) Public.random(width / 50, width / 40));
-		butterfly = ((int) Public.random(width / 50, width / 40));
-		fox = ((int) Public.random(width / 40, width / 10));
-		cannibal = ((int) Public.random(width / 100, width / 50));
-
-		maxStone = ((int) Public.random(width, width * 2));
-		maxFlower = ((int) Public.random(width, width * 2));
-		maxTrees = ((int) Public.random(width, width * 2));
-
-		maxBee = ((int) Public.random(width / 20, width / 10));
-		maxButterfly = ((int) Public.random(width / 20, width / 10));
-		maxFox = ((int) Public.random(width / 10, width / 5));
-		maxCannibals = ((int) Public.random(width / 50, width / 40));
-
-		cloud0 = ((int) Public.random(width / 50, width / 20));
-		cloud1 = ((int) Public.random(width / 50, width / 20));
-		cloud2 = ((int) Public.random(width / 50, width / 20));
-		cloud3 = ((int) Public.random(width / 50, width / 20));
-		cloudY = ((int) Public.random(height / 4, height / 2));
-
-		varsload = System.nanoTime() - pre;
+		handler.getGame().initMessage("Loading Custom Entities...");
+		postload = System.nanoTime() - pre;
 		pre = System.nanoTime();
 
-		handler.getGame().initMessage("Loading Tiles...");
+		entityManager.getPlayer().setX(spawnx);
+		entityManager.getPlayer().setY(spawny);
 
-		double y = cloudY;
+		handler.getGame().initMessage("Loading Background...");
+		addingload = System.nanoTime() - pre;
+		pre = System.nanoTime();
 
-		tiles = new String[width][height];
+		backgroundImages = new ArrayList<>();
+		backgroundSnowOverlays = new ArrayList<>();
 
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				tiles[i][j] = "TILE" + 0;
-			}
-		}
-
-		int biome = 1;
-
-		for (int i = 0; i < width; i++) {
-			tiles[i][((int) Math.max(0.0D, y))] = "TILE" + 2;
-
-			for (int j = (int) y + 1; j < height; j++) {
-				tiles[i][Math.max(0, j)] = "TILE" + 5;
-			}
-
-			y = Noise.noise1(i);
-
-			if (Public.chance(1.0D)) {
-				biome = (int) Public.random(1.0D, 5.0D);
-				System.out.println("Biome: " + biome);
-			}
-		}
-
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				tiles[i][j] = formatTiles(tiles, i, j);
-			}
-		}
-		tilesload = System.nanoTime() - pre;
-
-		highestTile();
-
-		spawnx = 180;
-		spawny = getHighest(180.0D);
-
-		enviornment = new Enviornment(handler, Public.random(1.0D, 5.0D), Public.random(1.0D, 5.0D),
-				Public.random(50.0D, 100.0D));
+		BufferedImage[] bg1 = createBackground(3);
+		backgroundImages.add(bg1[0]);
+		backgroundSnowOverlays.add(bg1[1]);
+		Noise.init((long) Public.expandedRand(0, 100000));
+		BufferedImage[] bg2 = createBackground(4);
+		backgroundImages.add(bg2[0]);
+		backgroundSnowOverlays.add(bg2[1]);
+		Noise.init((long) Public.expandedRand(0, 100000));
+		BufferedImage[] bg3 = createBackground(5);
+		backgroundImages.add(bg3[0]);
+		backgroundSnowOverlays.add(bg3[1]);
+		backgroundload = System.nanoTime() - pre;
+//		try {
+//			ImageIO.write(bg1[0], "png", new File("C:\\Output.png"));
+//		} catch (IOException e) {
+//			throw new RuntimeException(e);
+//		}
 	}
 
-	public void generateWorld(boolean beginning, int width, int height, float foliation, float stones, float insects,
-			float creatures, float cannibals, int caves) {
+	public World(Handler handler, long seed, ArrayList<Slider> sliders) {
+		this(handler);
 
-		if (beginning) {
-			GameState gset = (GameState) State.getState();
-			gset.setLoadingPhase(1);
-			State.setState(gset);
-		}
-		handler.getGame().initMessage("Loading Variables...");
+		Creature.init();
 
+		type = "Generation";
+		generateWorld(seed, true, sliders);
+		WorldImageUpdater.update();
+		handler.getGame().initMessage("Loading Custom Entities...");
 		long pre = System.nanoTime();
 
-		World.width = width;
-		World.height = height;
-
-		stone0 = (int) (width * stones * 0.1);
-		stone1 = (int) (width * stones * 0.1);
-		stone2 = (int) (width * stones * 0.1);
-		flower0 = (int) (width * foliation * 0.1);
-		flower1 = (int) (width * foliation * 0.1);
-		flower2 = (int) (width * foliation * 0.1);
-		youngTrees = (int) (width * foliation * 0.1);
-		midTrees = (int) (width * foliation * 0.1);
-		oldTrees = (int) ((width / 45) * foliation * 0.1);
-
-		bee = (int) (width * insects * 0.1);
-		butterfly = (int) (width * insects * 0.1);
-		fairy = (int) (width * insects * 0.1);
-
-		fox = (int) (width * creatures * 0.1);
-		wolf = (int) (width * creatures * 0.1);
-		bear = (int) (width * creatures * 0.1);
-		bat = (int) (width * creatures * 0.1);
-		skunk = (int) (width * creatures * 0.1);
-
-		cannibal = (int) ((width / 100) * cannibals * 0.1);
-
-		maxStone = (int) (width * stones * 0.1);
-		maxFlower = (int) (width * stones * 0.1);
-		maxTrees = (int) (width * stones * 0.1);
-
-		maxBee = (int) (width * insects * 0.1);
-		maxButterfly = (int) (width * insects * 0.1);
-		maxFairy = (int) (width * insects * 0.1);
-
-		maxFox = (int) (width * creatures * 0.1);
-
-		maxCannibals = (int) (width * creatures * 0.1);
-
-		cloud0 = ((int) Public.random(width / 50, width / 20));
-		cloud1 = ((int) Public.random(width / 50, width / 20));
-		cloud2 = ((int) Public.random(width / 50, width / 20));
-		cloud3 = ((int) Public.random(width / 50, width / 20));
-		cloudY = ((int) Public.random(height / 4, height / 2));
-
-		varsload = System.nanoTime() - pre;
+		handler.getGame().initMessage("Making Background...");
+		addingload = System.nanoTime() - pre;
 		pre = System.nanoTime();
 
-		handler.getGame().initMessage("Loading Tiles...");
+		backgroundImages = new ArrayList<>();
+		backgroundSnowOverlays = new ArrayList<>();
 
-		int bh = height * 18;
-		double c = Public.debugRandom(-1.0D, 1.0D);
-		double y = (Noise.noise1(c) * 10 + (bh / 72));
+		BufferedImage[] bg1 = createBackground(3);
+		backgroundImages.add(bg1[0]);
+		backgroundSnowOverlays.add(bg1[1]);
+		Noise.init((long) Public.expandedRand(0, 100000));
+		BufferedImage[] bg2 = createBackground(4);
+		backgroundImages.add(bg2[0]);
+		backgroundSnowOverlays.add(bg2[1]);
+		Noise.init((long) Public.expandedRand(0, 100000));
+		BufferedImage[] bg3 = createBackground(5);
+		backgroundImages.add(bg3[0]);
+		backgroundSnowOverlays.add(bg3[1]);
 
-		tiles = new String[width][height];
-		backtiles = new String[width][height];
-
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				tiles[i][j] = "TILE0";
-				backtiles[i][j] = "TILE0";
-			}
-		}
-
-		// CAVES
-
-		int biome = 1;
-		double offset = 0;
-
-		for (int i = 0; i < width; i++) {
-			tiles[i][((int) Math.max(2.0D, Math.min(y, tiles[i].length - 2)))] = "TILE2";
-
-			for (int j = (int) y + 1; j < height; j++) {
-				tiles[i][Math.max(0, j)] = "TILE5";
-			}
-
-			c += 0.02;
-
-			y = (Noise.noise1(c) * 10 * biome + (bh / 72)) + offset;
-
-			if (Public.chance(1.0D)) {
-				biome = (int) Public.random(1.0D, 5.0D);
-				double original = (y - (bh / 72));
-				double newer = (Noise.noise1(c) * 20 * biome);
-				offset = original - newer;
-				System.out.println("Biome: " + biome);
-			}
-		}
-
-		for (int i = 0; i < caves; i++) {
-			Noise n = new Noise((long) (Math.random() * 10000));
-
-			double radius = 0;
-			double momentum = Math.random() * 1000;
-			double xc = Math.random() * (width);
-			double yc = 0;
-			while (radius < 10) {
-				xc = Public.range(0, width, xc);
-				xc += n.get1(momentum) * 2;
-				yc = Math.max(yc, 0);
-				yc += (n.get1(-momentum) + 0.1) * 0.4;
-
-				// int r = (n.get1(radius)>-0.25 ? 3 : 0);
-				int r = 5;
-				for (double px = xc - r; px < xc + r; px++) {
-					for (double py = yc - r; py < yc + r; py++) {
-						int tx = (int) Public.range(0, tiles.length - 1, px);
-						int ty = (int) Public.range(0, tiles[0].length - 1, py);
-						int cx = (int) Public.range(0, tiles.length - 1, xc);
-						int cy = (int) Public.range(0, tiles[0].length - 1, yc);
-
-						if (tiles[tx][ty] != "TILE0")
-							backtiles[tx][ty] = "TILE5";
-						if (Public.dist(tx, ty, cx, cy) <= r - 2)
-							tiles[tx][ty] = "TILE0";
-					}
-				}
-
-				momentum += 0.0025;
-				radius += 0.0025;
-			}
-		}
-
-		// tiles[i][((int) Math.max(0.0D, Math.min(y, tiles[i].length - 2)))] = 2;
-		//
-		// for (int j = (int) y + 1; j < height; j++) {
-		// tiles[i][Math.max(0, j)] = 5;
-		// }
-		//
-		// }
-
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				tiles[i][j] = formatTiles(tiles, i, j);
-				backtiles[i][j] = formatBacktiles(backtiles, i, j);
-			}
-		}
-		tilesload = System.nanoTime() - pre;
-
-		highestTile();
-
-		spawnx = 180;
-		spawny = getHighest(180.0D);
-
-		enviornment = new Enviornment(handler, Public.random(1.0D, 5.0D), Public.random(1.0D, 5.0D),
-				Public.random(50.0D, 100.0D));
+		backgroundload = System.nanoTime() - pre;
 	}
 
-	public void generateWorld(boolean beginning, ArrayList<Slider> sliders) {
-
+	public void generateWorld(long seed, boolean beginning, ArrayList<Slider> sliders) {
+		// If you change this, make sure to change GenerateWorldState preview generation
 		if (beginning) {
-			GameState gset = (GameState) State.getState();
-			gset.setLoadingPhase(1);
-			State.setState(gset);
+			handler.getGame().gameState.setLoadingPhase(1);
+			State.setState(handler.getGame().gameState);
 		}
 		handler.getGame().initMessage("Loading Variables...");
 
@@ -843,13 +297,14 @@ public class World implements Serializable {
 				caves = s.getValue();
 		}
 
-		float stones = 0, foliation = 0, insects = 0, creatures = 0, cannibals = 0;
-
-		cloud0 = ((int) Public.random(width / 50, width / 20));
-		cloud1 = ((int) Public.random(width / 50, width / 20));
-		cloud2 = ((int) Public.random(width / 50, width / 20));
-		cloud3 = ((int) Public.random(width / 50, width / 20));
-		cloudY = ((int) Public.random(height / 4, height / 2));
+		double stones = 0, foliation = 0, insects = 0, creatures = 0, cannibals = 0;
+		Random rand = new Random(seed);
+		Noise.init(seed);
+		cloud0 = rand.nextInt(width / 50, width / 20);
+		cloud1 = rand.nextInt(width / 50, width / 20);
+		cloud2 = rand.nextInt(width / 50, width / 20);
+		cloud3 = rand.nextInt(width / 50, width / 20);
+		cloudY = rand.nextInt(height / 4, height / 2);
 
 		varsload = System.nanoTime() - pre;
 		pre = System.nanoTime();
@@ -857,8 +312,8 @@ public class World implements Serializable {
 		handler.getGame().initMessage("Loading Tiles...");
 
 		int bh = height * 18;
-		double c = Public.debugRandom(-1.0D, 1.0D);
-		double y = (Noise.noise1(c) * 10 + (bh / 72));
+		double c = rand.nextDouble(-1, 1);
+		double y = (Noise.noise1(c) * 10 + (bh / 72.f));
 
 		tiles = new String[width][height];
 		backtiles = new String[width][height];
@@ -866,28 +321,66 @@ public class World implements Serializable {
 		for (int i = 0; i < tiles.length; i++) {
 			for (int j = 0; j < tiles[0].length; j++) {
 				tiles[i][j] = "TILE0";
+				backtiles[i][j] = "TILE0";
 			}
 		}
 
+		int[][] caveTiles = new int[width][height];
 		// CAVES
+		// Done beforehand, both so that preview image in GenerateWorldState is easier to create,
+		// But also so that caves are more consistent per world, rather than randomized if the width of a world is
+		// changed, and thus rand.next gets more calls before caves are generated
+		for (int i = 0; i < caves; i++) {
+			Noise n = new Noise(rand.nextLong());
+
+			double radius = 0;
+			double momentum = rand.nextDouble(1000);
+			double xc = rand.nextDouble(width);
+			double yc = 0;
+			double r = 5;
+			while (yc < height - r - 5) {
+				xc = Public.range(0, width, xc);
+				xc += n.get1(momentum) * 2;
+				yc = Math.max(yc, 0);
+				yc += (n.get1(-momentum) + 0.1) * 0.4;
+
+				r = Public.range(1.75, 5.0, n.get1(radius)*5.0+5.0);
+				int cx = (int) Public.range(0, tiles.length - 1, xc);
+				int cy = (int) Public.range(0, tiles[0].length - 1, yc);
+				for (double px = xc - r; px < xc + r; px++) {
+					for (double py = yc - r; py < yc + r; py++) {
+						int tx = (int) Public.range(0, tiles.length - 1, px);
+						int ty = (int) Public.range(0, tiles[0].length - 1, py);
+
+						if (Public.dist(tx, ty, cx, cy) <= r)
+							caveTiles[tx][ty] = 1;
+					}
+				}
+
+				momentum += 0.0025;
+				radius += 0.0025;
+			}
+		}
 
 		int biome = 1;
 		double offset = 0;
 
 		for (int i = 0; i < width; i++) {
-			tiles[i][((int) Math.max(2.0D, Math.min(y, tiles[i].length - 2)))] = "TILE" + 2;
+			y = Public.range(0, height, y);
+			if(caveTiles[i][(int) y]==0)
+				tiles[i][(int) y] = "TILE" + 2;
 
-			for (int j = (int) y + 1; j < height; j++) {
-				tiles[i][Math.max(0, j)] = "TILE" + 5;
-			}
+			for (int j = (int) y + 1; j < height; j++)
+				if(caveTiles[i][j]==0)
+					tiles[i][Math.max(0, j)] = "TILE" + 5;
 
 			c += 0.02;
 
-			y = (Noise.noise1(c) * 10 * biome + (bh / 72)) + offset;
+			y = (Noise.noise1(c) * 10 * biome + (bh / 72.f)) + offset;
 
-			if (Public.chance(1.0D)) {
-				biome = (int) Public.random(1.0D, 5.0D);
-				double original = (y - (bh / 72));
+			if (rand.nextDouble() < 0.01) {
+				biome = rand.nextInt(1, 6);
+				double original = (y - (bh / 72.f));
 				double newer = (Noise.noise1(c) * 20 * biome);
 				offset = original - newer;
 				System.out.println("Biome: " + biome);
@@ -897,27 +390,33 @@ public class World implements Serializable {
 		for (Slider s : sliders) {
 			String e = s.getName();
 
-			for (EntityAdder a : entityManager.adders) {
-				if (a.name.contains(e) && e.contains(a.name))
-					maxEntities.put(a.name, (int) (width * s.getWholeValue() * 0.1));
+			for (EntityEntry a : entityManager.entityEntries.values()) {
+				if (a.name.contains(e) && e.contains(a.name)) {
+					entityCaps.put(a.name, (int) (width * s.getWholeValue() * 0.1));
+				}
 //					maxEntities.put(a.name, (int) (width * d[contInt + 1] * 0.1));
 			}
 
-			if (e == "Stones")
-				stones = s.getValue();
-			if (e == "Foliation")
-				foliation = s.getValue();
-			if (e == "Creatures")
-				creatures = s.getValue();
-			if (e == "Insects")
-				insects = s.getValue();
-			if (e == "Cannibals")
-				cannibals = s.getValue();
+			if (Objects.equals(e, "Stones")) {
+				stones = s.getWholeValue();
+			}
+			if (Objects.equals(e, "Foliation")) {
+				foliation = s.getWholeValue();
+			}
+			if (Objects.equals(e, "Creatures")) {
+				creatures = s.getWholeValue();
+			}
+			if (Objects.equals(e, "Insects")) {
+				insects = s.getWholeValue();
+			}
+			if (Objects.equals(e, "Cannibals")) {
+				cannibals = s.getWholeValue();
+			}
 		}
 
-		for (EntityAdder a : entityManager.adders) {
-			if (maxEntities.containsKey(a.name)) {
-				origEntities.put(a.name, maxEntities.get(a.name) / 4);
+		for (EntityEntry a : entityManager.entityEntries.values()) {
+			if (entityCaps.containsKey(a.name)) {
+				entityCount.put(a.name, entityCaps.get(a.name) / 4);
 			}
 		}
 
@@ -929,7 +428,7 @@ public class World implements Serializable {
 		flower2 = (int) (width * foliation * 0.1);
 		youngTrees = (int) (width * foliation * 0.1);
 		midTrees = (int) (width * foliation * 0.1);
-		oldTrees = (int) ((width / 45) * foliation * 0.1);
+		oldTrees = (int) ((width / 45.0) * foliation * 0.1);
 
 		bee = (int) (width * insects * 0.1);
 		butterfly = (int) (width * insects * 0.1);
@@ -941,7 +440,8 @@ public class World implements Serializable {
 		bat = (int) (width * creatures * 0.1);
 		skunk = (int) (width * creatures * 0.1);
 
-		cannibal = (int) ((width / 100) * cannibals * 0.1);
+		maxCannibals = (int) (width * cannibals * 0.1);
+		cannibal = maxCannibals / 2;
 
 		maxStone = (int) (width * stones * 0.1);
 		maxFlower = (int) (width * stones * 0.1);
@@ -953,98 +453,56 @@ public class World implements Serializable {
 
 		maxFox = (int) (width * creatures * 0.1);
 
-		maxCannibals = (int) (width * creatures * 0.1);
-
-		for (int i = 0; i < caves; i++) {
-			Noise n = new Noise((long) (Math.random() * 10000));
-
-			double radius = 0;
-			double momentum = Math.random() * 1000;
-			double xc = Math.random() * (width);
-			double yc = 0;
-			while (radius < 10) {
-				xc = Public.range(0, width, xc);
-				xc += n.get1(momentum) * 2;
-				yc = Math.max(yc, 0);
-				yc += (n.get1(-momentum) + 0.1) * 0.4;
-
-//			int r = (n.get1(radius)>-0.25 ? 3 : 0);
-				int r = 5;
-				for (double px = xc - r; px < xc + r; px++) {
-					for (double py = yc - r; py < yc + r; py++) {
-						int tx = (int) Public.range(0, tiles.length - 1, px);
-						int ty = (int) Public.range(0, tiles[0].length - 1, py);
-						int cx = (int) Public.range(0, tiles.length - 1, xc);
-						int cy = (int) Public.range(0, tiles[0].length - 1, yc);
-
-						if (tiles[tx][ty] != "TILE" + 0)
-							backtiles[tx][ty] = "TILE5";
-						if (Public.dist(tx, ty, cx, cy) <= r - 2)
-							tiles[tx][ty] = "TILE" + 0;
-					}
-				}
-
-				momentum += 0.0025;
-				radius += 0.0025;
-			}
-		}
-
-//			tiles[i][((int) Math.max(0.0D, Math.min(y, tiles[i].length - 2)))] = 2;
-//
-//			for (int j = (int) y + 1; j < height; j++) {
-//				tiles[i][Math.max(0, j)] = 5;
+//		Todo
+//		for (int i = 0; i < tiles.length; i++) {
+//			for (int j = 0; j < tiles[0].length; j++) {
+//				tiles[i][j] = formatTiles(tiles, i, j);
+//				backtiles[i][j] = formatBacktiles(backtiles, i, j);
 //			}
-//
 //		}
-
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				tiles[i][j] = formatTiles(tiles, i, j);
-				backtiles[i][j] = formatBacktiles(backtiles, i, j);
-			}
-		}
 		tilesload = System.nanoTime() - pre;
 
 		highestTile();
 
 		spawnx = 180;
-		spawny = getHighest(180.0D);
+		spawny = getHighest(180.0D)*Tile.HEIGHT;
 
-		enviornment = new Enviornment(handler, Public.random(1.0D, 5.0D), Public.random(1.0D, 5.0D),
-				Public.random(50.0D, 100.0D));
+		environment = new Environment(handler, Public.expandedRand(1.0D, 5.0D), Public.expandedRand(1.0D, 5.0D),
+				Public.expandedRand(50.0D, 100.0D));
 	}
 
 	public BufferedImage[] createBackground(double index) {
 		
-		int bw = width * 18 + handler.getWidth();
-		int bh = height * 18 + handler.getHeight();
+		int bw = width * 18;
+		int bh = height * 18;
 
 		BufferedImage backgroundImage = new BufferedImage(bw, bh, 6);
 		BufferedImage backgroundImageSnowy = new BufferedImage(bw, bh, 6);
 		Graphics bg = backgroundImage.getGraphics();
 		Graphics sg = backgroundImageSnowy.getGraphics();
 
-		double c = Public.debugRandom(-1.0D, 1.0D);
+		double c = Public.rand(-1.0D, 1.0D);
 		if (tiles == null || tiles.length == 0)
 			return null;
-		double y = Noise.noise1(0) * 30 + (tiles[0].length / 4) - (height / 10 * index) / 2;
+		double y;
 
-		String[][] tiles = new String[bw / 9][bh / 9];
+		ArrayList<ArrayList<String>> tiles = new ArrayList<>();
 		
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				tiles[i][j] = "TILE" + 0;
+		for (int i = 0; i < width; i++) {
+			tiles.add(new ArrayList<>());
+			for (int j = 0; j < height; j++) {
+				tiles.get(i).add("TILE0");
 			}
 		}
 
-		for (int i = 0; i < bw / 9; i++) {
+		for (int i = 0; i < width; i++) {
 
-			y = Noise.noise1((i / 100.0) * 2) * 30 + (tiles[0].length / 4) - (height / 10 * index) / 2;
+			y = Noise.noise1((i / 100.0) * 2) * 30 + (height / 2.0) - (height / 10.0 * index) / 2;
 
-			tiles[i][((int) Math.max(0.0D, Math.min(y, tiles[0].length - 1)))] = "TILE" + 2;
+			tiles.get(i).set(((int) Math.max(0.0D, Math.min(y, height - 1))), "TILE6");
 
-			for (int j = (int) y + 1; j < bh / 9; j++) {
-				tiles[i][Math.max(0, j)] = "TILE" + 5;
+			for (int j = (int) y + 1; j < height; j++) {
+				tiles.get(i).set(Math.max(0, j), "TILE5");
 			}
 
 			if (Math.abs(c) >= 2.0D)
@@ -1059,56 +517,63 @@ public class World implements Serializable {
 			}
 		}
 		
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[0].length; j++) {
-				tiles[i][j] = formatTiles(tiles, i, j);
-			}
-		}
+		Tile.formatTiles(tiles, 0, 0, width, height);
 
 		int bs = 0;
-		
-		for (int i = 0; i < tiles.length; i++) {
-			for (int j = 0; j < tiles[i].length - 1; j++) {
-				if ((tiles[i][j] == "TILE" + 0) && (tiles[i][(j + 1)] == "TILE" + 1 || tiles[i][j+1]=="TILE"+2 || tiles[i][j+1]=="TILE"+3)) {
-					if ((Public.chance(maxStone / 2)) && (bs < maxStone)) {
-						bg.drawImage(PublicAssets.stone[((int) Public.random(0.0D, 2.0D))], i * 15, j * 15, 15, 15,
+
+		Color fol = new Color(10, 250, 60);
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height-1; j++) {
+				if (tiles.get(i).get(j).equals("TILE0") && !tiles.get(i).get(j+1).equals("TILE0")) {
+					if (entityCaps.containsKey("Stone") && Public.chance(entityCaps.get("Stone")*5.0 / width))
+						bg.drawImage(PublicAssets.stone[((int) Public.expandedRand(0.0D, 2.0D))], i * 18, j * 18, 18, 18,
 								null);
-						bs++;
+					else if (entityCaps.containsKey("Flower") && Public.chance(entityCaps.get("Flower")*40.0 / width))
+						bg.drawImage(PublicAssets.flower[((int) Public.expandedRand(0.0D, 8.0D))], i * 18, j * 18,
+								PublicAssets.flower[0].getWidth(),
+								PublicAssets.flower[0].getHeight(), null);
+					else if (Public.chance(4)) {
+						int f = Public.randInt(4, 6);
+						bg.drawImage(Tran.effectImage(new Tran.ShadowBrightColorEffect(new Color(50, 50, 100), fol),
+										PublicAssets.shrubbery[f]), i * 18, j * 18, PublicAssets.shrubbery[f].getWidth(),
+								PublicAssets.shrubbery[f].getHeight(), null);
+						if(f==5)
+							bg.drawImage(PublicAssets.shrubbery[12], i * 18, j * 18, PublicAssets.shrubbery[12].getWidth(),
+									PublicAssets.shrubbery[12].getHeight(), null);
 					}
 
-					if ((Public.chance(maxFlower / 2)) && (bs < maxFlower)) {
-						bg.drawImage(PublicAssets.flower[((int) Public.random(0.0D, 8.0D))], i * 15, j * 15,
-								PublicAssets.flower[((int) Public.random(0.0D, 2.0D))].getWidth() - 3,
-								PublicAssets.flower[((int) Public.random(0.0D, 2.0D))].getHeight() - 3, null);
+					if (i > 0 && tiles.get(i-1).get(j+1).equals("TILE0")) {
+						bg.drawImage(Tran.effectImage(new Tran.ShadowBrightColorEffect(new Color(50, 50, 100), fol), PublicAssets.shrubbery[0]), i * 18, j * 18, 18, 18, null);
+						sg.drawImage(PublicAssets.snowyGrassEntity.getSubimage(0, 0, 18, 18), i * 18, j * 18, null);
+					} else if (i < width-1 && tiles.get(i+1).get(j+1).equals("TILE0")) {
+						bg.drawImage(Tran.effectImage(new Tran.ShadowBrightColorEffect(new Color(50, 50, 100), fol), PublicAssets.shrubbery[2]), i * 18, j * 18, 18, 18, null);
+						sg.drawImage(PublicAssets.snowyGrassEntity.getSubimage(18, 0, 18, 18), i * 18, j * 18, null);
+					} else {
+						bg.drawImage(Tran.effectImage(new Tran.ShadowBrightColorEffect(new Color(50, 50, 100), fol), PublicAssets.shrubbery[1]), i * 18, j * 18, 18, 18, null);
+						sg.drawImage(PublicAssets.snowyGrassEntity.getSubimage(36, 0, 18, 18), i * 18, j * 18, null);
 					}
 
-					if (tiles[i][(j + 1)] == "TILE" + 1) {
-						bg.drawImage(PublicAssets.shrubbery[0], i * 15, j * 15, 15, 15, null);
-						sg.drawImage(PublicAssets.snowyGrassEntity.getSubimage(0, 0, 18, 18), i * 15, j * 15, null);
-					} else if (tiles[i][(j + 1)] == "TILE" + 2) {
-						bg.drawImage(PublicAssets.shrubbery[1], i * 15, j * 15, 15, 15, null);
-						sg.drawImage(PublicAssets.snowyGrassEntity.getSubimage(18, 0, 18, 18), i * 15, j * 15, null);
-					} else if (tiles[i][(j + 1)] == "TILE" + 3) {
-						bg.drawImage(PublicAssets.shrubbery[2], i * 15, j * 15, 15, 15, null);
-						sg.drawImage(PublicAssets.snowyGrassEntity.getSubimage(36, 0, 18, 18), i * 15, j * 15, null);
-					}
-
-					if ((Public.chance(maxStone / 2)) && (bs < maxStone)) {
-						bg.drawImage(PublicAssets.stone[((int) Public.random(0.0D, 2.0D))], i * 15, j * 15, 15, 15,
+					if (entityCaps.containsKey("Stone") && Public.chance(entityCaps.get("Stone")*10.0 / width))
+						bg.drawImage(PublicAssets.stone[((int) Public.expandedRand(0.0D, 2.0D))], i * 18, j * 18, 18, 18,
 								null);
-						bs++;
+					else if (entityCaps.containsKey("Flower") && Public.chance(entityCaps.get("Flower")*40.0 / width))
+						bg.drawImage(PublicAssets.flower[((int) Public.expandedRand(0.0D, 8.0D))], i * 18, j * 18,
+								PublicAssets.flower[((int) Public.expandedRand(0.0D, 2.0D))].getWidth(),
+								PublicAssets.flower[((int) Public.expandedRand(0.0D, 2.0D))].getHeight(), null);
+					else if (Public.chance(4)) {
+						int f = Public.randInt(4, 6);
+						bg.drawImage(Tran.effectImage(new Tran.ShadowBrightColorEffect(new Color(50, 50, 100), fol),
+								PublicAssets.shrubbery[f]), i * 18, j * 18, PublicAssets.shrubbery[f].getWidth(),
+								PublicAssets.shrubbery[f].getHeight(), null);
+						if(f==5)
+							bg.drawImage(PublicAssets.shrubbery[12], i * 18, j * 18, PublicAssets.shrubbery[12].getWidth(),
+									PublicAssets.shrubbery[12].getHeight(), null);
 					}
 
-					if ((Public.chance(maxFlower / 2)) && (bs < maxFlower)) {
-						bg.drawImage(PublicAssets.flower[((int) Public.random(0.0D, 8.0D))], i * 15, j * 15,
-								PublicAssets.flower[((int) Public.random(0.0D, 2.0D))].getWidth() - 3,
-								PublicAssets.flower[((int) Public.random(0.0D, 2.0D))].getHeight() - 3, null);
-					}
 				}
 
-				if (Tile.getTile(tiles[i][j]).getImage() != null) {
-					bg.drawImage(Tile.getTile(tiles[i][j]).getImage(), i * 15, j * 15, 15, 15, null);
-//					sg.drawImage(Tile.getTile(tiles[i][j]).getSnowy(), i * 15, j * 15, 15, 15, null);
+				if (Tile.getTile(tiles.get(i).get(j)).getImage() != null) {
+					bg.drawImage(Tile.getTile(tiles.get(i).get(j)).getImage(), i * 18, j * 18, 18, 18, null);
 				}
 			}
 		}
@@ -1116,267 +581,7 @@ public class World implements Serializable {
 		bg.dispose();
 		sg.dispose();
 
-		return new BufferedImage[] {
-				Tran.effectColor(backgroundImage,
-						new Color((int) (240 - index * 5), (int) (240 - index * 5), (int) (250 - index * 2))),
-				backgroundSnowOverlay};
-	}
-
-	public static String formatTiles(String[][] tiles, int i, int j) {
-		if (tiles[i][j] == "TILE" + 0) {
-			return "TILE" + 0;
-		}
-
-		if (j > 0)
-			if (tiles[i][(j - 1)] == "TILE" + 0) {
-				if (i > 0 && i < tiles.length - 2 && (tiles[(i - 1)][j] == "TILE" + 0)
-						&& (tiles[(i + 1)][j] == "TILE" + 0)) {
-					if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == "TILE" + 0)
-						return "TILE" + 16;
-					return "TILE" + 13;
-				}
-				if (tiles.length > i + 1 && tiles[(i + 1)][j] == "TILE" + 0) {
-					if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == "TILE" + 0)
-						return "TILE" + 12;
-					return "TILE" + 3;
-				}
-				if (i > 0 && tiles[(i - 1)][j] == "TILE" + 0) {
-					if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == "TILE" + 0)
-						return "TILE" + 10;
-					return "TILE" + 1;
-				}
-
-				if (i > 0 && tiles.length > i + 1 && (tiles[(i - 1)][j] != "TILE" + 0)
-						&& (tiles[(i + 1)][j] != "TILE" + 0)) {
-					if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == "TILE" + 0)
-						return "TILE" + 11;
-					return "TILE" + 2;
-				}
-			}
-
-		if (i > 0 && j > 0 && (tiles[(i - 1)][(j - 1)] == "TILE" + 0) && (tiles[(i - 1)][j] != "TILE" + 0)
-				&& ((j == 0) || (tiles[i][(j - 1)] != "TILE" + 0))) {
-			return "TILE" + 18;
-		}
-		if (tiles.length > i + 1 && j > 0 && (tiles[(i + 1)][(j - 1)] == "TILE" + 0)
-				&& (tiles[(i + 1)][j] != "TILE" + 0) && (tiles[i][(j - 1)] != "TILE" + 0)) {
-			return "TILE" + 17;
-		}
-
-		if (tiles.length > i + 1 && j > 0 && (tiles[(i + 1)][j] == "TILE" + 0) && (tiles[i][(j - 1)] != "TILE" + 0)) {
-			if (i > 0 && tiles[i - 1][j] == "TILE" + 0) {
-				if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == "TILE" + 0)
-					return "TILE" + 15;
-				return "TILE" + 14;
-			}
-			if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == "TILE" + 0)
-				return "TILE" + 9;
-			return "TILE" + 6;
-		}
-		if (i > 0 && j > 0 && (tiles[(i - 1)][j] == "TILE" + 0) && (tiles[i][(j - 1)] != "TILE" + 0)) {
-			if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == "TILE" + 0)
-				return "TILE" + 7;
-			return "TILE" + 4;
-		}
-		if (tiles[i].length > j + 1 && tiles[i][j + 1] == "TILE" + 0)
-			return "TILE" + 8;
-		return "TILE" + 5;
-	}
-
-	public static String formatTiles(ArrayList<ArrayList<String>> tiles, int i, int j) {
-		if (tiles.get(i).get(j) == "TILE" + 0) {
-			return tiles.get(i).get(j);
-		}
-
-		if (j == 0 || tiles.get(i).get(j - 1) == "TILE" + 0) {
-			if (i > 0 && i < tiles.size() - 2 && (tiles.get(i - 1).get(j) == "TILE" + 0)
-					&& (tiles.get(i + 1).get(j) == "TILE" + 0)) {
-				if (j == tiles.get(i).size() - 1
-						|| (tiles.get(i).size() > j + 1 && tiles.get(i).get(j + 1) == "TILE" + 0))
-					return "TILE" + 16;
-				return "TILE" + 13;
-			}
-			if (i == tiles.size() - 1 || (tiles.size() > i + 1 && tiles.get(i + 1).get(j) == "TILE" + 0)) {
-				if (j == tiles.get(i).size() - 1
-						|| (tiles.get(i).size() > j + 1 && tiles.get(i).get(j + 1) == "TILE" + 0))
-					return "TILE" + 12;
-				return "TILE" + 3;
-			}
-			if (i == 0 || (i > 0 && tiles.get(i - 1).get(j) == "TILE" + 0)) {
-				if (j == tiles.get(i).size() - 1
-						|| (tiles.get(i).size() > j + 1 && tiles.get(i).get(j + 1) == "TILE" + 0))
-					return "TILE" + 10;
-				return "TILE" + 1;
-			}
-
-			if (i > 0 && tiles.size() > i + 1 && (tiles.get(i - 1).get(j) != "TILE" + 0)
-					&& (tiles.get(i + 1).get(j) != "TILE" + 0)) {
-				if (j == tiles.get(i).size() - 1
-						|| (tiles.get(i).size() > j + 1 && tiles.get(i).get(j + 1) == "TILE" + 0))
-					return "TILE" + 11;
-				return "TILE" + 2;
-			}
-		}
-
-		if (i > 0 && j > 0 && (tiles.get(i - 1).get(j - 1) == "TILE" + 0) && (tiles.get(i - 1).get(j) != "TILE" + 0)
-				&& ((j == 0) || (tiles.get(i).get(j - 1) != "TILE" + 0))) {
-			return "TILE" + 18;
-		}
-		if (tiles.size() > i + 1 && j > 0 && (tiles.get(i + 1).get(j - 1) == "TILE" + 0)
-				&& (tiles.get(i + 1).get(j) != "TILE" + 0) && (tiles.get(i).get(j - 1) != "TILE" + 0)) {
-			return "TILE" + 17;
-		}
-
-		if (tiles.size() > i + 1 && j > 0 && (tiles.get(i + 1).get(j) == "TILE" + 0)
-				&& (tiles.get(i).get(j - 1) != "TILE" + 0)) {
-			if (i > 0 && tiles.get(i - 1).get(j) == "TILE" + 0) {
-				if (j == tiles.get(i).size() - 1
-						|| (tiles.get(i).size() > j + 1 && tiles.get(i).get(j + 1) == "TILE" + 0))
-					return "TILE" + 15;
-				return "TILE" + 14;
-			}
-			if (j == tiles.get(i).size() - 1 || (tiles.get(i).size() > j + 1 && tiles.get(i).get(j + 1) == "TILE" + 0))
-				return "TILE" + 9;
-			return "TILE" + 6;
-		}
-		if (i == 0 || (i > 0 && j > 0 && (tiles.get(i - 1).get(j) == "TILE" + 0)
-				&& (tiles.get(i).get(j - 1) != "TILE" + 0))) {
-			if (j == tiles.get(i).size() - 1 || (tiles.get(i).size() > j + 1 && tiles.get(i).get(j + 1) == "TILE" + 0))
-				return "TILE" + 7;
-			return "TILE" + 4;
-		}
-		if (j == tiles.get(i).size() - 1 || (tiles.get(i).size() > j + 1 && tiles.get(i).get(j + 1) == "TILE" + 0))
-			return "TILE" + 8;
-		return tiles.get(i).get(j);
-	}
-
-	public static String formatBacktiles(String[][] tiles, int i, int j) {
-		if ((i == 0) || (j == 0) || (i == tiles.length - 1) || (j == tiles[(tiles.length - 1)].length - 1)) {
-			if (i == 0 && tiles[i][j] == "TILE2" && tiles[1][j] == "TILE0")
-				return "TILE3";
-			return tiles[i][j];
-		}
-
-		if (tiles[i][j] == "TILE0") {
-			return "TILE0";
-		}
-
-		if (tiles[i][(j - 1)] == "TILE0") {
-//			if ((tiles[(i - 1)][j] == 0) && (tiles[(i + 1)][j] == 0)) {
-//				if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == 0)
-//					return 16;
-//				return 13;
-//			}
-			if (tiles[(i + 1)][j] == "TILE0") {
-				if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == "TILE0")
-					return "TILE12";
-				return "TILE3";
-			}
-			if (tiles[(i - 1)][j] == "TILE0") {
-				if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == "TILE0")
-					return "TILE10";
-				return "TILE1";
-			}
-
-			if ((tiles[(i - 1)][j] != "TILE0") && (tiles[(i + 1)][j] != "TILE0")) {
-				if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == "TILE0")
-					return "TILE11";
-				return "TILE2";
-			}
-		}
-
-		if ((tiles[(i - 1)][(j - 1)] == "TILE0") && (tiles[(i - 1)][j] != "TILE0")
-				&& ((j == 0) || (tiles[i][(j - 1)] != "TILE0"))) {
-			return "TILE11";
-		}
-		if ((tiles[(i + 1)][(j - 1)] == "TILE0") && (tiles[(i + 1)][j] != "TILE0") && (tiles[i][(j - 1)] != "TILE0")) {
-			return "TILE10";
-		}
-
-		if ((tiles[(i + 1)][j] == "TILE0") && (tiles[i][(j - 1)] != "TILE0")) {
-//			if (tiles[i-1][j] == 0) {
-//				if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == 0)
-//					return 15;
-//				return 14;
-//			}
-			if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == "TILE0")
-				return "TILE9";
-			return "TILE6";
-		}
-		if ((tiles[(i - 1)][j] == "TILE0") && (tiles[i][(j - 1)] != "TILE0")) {
-			if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == "TILE0")
-				return "TILE7";
-			return "TILE4";
-		}
-		if (tiles[i].length > j + 1 && tiles[i][j + 1] == "TILE0")
-			return "TILE8";
-		return "TILE5";
-
-	}
-
-	public static String formatBacktiles(ArrayList<ArrayList<String>> tiles, int i, int j) {
-		if ((i == 0) || (j == 0) || (i == tiles.size() - 1) || (j == tiles.get(tiles.size() - 1).size() - 1)) {
-			if (i == 0 && tiles.get(i).get(j) == "TILE2" && tiles.get(1).get(j) == "TILE0")
-				return "TILE3";
-			return tiles.get(i).get(j);
-		}
-
-		if (tiles.get(i).get(j) == "TILE0") {
-			return "TILE0";
-		}
-
-		if (tiles.get(i).get((j - 1)) == "TILE0") {
-//			if ((tiles[(i - 1)][j] == "TILE0") && (tiles[(i + 1)][j] == "TILE0")) {
-//				if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == "TILE0")
-//					return 16;
-//				return 13;
-//			}
-			if (tiles.get(i + 1).get(j) == "TILE0") {
-				if (tiles.get(i).size() > j + 1 && tiles.get(i).get(j + 1) == "TILE0")
-					return "TILE12";
-				return "TILE3";
-			}
-			if (tiles.get(i - 1).get(j) == "TILE0") {
-				if (tiles.get(i).size() > j + 1 && tiles.get(i).get(j + 1) == "TILE0")
-					return "TILE10";
-				return "TILE1";
-			}
-
-			if ((tiles.get(i - 1).get(j) != "TILE0") && (tiles.get(i + 1).get(j) != "TILE0")) {
-				if (tiles.get(i).size() > j + 1 && tiles.get(i).get(j + 1) == "TILE0")
-					return "TILE11";
-				return "TILE2";
-			}
-		}
-
-		if ((tiles.get(i - 1).get(j - 1) == "TILE0") && (tiles.get(i - 1).get(j) != "TILE0")
-				&& ((j == 0) || (tiles.get(i).get(j - 1) != "TILE0"))) {
-			return "TILE11";
-		}
-		if ((tiles.get(i + 1).get(j - 1) == "TILE0") && (tiles.get(i + 1).get(j) != "TILE0")
-				&& (tiles.get(i).get(j - 1) != "TILE0")) {
-			return "TILE10";
-		}
-
-		if ((tiles.get(i + 1).get(j) == "TILE0") && (tiles.get(i).get(j - 1) != "TILE0")) {
-//			if (tiles[i-1][j] == "TILE0") {
-//				if (tiles[i].length > j + 1 && tiles[(i)][j + 1] == "TILE0")
-//					return 15;
-//				return 14;
-//			}
-			if (tiles.get(i).size() > j + 1 && tiles.get(i).get(j + 1) == "TILE0")
-				return "TILE9";
-			return "TILE6";
-		}
-		if ((tiles.get(i - 1).get(j) == "TILE0") && (tiles.get(i).get(j - 1) != "TILE0")) {
-			if (tiles.get(i).size() > j + 1 && tiles.get(i).get(j + 1) == "TILE0")
-				return "TILE7";
-			return "TILE4";
-		}
-		if (tiles.get(i).size() > j + 1 && tiles.get(i).get(j + 1) == "TILE0")
-			return "TILE8";
-		return "TILE5";
-
+		return new BufferedImage[] {backgroundImage,null};
 	}
 
 	public void finish(boolean beginning) {
@@ -1423,7 +628,7 @@ public class World implements Serializable {
 		items = (System.nanoTime() - pre);
 		pre = System.nanoTime();
 
-		enviornment.tick();
+		environment.tick();
 
 		enviorn = (System.nanoTime() - pre);
 		pre = System.nanoTime();
@@ -1434,19 +639,16 @@ public class World implements Serializable {
 		water = (System.nanoTime() - pre);
 		pre = System.nanoTime();
 
-		int xStart = (int) Math.max(handler.getGameCamera().getxOffset() / Tile.TILEWIDTH, 0.0F);
+		int xStart = (int) Math.max(handler.getGameCamera().getxOffset() / Tile.WIDTH, 0.0F);
 		int xEnd = (int) Math.min(width,
-				(handler.getGameCamera().getxOffset() + handler.getWidth()) / Tile.TILEWIDTH + 1.0F);
-		int yStart = (int) Math.max(handler.getGameCamera().getyOffset() / Tile.TILEHEIGHT, 0.0F);
+				(handler.getGameCamera().getxOffset() + handler.getWidth()) / Tile.WIDTH + 1.0F);
+		int yStart = (int) Math.max(handler.getGameCamera().getyOffset() / Tile.HEIGHT, 0.0F);
 		int yEnd = (int) Math.min(height,
-				(handler.getGameCamera().getyOffset() + handler.getHeight()) / Tile.TILEHEIGHT + 1.0F);
+				(handler.getGameCamera().getyOffset() + handler.getHeight()) / Tile.HEIGHT + 1.0F);
 
-		for (int y = yStart; y < yEnd; y++) {
-			for (int x = xStart; x < xEnd; x++) {
-				if (getTile(x, y).tickable())
-					getTile(x, y).tick(handler, x, y);
-			}
-		}
+		for (int y = yStart; y < yEnd; y++)
+			for (int x = xStart; x < xEnd; x++)
+				getTile(x, y).tick(handler, x, y);
 		tilet = (System.nanoTime() - pre);
 
 		if (respawn.on) {
@@ -1473,7 +675,7 @@ public class World implements Serializable {
 			waitingForCreature = true;
 		
 		if (waitingForCreature) {
-			Entity e2 = entityManager.getEntities().get((int) Public.random(0, entityManager.getEntities().size()-1));
+			Entity e2 = entityManager.getEntities().get((int) Public.expandedRand(0, entityManager.getEntities().size()-1));
 			if (e2.creature) {
 				center = e2;
 				handler.logWorld("Centered on: " + e2.getClass());
@@ -1488,7 +690,7 @@ public class World implements Serializable {
 //		handler.getGameCamera().centerOnEntity(center);
 	}
 
-	public boolean SAFETOWALK(double xp, double y) {
+	public boolean safeToWalk(double xp, double y) {
 		int x = (int) (xp / 18);
 		if (heights.size() > x && heights.get(x).size() > 0) {
 			for (int i = 0; i < heights.get(x).size(); i++) {
@@ -1506,27 +708,7 @@ public class World implements Serializable {
 		return false;
 	}
 
-	public boolean SAFETOWALK(double xp, double yp, double height) {
-		for (double y = yp; y < height + yp; y += 18) {
-			int x = (int) (xp / 18);
-			if (heights.size() > x && heights.get(x).size() > 0) {
-				for (int i = 0; i < heights.get(x).size(); i++) {
-					if (y > heights.get(x).get(i) * 18 && y < heights.get(x).get(i) * 18 + 19)
-						return true;
-				}
-			}
-			if (tops.size() > x && tops.get(x).size() > 0) {
-				for (int i = 0; i < tops.get(x).size(); i++) {
-					if (y > tops.get(x).get(i) * 18 && y < tops.get(x).get(i) * 18 + 19)
-						return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	public boolean SAFETOWALK(double xc, double y, int width) {
+	public boolean safeToWalk(double xc, double y, int width) {
 		for (double xp = xc; xp <= xc + width; xp += 18) {
 			int x = (int) (xp / 18);
 			if (x >= 0 && heights.size() > x && heights.get(x) != null && heights.get(x).size() > 0) {
@@ -1546,75 +728,28 @@ public class World implements Serializable {
 		return false;
 	}
 
-	public boolean SAFETOWALK(double xc, double yp, int width, int height) {
-		for (double y = yp; y < height + yp; y += 18) {
-			for (double xp = xc; xp <= xc + width; xp += 18) {
-				int x = (int) (xp / 18);
-				if (heights.size() > x && heights.get(x).size() > 0) {
-					for (int i = 0; i < heights.get(x).size(); i++) {
-						if (y > heights.get(x).get(i) * 18 && y < heights.get(x).get(i) * 18 + 19)
-							return true;
-					}
-				}
-				if (tops.size() > x && tops.get(x).size() > 0) {
-					for (int i = 0; i < tops.get(x).size(); i++) {
-						if (y > tops.get(x).get(i) * 18 && y < tops.get(x).get(i) * 18 + 19)
-							return true;
-					}
-				}
-			}
-		}
-
-		return false;
-	}
-
-	public void spawing() {
+	public void spawnEntities() {
 
 		long pre = System.nanoTime();
 
-		if ((enviornment.getTemp() > 32.0D) && (enviornment.getHumidity() > 2.0D)
-				&& (flower0 + flower1 + flower2 < maxFlower)
-				&& (Math.random() < 0.001D + Public.Map(enviornment.getHumidity(), 5.0D, 0.0D, 0.009D, 0.0D))) {
-			if (Math.random() < 0.0D) {
-				addFlower(2, 0);
-				flower0 += 2;
-			} else if (Math.random() < 0.5D) {
-				addFlower(2, 1);
-				flower1 += 2;
-			} else {
-				addFlower(2, 2);
-				flower2 += 2;
-			}
-		}
-
-		sFlowers = System.nanoTime() - pre;
-		pre = System.nanoTime();
-
-		if ((enviornment.getTemp() > 32.0D) && (youngTrees + midTrees + oldTrees < maxTrees) && Public.chance(1)) {
-
-			youngTrees += 1;
-
-			addTrees(1, 0, 15);
-		}
-
 		if (Public.chance(5) && shrubs.size() > 0) {
-			int x = (int) Public.random(0, shrubs.size() - 1);
+			int x = (int) Public.expandedRand(0, shrubs.size() - 1);
 
 			int index = 0;
 			
 			int max = (width*height)/72;
 			
 			while (shrubs.get(x).size() == 0 && index < 10) {
-				x = (int) Public.random(0, shrubs.size() - 1);
+				x = (int) Public.expandedRand(0, shrubs.size() - 1);
 				index++;
 			}
 
 			if (shrubs.get(x).size() != 0) {
-				index = (int) Public.random(0, shrubs.get(x).size() - 1);
+				index = (int) Public.expandedRand(0, shrubs.get(x).size() - 1);
 
 				if (Public.chance(5) && shrubbery<max) {
-					entityManager.addEntity(new Shrubbery(handler, x * 18 + Public.random(0, 18),
-							shrubs.get(x).get(index).get(0) * 18 - 18, (int) Public.random(3, 4)), false);
+					entityManager.addEntity(new Shrubbery(handler, x * 18 + Public.expandedRand(0, 18),
+							shrubs.get(x).get(index).get(0) * 18 - 18, (int) Public.expandedRand(3, 4)), false);
 				} else {
 					if (shrubs.get(x).get(index).get(2) == 0) {
 						entityManager.addEntity(new Shrubbery(handler, x * 18,
@@ -1626,107 +761,40 @@ public class World implements Serializable {
 			}
 		}
 
-		sTrees = System.nanoTime() - pre;
-		pre = System.nanoTime();
-
-		if ((stone0 + stone1 + stone2 < maxStone) && (Math.random() < 0.01D)) {
-			if (Math.random() < 0.0D) {
-				addStone(2, 0);
-				stone0 += 2;
-			} else if (Math.random() < 0.5D) {
-				addStone(2, 1);
-				stone1 += 2;
-			} else {
-				addStone(1, 2);
-				stone2 += 1;
-			}
-		}
-
-		sStones = System.nanoTime() - pre;
-		pre = System.nanoTime();
-
-		if ((fox < maxFox) && (Math.random() < 0.01D)) {
-			addFox(1);
-			fox++;
-		}
-
-		if ((wolf < maxWolf) && (Math.random() < 0.01D)) {
-			addWolf(1);
-			wolf++;
-		}
-
-		if ((skunk < maxSkunk) && (Math.random() < 0.01D)) {
-			addSkunk(1);
-			skunk++;
-		}
-
-		if ((bat < maxBat) && (enviornment.getHours() > 20 && enviornment.getHours() < 8) && (Math.random() < 0.01D)) {
-			addBat(1);
-			bat++;
-		}
-
-		if ((bear < maxBear) && (Math.random() < 0.01D)) {
-			addBear(1);
-			bear++;
-		}
-
-		if ((fairy < maxFairy) && (Math.random() < 0.01D)) {
-			addFairy(1);
-			fairy++;
-		}
-
-		if ((bee < maxBee) && (Math.random() < 0.01D)) {
-			addBee(1, 10000L);
-			bee += 1;
-		}
-
-		for (EntityAdder a : entityManager.adders) {
-			if (Public.chance(1) && maxEntities.containsKey(a.name)) {
-				int orig = 0;
-				int max = 0;
-				max = maxEntities.get(a.name);
-				orig = origEntities.get(a.name);
-//				System.out.println(orig+ " " + max);
-				if (orig < max) {
-					addEntities(1, a);
-					origEntities.put(a.name, origEntities.get(a.name) + 1);
-				}
-			}
-		}
-
-		if ((butterfly < maxButterfly) && (Math.random() < 0.01D)) {
-			addButterfly(1, 10000L);
-			butterfly += 1;
-		}
-		
-		if ((cannibal < maxCannibals) && (Math.random() < 0.0025D)) {
-			addCannibalTribe(1, (int) (Public.random(5.0D, width - 5)*18));
-			cannibal += 1;
-		}
+		ArrayList<String> availableSpawnableEntities = new ArrayList<>();
+		for(String key : entityCaps.keySet())
+			if(entityCount.get(key)< entityCaps.get(key)&&entityManager.entityEntries.containsKey(key)
+				&& entityManager.entityEntries.get(key).example.canCurrentlySpawn(handler))
+				availableSpawnableEntities.add(key);
+		if(availableSpawnableEntities.size()==0)
+			return;
+		String i = availableSpawnableEntities.get((int)(Math.random()*availableSpawnableEntities.size()));
+		addEntities(1, entityManager.entityEntries.get(i));
+		entityCount.put(i, entityCount.get(i) + 1);
 
 		sOther = System.nanoTime() - pre;
-		pre = System.nanoTime();
 	}
 
 	public EntityManager getEntityManager() {
 		return entityManager;
 	}
 
-	public void render(Graphics g, Graphics2D g2d) {
-//		handler.getGameCamera().centerOnEntity(center);
+	public void render(Graphics2D g) {
+		if (!OptionState.split_stream_lighting)
+			WorldImageUpdater.update();
+		else if (WorldImageUpdater.instance == null)
+			WorldImageUpdater.instance = new WorldImageUpdater();
+
 		long pre = System.nanoTime();
-//		g2d.translate(handler.getGameCamera().xOffset, handler.getGameCamera().yOffset);
-		g2d.translate(-(Game.scale - 1.0D) * handler.getWidth() / 2.0D,
-				-(Game.scale - 1.0D) * handler.getHeight() / 2.0D);
-		g2d.scale(Game.scale, Game.scale);
-		
+		g.setClip(0, 0, 720, 405);
+
 		pre = System.nanoTime();
-		enviornment.renderSunMoon(g2d);
-		enviornment.renderStars(g2d);
+		environment.renderSunMoon(g);
+		environment.renderStars(g);
 		enviorr = (System.nanoTime() - pre);
 		pre = System.nanoTime();
 
-		if (OptionState.renderbackground)
+		if (OptionState.render_background)
 			for (int i = backgroundImages.size() - 1; i >= 0; i--) {
 
 				double a = i + 1.5;
@@ -1734,9 +802,10 @@ public class World implements Serializable {
 
 				int xoff = (int) ((handler.xOffset() / a));
 				int yoff = (int) ((handler.yOffset() / a));
-				g2d.clipRect(0, 0, 720, 405);
-				if (xoff < b.getWidth())
-					g2d.drawImage(b, -xoff, -yoff,null);
+				if (xoff < b.getWidth()) {
+					g.drawImage(b, -xoff, -yoff, null);
+					g.setColor(new Color(80, 100, 180, 128));
+				}
 //					g2d.drawImage(b.getSubimage(xoff, yoff, 720, 405), 0, 0, null);
 
 //				for (int l = 0; l < Tile.g1.snowyness(0, 0); l++) {
@@ -1745,140 +814,72 @@ public class World implements Serializable {
 //				}
 			}
 
-		if (rencount == 0) {
+		if (render_count == 0)
 			resetGraphics();
-		}
+
 		itemsr = System.nanoTime() - pre;
 		pre = System.nanoTime();
 
-		if(((OptionState) handler.getGame().optionState).getToggle("Glow near sun"))
-			entityManager.renderLight(g2d);
-		renderBacktiles(g2d);
-		renderTiles(g2d);
+
+		AffineTransform previousTransform = g.getTransform();
+		g.translate(-handler.xOffset(), -handler.yOffset());
+		if(handler.getGame().optionState.getToggle("Glow near sun"))
+			entityManager.renderLight(g);
+		int sx = environment.sunX() + 9;
+		int sy = environment.sunY() + 9;
+
+		if(handler.getGame().optionState.getToggle("Glow near sun"))
+			for (int j = sx / 18 - 5; j < sx / 18 + 5; j++)
+				for (int k = sy / 18 - 5; k < sy / 18 + 5; k++) {
+					if (j < 0 || k < 0 || j >= World.getWidth() || k >= World.getHeight() || !World.ready())
+						continue;
+
+					float opacity = Math.max(1 - (float) Public.dist(j, k, sx / 18.f, sy / 18.f) / 5.f, 0.f);
+
+					World.getTile(j, k).lightRender(g, j * 18, k * 18, opacity);
+				}
+
+		g.drawImage(WorldImageUpdater.background, WorldImageUpdater.xbOffset*18, WorldImageUpdater.ybOffset*18, null);
+		g.drawImage(WorldImageUpdater.foreground, WorldImageUpdater.xfOffset*18, WorldImageUpdater.yfOffset*18, null);
 
 		tiler = (System.nanoTime() - pre);
 
 		pre = System.nanoTime();
-		entityManager.render(g2d, Box);
+		entityManager.render(g, Box);
 		entitiesr = (System.nanoTime() - pre);
 		pre = System.nanoTime();
-		itemManager.render(g2d, Box);
-//		itemsr = (System.nanoTime() - pre); 
-		particleManager.render(g2d);
+		itemManager.render(g, Box);
+//		itemsr = (System.nanoTime() - pre);
+		particleManager.render(g);
 		pre = System.nanoTime();
-		waterManager.Render(g2d, Box);
+		waterManager.Render(g, Box);
 		waterr = (System.nanoTime() - pre);
-		
+
 //		g2d.translate(-handler.getGameCamera().xOffset, -handler.getGameCamera().yOffset);
 
 		if (dead) {
 			respawn.render(g);
 		}
 
-		rencount += 1;
+		render_count += 1;
 
 		pre = System.nanoTime();
-		enviornment.render(g, g2d);
-		enviornment.renderGui(g, g2d);
+		environment.renderWeather(g);
+		g.setTransform(previousTransform);
+		environment.render(g);
+		environment.renderGui(g);
 		enviorr += System.nanoTime() - pre;
 
 		pre = System.nanoTime();
 
-		entityManager.gui(g2d);
+		entityManager.gui(g);
 
-		if (KeyManager.checkBind("Toggle Map")) {
+		if (KeyManager.checkBind("Toggle Map"))
 			map.render(g);
-		}
 
 		waterr = System.nanoTime() - pre;
 		
 //		handler.getGameCamera().centerOnEntity(center);
-	}
-
-	private void startForeground() {
-		foreground = new BufferedImage(width * 18, height * 18, BufferedImage.TYPE_4BYTE_ABGR);
-		Graphics2D g = foreground.createGraphics();
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				g.drawImage(getTile(x, y).getImage(), x * 18, y * 18, null);
-			}
-		}
-		g.dispose();
-	}
-	
-	private void startBackground() {
-		background = new BufferedImage(width * 18, height * 18, BufferedImage.TYPE_4BYTE_ABGR);
-		Graphics2D g = background.createGraphics();
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				g.drawImage(Backtile.getTile(backtiles[x][y]).getImage(), x * 18, y * 18, null);
-			}
-		}
-		g.dispose();
-	}
-
-	private void renderTiles(Graphics2D g) {
-
-		if (foreground == null)
-			startForeground();
-
-//		if (!OptionState.individualtilerender)
-//			g.drawImage(foreground, (int) -handler.xOffset(), (int) -handler.yOffset(), null);
-
-		int xStart = (int) Math.max(handler.xOffset() / 18, 0.0F);
-		int xEnd = (int) Math.min(width, (handler.xOffset() + handler.getWidth()) / 18 + 1.0F);
-		int yStart = (int) Math.max(handler.yOffset() / 18, 0.0F);
-		int yEnd = (int) Math.min(height, (handler.yOffset() + handler.getHeight()) / Tile.TILEHEIGHT + 1.0F);
-
-		int sx = enviornment.sunX() + (int) (9);
-		int sy = enviornment.sunY() + (int) (9);
-
-		if(((OptionState) handler.getGame().optionState).getToggle("Glow near sun")) {
-			for (int j = (int) (sx / 18 - 5); j < sx / 18 + 5; j++) {
-				for (int k = sy / 18 - 5; k < sy / 18 + 5; k++) {
-					if (j >= 0 && k >= 0 && j < World.getWidth() && k < World.getHeight() && World.ready()) {
-
-						float opacity = (float) Math.max(1 - Public.dist(j, k, sx / 18, sy / 18) / 5, 0);
-
-						World.getTile(j, k).lightRender(g, (int) ((double) j * 18.0 - handler.xOffset()),
-								(int) ((double) k * 18.0 - handler.yOffset()), (int) (opacity * 255));
-					}
-				}
-			}
-		}
-
-		g.clipRect(0, 0, 720, 405);
-		g.drawImage(foreground, -(int)handler.xOffset(), -(int)handler.yOffset(), null);
-//		return;
-//		g.drawImage(foreground.getSubimage((int) ((handler.xOffset())), (int) ((handler.yOffset())), handler.getWidth(),
-//				(int) Math.min(handler.getHeight(), foreground.getHeight())), 0, 0, null);
-
-		for (int y = yStart; y < yEnd; y++) {
-			for (int x = xStart; x < xEnd; x++) {
-	//			g.drawImage(getTile(x, y).getImage(), (int) Public.xO(x*18), (int) Public.yO(y*18), null);
-				getTile(x, y).render(g, (int) Public.xO(x*18.0), (int) Public.yO(y*18.0), x, y);
-			}
-		}
-	}
-
-	private void renderBacktiles(Graphics2D g) {
-
-		if(background==null)
-			startBackground();
-		
-		try {
-			g.clipRect(0, 0, 720, 405);
-			g.drawImage(background, -(int)handler.xOffset(), -(int)handler.yOffset(), null);
-		} catch (RasterFormatException e) {
-			
-		}
-//		for (int y = yStart; y < yEnd; y++) {
-//			for (int x = xStart; x < xEnd; x++) {
-//				Backtile.getTile(backtiles[x][y]).render(g,
-//						(int) (x * Tile.TILEWIDTH - handler.getGameCamera().getxOffset()),
-//						(int) (y * Tile.TILEHEIGHT - handler.getGameCamera().getyOffset()), x, y);
-//			}
-//		}
 	}
 
 	public WaterManager getWaterManager() {
@@ -1889,20 +890,8 @@ public class World implements Serializable {
 		return itemManager;
 	}
 
-	public void setItemManager(ItemManager itemManager) {
-		this.itemManager = itemManager;
-	}
-
 	public ParticleManager getParticleManager() {
 		return particleManager;
-	}
-
-	public void setParticleManager(ParticleManager particleManager) {
-		this.particleManager = particleManager;
-	}
-
-	public void addBuilt(Building b) {
-//		builtTiles.add(b);
 	}
 
 	private void resetGraphics() {
@@ -1917,9 +906,8 @@ public class World implements Serializable {
 			return Tile.n0;
 		}
 		Tile t = Tile.getTile(tiles[x][y]);
-		if (t == null) {
+		if (t == null)
 			return Tile.n0;
-		}
 		return t;
 	}
 
@@ -1928,12 +916,404 @@ public class World implements Serializable {
 	}
 
 	public void loadWorld(String path) {
+		Scanner scanner;
+		try {
+			scanner = new Scanner(FileLoader.loadResource(path));
+		} catch(IOException e) {
+			try {
+				scanner = new Scanner(new File(path));
+			} catch(IOException f) {
+				System.err.println("Could not load world: \"" + path + "\", as either resource or generic path.");
+				e.printStackTrace();
+				f.printStackTrace();
+				return;
+			}
+		}
+
+		scanner.nextLine(); // Ignore first line
+
+		float worldVersion = scanner.nextFloat();
+		if(worldVersion < 0.8) {
+			scanner.close();
+//			System.err.println("No longer supports worlds below version 0.8! Contact zandgall if you think there is an issue");
+			loadWorld_0_7(path);
+			return;
+		}
+		width = scanner.nextInt();
+		height = scanner.nextInt();
+
+		spawnx = scanner.nextInt();
+		spawny = scanner.nextInt();
+
+		tiles = new String[width][height];
+		backtiles = new String[width][height];
+
+		for(int y = 0; y < height; y++)
+			for(int x = 0; x < width; x++)
+				tiles[x][y] = scanner.next();
+		highestTile();
+
+		for(int y = 0; y < height; y++)
+			for(int x = 0; x < width; x++)
+				backtiles[x][y] = scanner.next();
+
+		int numOfEntities = scanner.nextInt();
+		scanner.nextLine(); // Jump to next line, starting the entities
+		for(int i = 0; i < numOfEntities; i++) {
+			String[] content = scanner.nextLine().split("\\s+");
+			if(!EntityManager.entityEntries.containsKey(content[0])) {
+				System.err.printf("Entity \"%s\" Unknown or does not exist%n", content[0]);
+				continue; // Entity is unknown or does not exist
+			}
+			try {
+				int x = Integer.parseInt(content[1]);
+				int y = Integer.parseInt(content[2]);
+				Class<? extends Entity> clazz = EntityManager.entityEntries.get(content[0]).entityClass;
+				Class<?>[] parTypes = new Class[3+(content.length-3)/2];
+				Object[] par = new Object[parTypes.length];
+				parTypes[0] = Handler.class;
+				par[0] = handler;
+				parTypes[1] = double.class;
+				par[1] = (double)x;
+				parTypes[2] = double.class;
+				par[2] = (double)y;
+
+				for(int j = 0; j < parTypes.length-3; j++)
+					switch(content[j*2+3]) {
+						case "i" -> {
+							parTypes[j+3] = int.class;
+							par[j+3] = Integer.parseInt(content[j*2+4]);
+						}
+						case "f" -> {
+							parTypes[j+3] = float.class;
+							par[j+3] = Float.parseFloat(content[j*2+4]);
+						}
+						case "d" -> {
+							parTypes[j+3] = double.class;
+							par[j+3] = Double.parseDouble(content[j*2+4]);
+						}
+						case "b" -> {
+							parTypes[j+3] = boolean.class;
+							par[j+3] = Boolean.parseBoolean(content[j*2+4]);
+						}
+					}
+				entityManager.addEntity(clazz.getConstructor(parTypes).newInstance(par));
+			} catch(Exception e) {
+				e.printStackTrace();
+				System.err.printf("Exception while trying to instantiate entity \"%s\" at (%s, %s)%n", content[0], content[1], content[2]);
+			}
+
+		}
+
+		double wind = 5, windChange = 5, windSwing = 100;
+		double temperatureOffset = 0;
+		while(scanner.hasNext()) {
+			String ent = scanner.next();
+			double amm = scanner.nextDouble();
+			if(EntityManager.entityEntries.containsKey(ent)) {
+				entityCaps.put(ent, (int)(width*amm*amm));
+				entityCount.put(ent, entityCaps.get(ent)/4);
+				addEntities(entityCount.get(ent), EntityManager.entityEntries.get(ent));
+			} else if(ent.equalsIgnoreCase("wind"))
+				wind = amm;
+			else if(ent.equalsIgnoreCase("windChange"))
+				windChange = amm;
+			else if(ent.equalsIgnoreCase("windSwing"))
+				windSwing = amm;
+			else if(ent.equalsIgnoreCase("temperatureOffset"))
+				temperatureOffset = amm;
+		}
+		environment = new Environment(handler, wind, windChange, windSwing);
+		environment.tempOffset = temperatureOffset;
+		environment.setupStars();
+	}
+
+	public void loadWorld_0_7(String path) {
+		Scanner scanner;
+		try {
+			scanner = new Scanner(FileLoader.loadResource(path));
+		} catch(IOException e) {
+			try {
+				scanner = new Scanner(new File(path));
+			} catch(IOException f) {
+				System.err.println("Could not load world: \"" + path + "\", as either resource or generic path.");
+				e.printStackTrace();
+				f.printStackTrace();
+				return;
+			}
+		}
+
+		scanner.nextLine();
+		float version = scanner.nextFloat();
+		if(version < 0.7f) {
+			scanner.close();
+			loadWorld_pre_0_7(path);
+			return;
+		}
+
+		width = scanner.nextInt();
+		height = scanner.nextInt();
+
+		spawnx = scanner.nextInt();
+		spawny = scanner.nextInt();
+
+		tiles = new String[width][height];
+		backtiles = new String[width][height];
+		for(int t = 0; t < width * height; t++)
+			tiles[t % width][t / width] = scanner.next();
+		highestTile();
+		if (scanner.next().equals("BACKTILES"))
+			for(int t = 0; t < width * height; t++)
+				backtiles[t % width][t / width] = scanner.next();
+
+		int numOfEntities = scanner.nextInt();
+		for (int e = 0; e < numOfEntities; e++) {
+			if(!scanner.hasNext())
+				break;
+			String name = scanner.next();
+			switch (name) {
+				case "Tree" ->
+						entityManager.addEntity(new Tree(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt()));
+				case "Fairy" ->
+						entityManager.addEntity(new Fairy(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextBoolean()));
+				case "Wolf" ->
+						entityManager.addEntity(new Wolf(handler, scanner.nextDouble(), scanner.nextDouble()));
+				case "Bear" ->
+						entityManager.addEntity(new Bear(handler, scanner.nextDouble(), scanner.nextDouble()));
+				case "Bat" ->
+						entityManager.addEntity(new Bat(handler, scanner.nextDouble(), scanner.nextDouble()));
+				case "Skunk" ->
+						entityManager.addEntity(new Skunk(handler, scanner.nextDouble(), scanner.nextDouble()));
+				case "Flower" ->
+						entityManager.addEntity(new Flower(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt(), scanner.nextDouble()));
+				case "Stone" ->
+						entityManager.addEntity(new Stone(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt()));
+				case "Cannibal" ->
+						entityManager.addEntity(new Cannibal(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt(), scanner.nextBoolean()));
+				case "Shrubbery" ->
+						entityManager.addEntity(new Shrubbery(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt()));
+				case "Butterfly" ->
+						entityManager.addEntity(new Butterfly(handler, scanner.nextDouble(), scanner.nextDouble(), false, 100000L));
+				case "Bee" ->
+						entityManager.addEntity(new Bee(handler, scanner.nextDouble(), scanner.nextDouble(), false, 10000L));
+				case "Fox" -> entityManager.addEntity(new Fox(handler, scanner.nextDouble(), scanner.nextDouble()));
+				case "Cloud" ->
+						entityManager.addEntity(new Cloud(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt(), scanner.nextDouble()));
+				case "House" ->
+						entityManager.addEntity(new House(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt()));
+				case "Villager" ->
+						entityManager.addEntity(new Villager(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt()));
+				case "NPC" -> {
+					double x = scanner.nextDouble(), y = scanner.nextDouble();
+					int type = scanner.nextInt();
+					String npcName = scanner.next().replaceAll("~", " ");
+
+					java.util.Map<String, String> quests = new HashMap<>();
+					String[] speeches = scanner.next().replaceAll("NAME", Reporter.user).replaceAll("`", " ").split("~");
+
+					String questTriggersString = scanner.next();
+					String questNamesString = scanner.next();
+					if(!questTriggersString.contains("!!!")) {
+						String[] questTriggers = questTriggersString.replaceAll("NAME", Reporter.user).replaceAll("`", " ").split("~");
+						String[] questNames = questNamesString.replaceAll("`", " ").split("~");
+						for (int q = 0; q < questNames.length; q++) {
+							quests.put(questTriggers[q], questNames[1]);
+						}
+					}
+					entityManager.addEntity(new Template(handler, x, y, type, name, speeches, quests));
+				}
+				case "AreaAdder" ->
+						entityManager.addEntity(new AreaAdder(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt(), scanner.nextInt(), scanner.next(), scanner.nextDouble()));
+				default -> {
+					System.err.println("Unrecognized pre-0.7 entity; \"" + path + "\" Entity #" + e + ": \""+name+"\". Scanning one element forward and continuing.");
+					e--;
+				}
+			}
+		}
+
+		double wind = 5, windChange = 5, windSwing = 100;
+		double temperatureOffset = 0;
+		while(scanner.hasNext()) {
+			String ent = scanner.next();
+			double amm = scanner.nextDouble();
+			if(EntityManager.entityEntries.containsKey(ent)) {
+				entityCaps.put(ent, (int)(width*amm*amm));
+				entityCount.put(ent, entityCaps.get(ent)/4);
+				addEntities(entityCount.get(ent), EntityManager.entityEntries.get(ent));
+			} else if(ent.equalsIgnoreCase("wind"))
+				wind = amm;
+			else if(ent.equalsIgnoreCase("windChange"))
+				windChange = amm;
+			else if(ent.equalsIgnoreCase("windSwing"))
+				windSwing = amm;
+			else if(ent.equalsIgnoreCase("temperatureOffset"))
+				temperatureOffset = amm;
+		}
+		environment = new Environment(handler, wind, windChange, windSwing);
+		environment.tempOffset = temperatureOffset;
+		environment.setupStars();
+		EntityManager.entityEntries.forEach((k,v) -> {
+			if (entityCaps.get(k) == null)
+				entityCaps.put(k, 0);
+			entityCount.put(k, entityCaps.get(k) / 4);
+			addEntities(entityCount.get(k), v);
+		});
+	}
+
+	public void loadWorld_pre_0_7(String path) {
+		Scanner scanner;
+		try {
+			scanner = new Scanner(FileLoader.loadResource(path));
+		} catch(IOException e) {
+			try {
+				scanner = new Scanner(new File(path));
+			} catch(IOException f) {
+				System.err.println("Could not load world: \"" + path + "\", as either resource or generic path.");
+				e.printStackTrace();
+				f.printStackTrace();
+				return;
+			}
+		}
+
+		scanner.nextLine();
+		float version = scanner.nextFloat();
+
+		width = scanner.nextInt();
+		height = scanner.nextInt();
+
+		spawnx = scanner.nextInt() * Tile.WIDTH;
+		spawny = scanner.nextInt() * Tile.HEIGHT;
+
+		for(int i = 0; i < 12; i++)
+			scanner.nextInt(); // Skip unused world values
+		int cannibalTribes = scanner.nextInt();
+		int minPerTribe = scanner.nextInt();
+		int maxPerTribe = scanner.nextInt();
+
+		entityCaps.put("Stone", scanner.nextInt());
+		entityCaps.put("Flower", scanner.nextInt());
+		entityCaps.put("Tree", scanner.nextInt());
+		entityCaps.put("Bee", scanner.nextInt());
+		entityCaps.put("Butterfly", scanner.nextInt());
+		entityCaps.put("Fox", scanner.nextInt());
+		int maxCannibalTribes = scanner.nextInt();
+		environment = new Environment(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextDouble());
+		scanner.nextInt(); // Cloud stuff
+		scanner.nextInt();
+		scanner.nextInt();
+		scanner.nextInt();
+		scanner.nextInt();
+
+		tiles = new String[width][height];
+		backtiles = new String[width][height];
+		for(int t = 0; t < width * height; t++) {
+			int oldTile = scanner.nextInt();
+			if(oldTile >= Tile.pre_0_7_identities.length)
+				tiles[t % width][t / width] = "TILE0";
+			else
+				tiles[t % width][t / width] = Tile.pre_0_7_identities[oldTile];
+			backtiles[t % width][t / width] = "TILE0";
+		}
+		highestTile();
+
+		for(int i = 0; i < cannibalTribes; i++)
+			addCannibalTribe(Public.randInt(minPerTribe, maxPerTribe), Public.randInt(width)*Tile.WIDTH);
+
+		entityManager.addEntity(new Lia(handler, (width - 10)*Tile.WIDTH,
+				getLowest(Public.range(0, width * Tile.WIDTH, (width - 10) * Tile.WIDTH))*Tile.WIDTH), false);
+
+		int num_entities = scanner.nextInt();
+
+		for (int e = 0; e < num_entities; e++) {
+			if(!scanner.hasNext())
+				break;
+			String name = scanner.next();
+			switch (name) {
+				case "Tree" ->
+						entityManager.addEntity(new Tree(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt()));
+				case "Flower" ->
+						entityManager.addEntity(new Flower(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt(), scanner.nextDouble()));
+				case "Stone" ->
+						entityManager.addEntity(new Stone(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt()));
+				case "Cannibal" ->
+						entityManager.addEntity(new Cannibal(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt(), scanner.nextBoolean()));
+				case "Shrubbery" ->
+						entityManager.addEntity(new Shrubbery(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt()));
+				case "Butterfly" ->
+						entityManager.addEntity(new Butterfly(handler, scanner.nextDouble(), scanner.nextDouble(), false, 100000L));
+				case "Bee" ->
+						entityManager.addEntity(new Bee(handler, scanner.nextDouble(), scanner.nextDouble(), false, 10000L));
+				case "Fox" -> entityManager.addEntity(new Fox(handler, scanner.nextDouble(), scanner.nextDouble()));
+				case "Cloud" ->
+						entityManager.addEntity(new Cloud(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt(), scanner.nextDouble()));
+				case "House" ->
+						entityManager.addEntity(new House(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt()));
+				case "Villager" ->
+						entityManager.addEntity(new Villager(handler, scanner.nextDouble(), scanner.nextDouble(), scanner.nextInt()));
+				case "NPC" -> {
+					double x = scanner.nextDouble(), y = scanner.nextDouble();
+					int type = scanner.nextInt();
+					String npcName = scanner.next().replaceAll("~", " ");
+
+					java.util.Map<String, String> quests = new HashMap<>();
+					String[] speeches = scanner.next().replaceAll("NAME", Reporter.user).replaceAll("`", " ").split("~");
+
+					String questTriggersString = scanner.next();
+					String questNamesString = scanner.next();
+					if(!questTriggersString.contains("!!!")) {
+						String[] questTriggers = questTriggersString.replaceAll("NAME", Reporter.user).replaceAll("`", " ").split("~");
+						String[] questNames = questNamesString.replaceAll("`", " ").split("~");
+						for (int q = 0; q < questNames.length; q++) {
+							quests.put(questTriggers[q], questNames[q]);
+						}
+					}
+					entityManager.addEntity(new Template(handler, x, y, type, name, speeches, quests));
+				}
+				default -> {
+					System.err.println("Unrecognized pre-0.7 entity; \"" + path + "\" Entity #" + e + ": \""+name+"\". Scanning one element forward and continuing.");
+					e--;
+				}
+			}
+		}
+
+		while(scanner.hasNext()) {
+			switch(scanner.next()) {
+				case "Bears" -> {
+					entityCaps.put("Bear", scanner.nextInt());
+				}
+				case "Wolves" -> {
+					entityCaps.put("Wolf", scanner.nextInt());
+				}
+				case "Skunks" -> {
+					entityCaps.put("Skunk", scanner.nextInt());
+				}
+				case "Fairies" -> {
+					entityCaps.put("Fairy", scanner.nextInt());
+				}
+				case "Birds" -> {
+					entityCaps.put("Bird", scanner.nextInt());
+				}
+			}
+		}
+
+		environment.setupStars();
+		EntityManager.entityEntries.forEach((k,v) -> {
+			if (entityCaps.get(k) == null)
+				entityCaps.put(k, 0);
+			entityCount.put(k, entityCaps.get(k) / 4);
+			addEntities(entityCount.get(k), v);
+		});
+	}
+
+	public void loadWorld_0_7_(String path) {
 		String[] s;
+		String[] lines;
 		double[] d;
 		int[] i;
 		if (path.startsWith("/")) {
 			try {
 				s = FileLoader.streamToString(FileLoader.loadResource(path), path.length()).split("\\s+");
+				lines = FileLoader.streamToString(FileLoader.loadResource(path), path.length()).split(System.lineSeparator());
 			} catch (IOException e) {
 				s = new String[1];
 				e.printStackTrace();
@@ -1942,6 +1322,7 @@ public class World implements Serializable {
 			File f = new File(path);
 
 			s = FileLoader.readFile(f).split("\\s+");
+			lines = FileLoader.readFile(f).split(System.lineSeparator());
 		}
 
 		d = new double[s.length];
@@ -1957,10 +1338,8 @@ public class World implements Serializable {
 
 		int o = 0;
 
-		System.out.println("\t\t" + d[1]);
-
 		if (d[1] < 0.7) {
-			loadWorldpre_0_7(path);
+			System.err.println("This program no longer supports worlds from versions below 0.7, please load a different world, or contact zandgall if this is an issue");
 			return;
 		}
 
@@ -1971,7 +1350,6 @@ public class World implements Serializable {
 		width = i[o];
 		height = i[o + 1];
 
-		System.out.println(s[o] + " " + s[o + 1] + " " + i[o] + " " + i[o + 1] + " " + d[o] + " " + d[o + 1]);
 
 		spawnx = (i[o + 2]);
 		spawny = (i[o + 3]);
@@ -1992,13 +1370,12 @@ public class World implements Serializable {
 
 		maxCannibals = 0;
 
-		int maxClouds = 0;
 		cloudY = 20;
 
 		double wind = 5, windChange = 5, windSwing = 100;
 		double temperatureOffset = 0;
 
-		enviornment = new Enviornment(handler, wind, windChange, windSwing);
+		environment = new Environment(handler, wind, windChange, windSwing);
 
 		varsload = System.nanoTime() - pre;
 		pre = System.nanoTime();
@@ -2015,8 +1392,6 @@ public class World implements Serializable {
 			}
 		}
 
-		System.out.println("Width: " + width + " " + tiles.length + "   Height: " + height);
-
 		tilesload = System.nanoTime() - pre;
 
 		highestTile();
@@ -2029,6 +1404,7 @@ public class World implements Serializable {
 			return;
 		}
 		int contInt = width * height + o;
+		int line = 4 + width*height;
 		if (s[contInt].contains("BACKTILES")) {
 			o = width * height + o + 1;
 			for (int y = 0; y < height; y++) {
@@ -2040,15 +1416,20 @@ public class World implements Serializable {
 		}
 
 		contInt = width * height + o;
-		System.out.println("COINTING     " + s[contInt]);
 
 		if (s.length > width * height + o) {
 			handler.logWorld("Adding custom entities... " + (s.length > width * height + 34));
 
-			contInt = handleEntityLoading(i, d, s, o);
-		}
+//			contInt = handleEntityLoading(i, d, s, o);
+			int size = Integer.parseInt(s[contInt]);
 
-		System.out.println("World length " + s.length + " " + contInt + " " + (contInt < s.length));
+			for(int e = 0; e < size; e++) {
+				String ent = s[contInt];
+				if(EntityManager.entityEntries.containsKey(ent)) {
+
+				}
+			}
+		}
 
 		while (contInt + 1 < s.length) {
 			if (d[contInt + 1] > 10) {
@@ -2056,213 +1437,27 @@ public class World implements Serializable {
 				continue;
 			}
 
-			String e = s[contInt].replaceAll(" ", "") + " ";
+			String e = s[contInt].strip();
 
-			for (EntityAdder a : entityManager.adders) {
-				if (e.contains(a.name.replaceAll(" ", "") + " ")) {
-					maxEntities.put(a.name, (int) (width * d[contInt + 1] * 0.1));
-					if (maxEntities.containsKey(a.name))
-						System.out.println("Applied Data");
-				}
+			if(entityManager.entityEntries.containsKey(e)) {
+				entityCaps.put(e, (int) (width * d[contInt + 1] * d[contInt+1]));
+				entityCount.put(e, entityCaps.get(e) / 4);
+				addEntities(entityCaps.get(e) / 4, entityManager.entityEntries.get(e));
 			}
 
-			System.out.println(e + (e.contains("Stones ")));
-			if (e.contains("Stones "))
-				maxStone = (int) (width * d[contInt + 1] * 0.1);
-			if (e.contains("Flowers "))
-				maxFlower = (int) (width * d[contInt + 1] * 0.1);
-			if (e.contains("Trees "))
-				maxTrees = (int) (width * d[contInt + 1] * 0.1);
-
-			if (e.contains("Bats "))
-				maxBat = (int) (width * d[contInt + 1] * 0.1);
-			if (e.contains("Faries "))
-				maxFairy = (int) (width * d[contInt + 1] * 0.1);
-			if (e.contains("Bees "))
-				maxBee = (int) (width * d[contInt + 1] * 0.1);
-			if (e.contains("Butterflies "))
-				maxButterfly = (int) (width * d[contInt + 1] * 0.1);
-
-			if (e.contains("Bears "))
-				maxBear = (int) (width * d[contInt + 1] * 0.1);
-			if (e.contains("Wolves "))
-				maxWolf = (int) (width * d[contInt + 1] * 0.1);
-			if (e.contains("Skunks "))
-				maxSkunk = (int) (width * d[contInt + 1] * 0.1);
-			if (e.contains("Foxes "))
-				maxFox = (int) (width * d[contInt + 1] * 0.1);
-
-			if (e.contains("Cannibals "))
-				maxCannibals = (int) (width * d[contInt + 1] * 0.1);
-			if (e.contains("Clouds "))
-				maxClouds = (int) (width * d[contInt + 1] * 0.1);
-			if (e.contains("CloudY "))
-				cloudY = i[contInt + 1];
 			if (e.contains("Wind "))
 				wind = d[contInt + 1];
-			if (e.contains("WindChange "))
+			else if (e.contains("WindChange "))
 				wind = d[contInt + 1];
-			if (e.contains("WindSwing "))
+			else if (e.contains("WindSwing "))
 				windSwing = d[contInt + 1];
 
-			if (e.contains("Temperature "))
-				wind = d[contInt + 1];
-
 			contInt++;
 		}
 
-		for (EntityAdder a : entityManager.adders) {
-			if (maxEntities.containsKey(a.name)) {
-				origEntities.put(a.name, maxEntities.get(a.name) / 4);
-				addEntities(maxEntities.get(a.name) / 4, a);
-				System.out.println(a.name + " Success");
-			}
-		}
-
-		stone0 = maxStone / 4;
-		stone1 = maxStone / 4;
-		stone2 = maxStone / 4;
-		flower0 = maxFlower / 4;
-		flower1 = maxFlower / 4;
-		flower2 = maxFlower / 4;
-		youngTrees = (int) (maxTrees * 0.1);
-		midTrees = (int) (maxTrees * 0.2);
-		oldTrees = (int) (maxTrees * 0.45);
-
-		bee = maxBee / 2;
-		butterfly = maxButterfly / 2;
-		fairy = maxFairy / 2;
-		fox = maxFox / 2;
-		cannibal = maxCannibals / 2;
-
-		cloud0 = maxClouds / 4;
-		cloud1 = maxClouds / 4;
-		cloud2 = maxClouds / 4;
-		cloud3 = maxClouds / 4;
-
-		enviornment = new Enviornment(handler, wind, windChange, windSwing);
-		enviornment.tempOffset = temperatureOffset;
-
-		customload = System.nanoTime() - pre;
-	}
-
-	private void loadWorldpre_0_7(String path) {
-		File f = new File(path);
-
-		String[] s = FileLoader.readFile(f).split("\\s+");
-		double[] d = new double[s.length];
-		int[] i = new int[s.length];
-
-		for (int j = 0; j < s.length; j++) {
-			d[j] = Utils.parseDouble(s[j]);
-			i[j] = Utils.parseInt(s[j]);
-		}
-
-		handler.getGame().initMessage("Loading Variables...");
-
-		long pre = System.nanoTime();
-
-		int o = 0;
-
-		if (s[0].contains("World") || s[0].contains("Save")) {
-			o = 2;
-		}
-
-		width = i[o];
-		height = i[o + 1];
-
-		spawnx = (i[o + 2] * 18);
-		spawny = (i[o + 3] * 18);
-
-		stone0 = i[o + 4];
-		stone1 = i[o + 5];
-		stone2 = i[o + 6];
-		flower0 = i[o + 7];
-		flower1 = i[o + 8];
-		flower2 = i[o + 9];
-		youngTrees = i[o + 10];
-		midTrees = i[o + 11];
-		oldTrees = i[o + 12];
-
-		bee = i[o + 13];
-		butterfly = i[o + 14];
-		fox = i[o + 15];
-		cannibal = i[o + 16];
-
-		maxStone = i[o + 19];
-		maxFlower = i[o + 20];
-		maxTrees = i[o + 21];
-
-		maxBee = i[o + 22];
-		maxButterfly = i[o + 23];
-		maxFox = i[o + 24];
-		maxCannibals = i[o + 25];
-
-		cloud0 = i[o + 29];
-		cloud1 = i[o + 30];
-		cloud2 = i[o + 31];
-		cloud3 = i[o + 32];
-		cloudY = i[o + 33];
-
-		varsload = System.nanoTime() - pre;
-		pre = System.nanoTime();
-
-		handler.getGame().initMessage("Loading Tiles...");
-
-		enviornment = new Enviornment(handler, d[o + 26], d[o + 27], d[o + 28]);
-
-		o += 34;
-
-		tiles = new String[width][height];
-		backtiles = new String[width][height];
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				tiles[x][y] = "TILE" + i[(x + y * width + o)];
-				backtiles[x][y] = "TILE0";
-			}
-		}
-
-		tilesload = System.nanoTime() - pre;
-
-		highestTile();
-
-		Lia = new com.zandgall.arvopia.entity.creatures.npcs.Lia(handler, (width - 10) * 18,
-				getLowest(Public.range(0.0D, width * Tile.TILEWIDTH, (width - 10) * Tile.TILEWIDTH)) * Tile.TILEHEIGHT);
-		entityManager.addEntity(Lia, true);
-
-		pre = System.nanoTime();
-
-		if (s.length <= width * height + o) {
-			state = 0;
-			customload = 0;
-			return;
-		}
-		int contInt = width * height + o;
-		if (s.length > width * height + o) {
-			handler.logWorld("Adding custom entities... " + (s.length > width * height + 34));
-
-			contInt = handleEntityLoadingPRE_0_7(i, d, s, o);
-		}
-
-		while (contInt < s.length) {
-			String e = s[contInt];
-			if (e.contains("Bears")) {
-				maxBear = i[contInt + 1];
-			} else if (e.contains("Wolves")) {
-				maxWolf = i[contInt + 1];
-			} else if (e.contains("Bats")) {
-				maxBat = i[contInt + 1];
-			} else if (e.contains("Skunks")) {
-				maxSkunk = i[contInt + 1];
-			} else if (e.contains("Fairies")) {
-				maxFairy = i[contInt + 1];
-			} else if (e.contains("Birds")) {
-				System.out.println("Birds have been found " + i[contInt + 1]);
-				maxEntities.put("Bird", i[contInt + 1]);
-				origEntities.put("Bird", 0);
-			}
-			contInt++;
-		}
+		environment = new Environment(handler, wind, windChange, windSwing);
+		environment.tempOffset = temperatureOffset;
+		environment.setupStars();
 
 		customload = System.nanoTime() - pre;
 	}
@@ -2274,26 +1469,21 @@ public class World implements Serializable {
 
 		int PRECONTINT = contInt;
 
-		System.out.println(size);
 		handler.getGame().initMessage("Loading " + size + " custom entities...");
 
 		for (int v = 0; v < size;) {
 			if (contInt >= s.length - 3) {
-				System.out.println("Breaking...");
 				break;
 			}
 
-//			System.out.println("V " + v + " " + size + " " + (contInt - PRECONTINT));
 			String e = s[(contInt + 1)].replaceAll(" ", "") + " ";
 
-			for (EntityAdder a : entityManager.adders) {
+			for (EntityEntry a : entityManager.entityEntries.values()) {
 				if (e.contains(a.name.replaceAll(" ", "") + " ")) {
-					a.add(d[(contInt + 2)], d[(contInt + 3)]);
+					a.spawn(d[(contInt + 2)], d[(contInt + 3)]);
 					v++;
 				}
 			}
-
-			System.out.println("ADDING : " + e);
 
 			if (e.contains("Tree ")) {
 				entityManager.addEntity(new Tree(handler, d[(contInt + 2)], d[(contInt + 3)], i[(contInt + 4)]), false);
@@ -2411,130 +1601,10 @@ public class World implements Serializable {
 
 				contInt += 8;
 			} else if (e.contains("AreaAdder ")) {
-				entityManager.addEntity(new AreaAdders(handler, d[(contInt + 3)], d[(contInt + 4)], i[(contInt + 5)],
+				entityManager.addEntity(new AreaAdder(handler, d[(contInt + 3)], d[(contInt + 4)], i[(contInt + 5)],
 						i[(contInt + 6)], s[contInt + 2], d[contInt + 7]), true);
 				contInt += 6;
 			} else {
-				contInt++;
-				System.out.println("Contint adding " + contInt + " " + PRECONTINT);
-			}
-		}
-
-		return contInt;
-	}
-
-	private int handleEntityLoadingPRE_0_7(int[] i, double[] d, String[] s, int o) {
-		int contInt = width * height + o;
-
-		int size = i[contInt];
-
-		System.out.println(size);
-		handler.getGame().initMessage("Loading " + size + " custom entities...");
-
-		for (int v = 0; v < size; v++) {
-			if (contInt >= s.length - 3) {
-				break;
-			}
-			String e = s[(contInt + 1)].replaceAll(" ", "") + " ";
-
-			for (EntityAdder a : entityManager.adders) {
-				if (e.contains(a.name.replaceAll(" ", "")))
-					a.add(d[(contInt + 2)], d[(contInt + 3)]);
-			}
-
-			if (e.contains("Tree ")) {
-				entityManager.addEntity(new Tree(handler, d[(contInt + 2)], d[(contInt + 3)], i[(contInt + 4)]), false);
-
-				contInt += 4;
-			} else if (e.contains("Flower ")) {
-				entityManager.addEntity(
-						new Flower(handler, d[(contInt + 2)], d[(contInt + 3)], i[(contInt + 4)], d[(contInt + 5)]),
-						false);
-
-				contInt += 5;
-			} else if (e.contains("Stone ")) {
-				entityManager.addEntity(new Stone(handler, d[(contInt + 2)], d[(contInt + 3)], i[(contInt + 4)]),
-						false);
-
-				contInt += 4;
-			} else if (e.contains("Cannibal ")) {
-				entityManager.addEntity(new Cannibal(handler, d[(contInt + 2)], d[(contInt + 3)], d[(contInt + 4)],
-						i[(contInt + 5)], Utils.parseBoolean(s[(contInt + 6)])), false);
-
-				contInt += 6;
-			} else if (e.contains("Shrubbery ")) {
-				entityManager.addEntity(new Shrubbery(handler, d[(contInt + 2)], d[(contInt + 3)], i[(contInt + 4)]),
-						false);
-				contInt += 4;
-			} else if (e.contains("Butterfly ")) {
-				entityManager.addEntity(new Butterfly(handler, d[(contInt + 2)], d[(contInt + 3)], false, 100000L),
-						false);
-
-				contInt += 3;
-			} else if (e.contains("Bee ")) {
-				entityManager.addEntity(new Bee(handler, d[(contInt + 2)], d[(contInt + 3)], false, 100000L), false);
-
-				contInt += 3;
-			} else if (e.contains("Fox ")) {
-				entityManager.addEntity(new Fox(handler, d[(contInt + 2)], d[(contInt + 3)]), false);
-
-				contInt += 3;
-			} else if (e.contains("Cloud ")) {
-				entityManager.addEntity(
-						new Cloud(handler, d[(contInt + 2)], d[(contInt + 3)], i[(contInt + 4)], d[(contInt + 5)]),
-						false);
-
-				contInt += 5;
-			} else if (e.contains("Water ")) {
-				waterManager.newWater(i[(contInt + 2)], i[(contInt + 3)], i[(contInt + 4)], i[(contInt + 5)]);
-
-				contInt += 5;
-			} else if (e.contains("House ")) {
-				entityManager.addEntity(new com.zandgall.arvopia.entity.statics.House(handler, d[(contInt + 2)],
-						d[(contInt + 3)], i[(contInt + 4)]), false);
-				contInt += 4;
-			} else if (e.contains("Villager ")) {
-				entityManager.addEntity(new com.zandgall.arvopia.entity.creatures.npcs.Villager(handler,
-						d[(contInt + 2)], d[(contInt + 3)], i[(contInt + 4)]), false);
-
-				contInt += 4;
-			} else if (e.contains("NPC ")) {
-				
-				if(s[(contInt + 5)].replaceAll("~", " ").equals("Frizzy")) {
-					entityManager.addEntity(new Frizzy(handler, d[contInt+2], d[contInt+3]), true);
-					contInt +=8;
-					continue;
-				}
-				
-				if(s[(contInt + 5)].replaceAll("~", " ").equals("Le Fancier")) {
-					entityManager.addEntity(new Fawncier(handler, d[contInt+2], d[contInt+3]), true);
-					contInt +=8;
-					continue;
-				}
-				
-				java.util.Map<String, String> quests = new HashMap<String, String>();
-
-				String[] speeches = s[(contInt + 6)].replaceAll("NAME", Reporter.user).replaceAll("`", " ").split("~");
-
-				if (!s[(contInt + 7)].contains("!!!")) {
-
-					String[] speechesvquests = s[(contInt + 7)].replaceAll("NAME", Reporter.user).replaceAll("`", " ")
-							.split("~");
-					String[] questmanage = s[(contInt + 8)].replaceAll("`", " ").split("~");
-
-					for (int q = 0; q < questmanage.length; q++) {
-						if (questmanage.length > 0) {
-							quests.put(speechesvquests[q], questmanage[q]);
-						}
-					}
-				}
-
-				entityManager.addEntity(new Template(handler, d[(contInt + 2)], d[(contInt + 3)], i[(contInt + 4)],
-						s[(contInt + 5)].replaceAll("~", " "), speeches, quests), true);
-
-				contInt += 8;
-			} else {
-				v--;
 				contInt++;
 			}
 		}
@@ -2548,19 +1618,19 @@ public class World implements Serializable {
 
 		openWorldData(path + "/World.arv");
 
-		Tile.set(width, height);
+		Tile.resetSnowiness();
 
 		openBGImage(path);
 
-		enviornment.setupStars();
+		environment.setupStars();
 
-		handler.loadMods(entityManager);
+		handler.loadMods();
 
 		type = "Save";
-		handler.getGame().initMessage("Loading Enviornment...");
-		openEnviornment(path + "/Enviornment.arv");
+		handler.getGame().initMessage("Loading Environment...");
+		openEnvironment(path + "/Environment.arv");
 		handler.getGame().initMessage("Loading Entities...");
-		handler.loadMods(path + "/mods", entityManager);
+		handler.loadMods(path + "/mods");
 		openEntities(path + "/Entities.arv");
 		handler.getGame().initMessage("Loading Player...");
 		openPlayer(path + "/Player.arv");
@@ -2601,7 +1671,7 @@ public class World implements Serializable {
 
 		writeBGImage(path);
 
-		writeEnviornment(path + "/Enviornment.arv");
+		writeEnvironment(path + "/Environment.arv");
 
 		writeEntities(path + "/Entities.arv");
 
@@ -2688,13 +1758,13 @@ public class World implements Serializable {
 		}
 	}
 
-	public void writeEnviornment(String path) {
+	public void writeEnvironment(String path) {
 
 		String content = "";
 
-		content += "" + enviornment.lapse + " " + enviornment.rohundo + " " + enviornment.getTime()
+		content += "" + environment.lapse + " " + environment.rohundo + " " + environment.getTime()
 				+ System.lineSeparator();
-		content += "" + enviornment.getHumidity() + " " + enviornment.precipitation;
+		content += "" + environment.getHumidity() + " " + environment.precipitation;
 
 		Utils.fileWriter(content, path);
 
@@ -2754,13 +1824,13 @@ public class World implements Serializable {
 		}
 	}
 
-	public void openEnviornment(String path) {
+	public void openEnvironment(String path) {
 		String[] t = FileLoader.readFile(new File(path)).split("\\s+");
-		enviornment.lapse = Utils.parseInt(t[0]);
-		enviornment.rohundo = Utils.parseInt(t[1]);
-		enviornment.setTime(Utils.parseLong(t[2]));
-		enviornment.setHumidity(Utils.parseDouble(t[3]));
-		enviornment.precipitation = Utils.parseBoolean(t[4]);
+		environment.lapse = Utils.parseInt(t[0]);
+		environment.rohundo = Utils.parseInt(t[1]);
+		environment.setTime(Utils.parseLong(t[2]));
+		environment.setHumidity(Utils.parseDouble(t[3]));
+		environment.precipitation = Utils.parseBoolean(t[4]);
 	}
 
 	public void openEntities(String path) {
@@ -2847,9 +1917,9 @@ public class World implements Serializable {
 		content += maxFox + " ";
 		content += maxCannibals + System.lineSeparator();
 
-		content += enviornment.getWind() + " ";
-		content += enviornment.getWindChange() + " ";
-		content += enviornment.getWindSwing() + System.lineSeparator();
+		content += environment.getMaxWind()*2 + " ";
+		content += environment.getWindChange() + " ";
+		content += environment.getWindSwing() + System.lineSeparator();
 
 		content += cloud0 + " ";
 		content += cloud1 + " ";
@@ -2888,28 +1958,20 @@ public class World implements Serializable {
 			content += System.lineSeparator();
 		}
 
-		Enviornment e = enviornment;
+		Environment e = environment;
 
 		content += e.getTime() + " " + e.rohundo + " 1 " + e.lapse;
 
 		Utils.fileWriter(content, path);
 	}
 
-	public Enviornment getEnviornment() {
-		return enviornment;
-	}
-
-	public int getSpawnx() {
-		return spawnx;
-	}
-
-	public int getSpawny() {
-		return spawny;
+	public Environment getEnvironment() {
+		return environment;
 	}
 
 	public void outOfBounds(Entity e) {
-		if ((e.getY() > (height + 10) * Tile.TILEHEIGHT) || (e.getX() > (width + 10) * Tile.TILEWIDTH)
-				|| (e.getX() < -10 * Tile.TILEWIDTH) || (e.getY() < -15 * Tile.TILEHEIGHT)) {
+		if ((e.getY() > (height + 10) * Tile.HEIGHT) || (e.getX() > (width + 10) * Tile.WIDTH)
+				|| (e.getX() < -10 * Tile.WIDTH) || (e.getY() < -15 * Tile.HEIGHT)) {
 			if (e.getClass() == Player.class) {
 				Player p = (Player) e;
 				if (p.lives == 0) {
@@ -2932,9 +1994,9 @@ public class World implements Serializable {
 
 	public void kill(Entity e) {
 
-		for (EntityAdder a : entityManager.adders) {
-			if (e.getClass() == a.c && origEntities.containsKey(a.name)) {
-				origEntities.put(a.name, origEntities.get(a.name) - 1);
+		for (EntityEntry a : entityManager.entityEntries.values()) {
+			if (e.getClass() == a.entityClass && entityCount.containsKey(a.name)) {
+				entityCount.put(a.name, entityCount.get(a.name) - 1);
 			}
 		}
 
@@ -2984,9 +2046,9 @@ public class World implements Serializable {
 				}
 			}
 		} else if (e.getClass() == com.zandgall.arvopia.entity.statics.Soil.class) {
-			for (int V = 0; V < Public.random(1.0D, 3.0D); V++)
-				itemManager.addItem(Item.dirt.createNew((int) Public.random(e.getX() - 18.0D, e.getX() + 18.0D),
-						(int) e.getY() + Tile.TILEHEIGHT * 2));
+			for (int V = 0; V < Public.expandedRand(1.0D, 3.0D); V++)
+				itemManager.addItem(Item.dirt.createNew((int) Public.expandedRand(e.getX() - 18.0D, e.getX() + 18.0D),
+						(int) e.getY() + Tile.HEIGHT * 2));
 		} else if (e.getClass() == Butterfly.class) {
 			butterfly -= 1;
 		} else if (e.getClass() == Bee.class) {
@@ -3068,12 +2130,10 @@ public class World implements Serializable {
 		tops = new ArrayList<ArrayList<Integer>>();
 		shrubs = new ArrayList<ArrayList<ArrayList<Integer>>>();
 		for (int x = 0; x < width + 2; x++) {
-			handler.logWorldSilent("Tile chosen: " + x);
 			heights.add(new ArrayList<Integer>());
 			tops.add(new ArrayList<Integer>());
 			shrubs.add(new ArrayList<ArrayList<Integer>>());
 			for (int y = 0; y < height + 1; y++) {
-				handler.logWorldSilent("Checking tile: (" + x + ", " + y + ")");
 
 				if ((getTile(x, y).isTop()) || (getTile(x, y).isSolid())) {
 					(tops.get(x)).add(y);
@@ -3084,7 +2144,7 @@ public class World implements Serializable {
 				if (y > 0 && !getTile(x, y - 1).isSolid()) {
 					if (getTile(x, y).isSolid())
 						heights.get(x).add(y);
-					if (getTile(x, y).supportsShrubbery()) {
+					if (getTile(x, y).isOrganic()) {
 						shrubs.get(x).add(new ArrayList<Integer>());
 						shrubs.get(x).get(shrubs.get(x).size() - 1).add(y);
 						if (x != 0 && !getTile(x - 1, y).isSolid())
@@ -3097,8 +2157,8 @@ public class World implements Serializable {
 						shrubs.get(x).get(shrubs.get(x).size() - 1).add(1);
 
 						if (save == "") {
-							entityManager.addEntity(new Shrubbery(handler, x * Tile.TILEWIDTH,
-									(y - 1) * Tile.TILEHEIGHT, shrubs.get(x).get(shrubs.get(x).size() - 1).get(1), x,
+							entityManager.addEntity(new Shrubbery(handler, x * Tile.WIDTH,
+									(y - 1) * Tile.HEIGHT, shrubs.get(x).get(shrubs.get(x).size() - 1).get(1), x,
 									shrubs.get(x).size() - 1), false);
 							shrubbery++;
 						}
@@ -3135,17 +2195,17 @@ public class World implements Serializable {
 
 			if ((heights.get(x)).size() <= 0) {
 				handler.logWorldSilent("404: No tile found");
-				(heights.get(x)).add((-Tile.TILEHEIGHT * 2));
+				(heights.get(x)).add((-Tile.HEIGHT * 2));
 
 				if ((tops.get(x)).size() <= 0) {
-					(tops.get(x)).add((-Tile.TILEHEIGHT * 2));
+					(tops.get(x)).add((-Tile.HEIGHT * 2));
 				}
 			}
 		}
 	}
 
 	public int getHighest(double x) {
-		int nx = Public.grid(x, Tile.TILEWIDTH, 0.0D);
+		int nx = Public.grid(x, Tile.WIDTH, 0.0D);
 
 		if (((ArrayList<?>) heights.get(nx)).size() > 0) {
 			return ((Integer) ((ArrayList<?>) heights.get(nx)).get(0)).intValue();
@@ -3164,78 +2224,49 @@ public class World implements Serializable {
 		return -1;
 	}
 
-	public ArrayList<Integer> getHeights(int x) {
-		return heights.get(x);
-	}
-
-	public ArrayList<ArrayList<Integer>> getHeights() {
-		return heights;
-	}
-
 	public int randomHeight(int x) {
 		int length = heights.get(x).size();
-		return heights.get(x).get((int) Public.random(0, length - 1));
-	}
-
-	public int getHigher(double x, double y, int threshold) {
-		int nx = Public.grid(x, Tile.TILEWIDTH, 0.0D);
-
-		int dist = threshold;
-		int out = -1;
-
-		for (int oy = 0; oy < ((ArrayList<?>) tops.get(nx)).size(); oy++) {
-			if (Public.difference(((Integer) ((ArrayList<?>) tops.get(nx)).get(oy)).intValue() * Tile.TILEHEIGHT,
-					y) < dist) {
-				dist = (int) Public
-						.difference(((Integer) ((ArrayList<?>) tops.get(nx)).get(oy)).intValue() * Tile.TILEHEIGHT, y);
-				out = ((Integer) ((ArrayList<?>) tops.get(nx)).get(oy)).intValue();
-			}
-		}
-
-		return out;
+		return heights.get(x).get((int) Public.expandedRand(0, length - 1));
 	}
 
 	public boolean checkCollision(int x, int y) {
-		x /= Tile.TILEWIDTH;
-		y /= Tile.TILEHEIGHT;
-		if (getTile(x, y).isSolid()) {
-			return true;
-		}
-		return false;
+		x /= Tile.WIDTH;
+		y /= Tile.HEIGHT;
+		return getTile(x, y).isSolid();
 	}
 
 	private void addFlower(int amount, int type) {
 		for (int i = 0; i < amount; i++) {
-			int x = (int) (Math.random() * width * Tile.TILEWIDTH + 1.0D);
-			double l = Public.random(-2.0D, 0.0D);
+			int x = (int) (Math.random() * width * Tile.WIDTH + 1.0D);
+			double l = Public.expandedRand(-2.0D, 0.0D);
 			entityManager.addEntity(new Flower(handler, x,
-					(((Integer) ((ArrayList<?>) heights.get(x / Tile.TILEWIDTH)).get(
-							(int) Public.random(0.0D, ((ArrayList<?>) heights.get(x / Tile.TILEWIDTH)).size() - 1)))
+					(((Integer) ((ArrayList<?>) heights.get(x / Tile.WIDTH)).get(
+							(int) Public.expandedRand(0.0D, ((ArrayList<?>) heights.get(x / Tile.WIDTH)).size() - 1)))
 									.intValue()
-							- 1) * Tile.TILEHEIGHT,
+							- 1) * Tile.HEIGHT,
 					type, l), true);
 		}
 	}
 
 	private void addStone(int amount, int type) {
 		for (int i = 0; i < amount; i++) {
-			int x = (int) (Math.random() * width + 1.0D) * Tile.TILEWIDTH;
+			int x = (int) (Math.random() * width + 1.0D) * Tile.WIDTH;
 			entityManager.addEntity(new Stone(handler, x,
-					(((Integer) ((ArrayList<?>) heights.get(x / Tile.TILEWIDTH)).get(
-							(int) Public.random(0.0D, ((ArrayList<?>) heights.get(x / Tile.TILEWIDTH)).size() - 1)))
+					(((Integer) ((ArrayList<?>) heights.get(x / Tile.WIDTH)).get(
+							(int) Public.expandedRand(0.0D, ((ArrayList<?>) heights.get(x / Tile.WIDTH)).size() - 1)))
 									.intValue()
-							- 1) * Tile.TILEHEIGHT,
+							- 1) * Tile.HEIGHT,
 					type), true);
 		}
 	}
 
 	private void addTrees(int amount, int agemin, int agemax) {
 		for (int i = 0; i < amount; i++) {
-			int x = (int) (Math.random() * width * Tile.TILEWIDTH + 1.0D);
+			int x = (int) (Math.random() * width * Tile.WIDTH + 1.0D);
 			entityManager.addEntity(new Tree(handler, x - 18,
-					(((heights.get(x / Tile.TILEWIDTH)).get(
-							(int) Public.random(0.0D, (heights.get(x / Tile.TILEWIDTH)).size() - 1)))) * Tile.TILEHEIGHT,
-					(int) Public.random(agemin, agemax)), true);
+					(((heights.get(x / Tile.WIDTH)).get(
+							(int) Public.expandedRand(0.0D, (heights.get(x / Tile.WIDTH)).size() - 1)))) * Tile.HEIGHT,
+					(int) Public.expandedRand(agemin, agemax)), true);
 		}
 	}
 
@@ -3249,7 +2280,7 @@ public class World implements Serializable {
 				y = (int) (Math.random() * height + 1.0D);
 			}
 
-			entityManager.addEntity(new Bee(handler, x * Tile.TILEWIDTH, y * Tile.TILEHEIGHT, false, timer), true);
+			entityManager.addEntity(new Bee(handler, x * Tile.WIDTH, y * Tile.HEIGHT, false, timer), true);
 		}
 	}
 
@@ -3263,7 +2294,7 @@ public class World implements Serializable {
 				y = (int) (Math.random() * height + 1.0D);
 			}
 
-			entityManager.addEntity(new Butterfly(handler, x * Tile.TILEWIDTH, y * Tile.TILEHEIGHT, false, timer),
+			entityManager.addEntity(new Butterfly(handler, x * Tile.WIDTH, y * Tile.HEIGHT, false, timer),
 					true);
 		}
 	}
@@ -3275,15 +2306,15 @@ public class World implements Serializable {
 //		addBat(amount);
 //		addFairy(amount);
 		for (int i = 0; i < amount; i++) {
-			int x = (int) (Math.random() * width + 1.0D) * Tile.TILEWIDTH;
+			int x = (int) (Math.random() * width + 1.0D) * Tile.WIDTH;
 
 			while (getTile(x, 0).isSolid()) {
-				x = (int) (Math.random() * width + 1.0D) * Tile.TILEWIDTH;
+				x = (int) (Math.random() * width + 1.0D) * Tile.WIDTH;
 			}
 
-			int ix = (int) (x / Tile.TILEWIDTH);
+			int ix = (int) (x / Tile.WIDTH);
 
-			int y = (heights.get(ix).size() > 0 ? (heights.get(ix).get(0) - 2) * Tile.TILEHEIGHT : 0);
+			int y = (heights.get(ix).size() > 0 ? (heights.get(ix).get(0) - 2) * Tile.HEIGHT : 0);
 
 			entityManager.addEntity(new Fox(handler, x, y), true);
 		}
@@ -3291,15 +2322,15 @@ public class World implements Serializable {
 
 	private void addBear(int amount) {
 		for (int i = 0; i < amount; i++) {
-			int x = (int) (Math.random() * width + 1.0D) * Tile.TILEWIDTH;
+			int x = (int) (Math.random() * width + 1.0D) * Tile.WIDTH;
 
 			while (getTile(x, 0).isSolid()) {
-				x = (int) (Math.random() * width + 1.0D) * Tile.TILEWIDTH;
+				x = (int) (Math.random() * width + 1.0D) * Tile.WIDTH;
 			}
 
-			int ix = (int) (x / Tile.TILEWIDTH);
+			int ix = (int) (x / Tile.WIDTH);
 
-			int y = (heights.get(ix).size() > 0 ? (heights.get(ix).get(0) - 2) * Tile.TILEHEIGHT : 0);
+			int y = (heights.get(ix).size() > 0 ? (heights.get(ix).get(0) - 2) * Tile.HEIGHT : 0);
 
 			entityManager.addEntity(new Bear(handler, x, y), true);
 		}
@@ -3307,15 +2338,15 @@ public class World implements Serializable {
 
 	private void addWolf(int amount) {
 		for (int i = 0; i < amount; i++) {
-			int x = (int) (Math.random() * width + 1.0D) * Tile.TILEWIDTH;
+			int x = (int) (Math.random() * width + 1.0D) * Tile.WIDTH;
 
 			while (getTile(x, 0).isSolid()) {
-				x = (int) (Math.random() * width + 1.0D) * Tile.TILEWIDTH;
+				x = (int) (Math.random() * width + 1.0D) * Tile.WIDTH;
 			}
 
-			int ix = (int) (x / Tile.TILEWIDTH);
+			int ix = (int) (x / Tile.WIDTH);
 
-			int y = (heights.get(ix).size() > 0 ? (heights.get(ix).get(0) - 2) * Tile.TILEHEIGHT : 0);
+			int y = (heights.get(ix).size() > 0 ? (heights.get(ix).get(0) - 2) * Tile.HEIGHT : 0);
 
 			entityManager.addEntity(new Wolf(handler, x, y), true);
 		}
@@ -3331,7 +2362,7 @@ public class World implements Serializable {
 				y = (int) (Math.random() * height + 1.0D);
 			}
 
-			entityManager.addEntity(new Bat(handler, x * Tile.TILEWIDTH, y * Tile.TILEHEIGHT), true);
+			entityManager.addEntity(new Bat(handler, x * Tile.WIDTH, y * Tile.HEIGHT), true);
 		}
 	}
 
@@ -3345,42 +2376,48 @@ public class World implements Serializable {
 				y = (int) (Math.random() * height + 1.0D);
 			}
 
-			entityManager.addEntity(new Fairy(handler, x * Tile.TILEWIDTH, y * Tile.TILEHEIGHT), true);
+			entityManager.addEntity(new Fairy(handler, x * Tile.WIDTH, y * Tile.HEIGHT), true);
 		}
 	}
 
 	private void addSkunk(int amount) {
 		for (int i = 0; i < amount; i++) {
-			int x = (int) (Math.random() * width + 1.0D) * Tile.TILEWIDTH;
+			int x = (int) (Math.random() * width + 1.0D) * Tile.WIDTH;
 
 			while (getTile(x, 0).isSolid()) {
-				x = (int) (Math.random() * width + 1.0D) * Tile.TILEWIDTH;
+				x = (int) (Math.random() * width + 1.0D) * Tile.WIDTH;
 			}
 
-			int ix = (int) (x / Tile.TILEWIDTH);
+			int ix = (int) (x / Tile.WIDTH);
 
-			int y = (heights.get(ix).size() > 0 ? (heights.get(ix).get(0) - 2) * Tile.TILEHEIGHT : 0);
+			int y = (heights.get(ix).size() > 0 ? (heights.get(ix).get(0) - 2) * Tile.HEIGHT : 0);
 
 			entityManager.addEntity(new Skunk(handler, x, y), true);
 		}
 	}
 
-	private void addEntities(int amount, EntityAdder a) {
-		for (int i = 0; i < amount; i++) {
-			int x = (int) (Math.random() * width + 1.0D) * Tile.TILEWIDTH;
-
-			int ix = (int) (x / Tile.TILEWIDTH);
-			while (heights.get(ix).size() == 0) {
-				x = (int) (Math.random() * width + 1.0D) * Tile.TILEWIDTH;
-				ix = (int) (x / Tile.TILEWIDTH);
+	private void addEntities(int amount, EntityEntry a) {
+		if(a.entityClass.isAssignableFrom(Creature.class) && ((Creature)a.example).flies)
+			for (int i = 0; i < amount; i++) {
+				int x, y;
+				do {
+					x = (int) (Math.random() * width + 1.0D) * Tile.WIDTH;
+					y = (int) (Math.random() * width + 1.0D) * Tile.WIDTH;
+				} while (getTile(x, y).isSolid());
+				entityManager.addEntity(a.spawn(x, y));
 			}
+		else
+			for (int i = 0; i < amount; i++) {
+				int x, size;
+				do {
+					x = (int) (Math.random() * width + 1.0D) * Tile.WIDTH;
+					size = heights.get(x/Tile.WIDTH).size();
+				} while (size == 0);
 
-			int y = (heights.get(ix).size() > 0 ? (heights.get(ix).get(0) - 2) * Tile.TILEHEIGHT : 0);
+				int y = heights.get(x / Tile.WIDTH).get((int)(Math.random()*size)) * Tile.HEIGHT;
 
-			System.out.println("Adding : " + a.name + " (" + x + ", " + y + ");");
-
-			a.add(x, y);
-		}
+				entityManager.addEntity(a.spawn(x, y));
+			}
 	}
 
 	private boolean nameScheming(String name) {
@@ -3438,33 +2475,6 @@ public class World implements Serializable {
 			cannibal++;
 	}
 
-	public void updateMaxEntities(String name) {
-		if (name.contains("Tree"))
-			maxTrees++;
-		if (name.contains("Bee"))
-			maxBee++;
-		if (name.contains("Butterfly"))
-			maxButterfly++;
-		if (name.contains("Fox"))
-			maxFox++;
-		if (name.contains("Wolf"))
-			maxWolf++;
-		if (name.contains("Bear"))
-			maxBear++;
-		if (name.contains("Bat"))
-			maxBat++;
-		if (name.contains("Skunk"))
-			maxSkunk++;
-		if (name.contains("Fairy"))
-			maxFairy++;
-		if (name.contains("Stone"))
-			maxStone++;
-		if (name.contains("Flower"))
-			maxFlower++;
-		if (name.contains("Cannibal"))
-			maxCannibals++;
-	}
-
 	public void updateMaxEntities(String name, int update) {
 		if (name.contains("Tree"))
 			maxTrees += update;
@@ -3497,13 +2507,13 @@ public class World implements Serializable {
 		boolean pass = true;
 
 		if (e instanceof Creature) {
-			if (origEntities.containsKey(((Creature) e).getName()))
-				if (origEntities.get(((Creature) e).getName()) < maxEntities.get(((Creature) e).getName()))
+			if (entityCount.containsKey(((Creature) e).getName()))
+				if (entityCount.get(((Creature) e).getName()) < entityCaps.get(((Creature) e).getName()))
 					pass = true;
 				else
 					pass = nameScheming(((Creature) e).getName());
-		} else if (origEntities.containsKey(e.getClass().getName())) {
-			pass = (origEntities.get(e.getClass().getName()) < maxEntities.get(e.getClass().getName()));
+		} else if (entityCount.containsKey(e.getClass().getName())) {
+			pass = (entityCount.get(e.getClass().getName()) < entityCaps.get(e.getClass().getName()));
 		} else {
 			pass = nameScheming(e.getClass().getName());
 		}
@@ -3511,13 +2521,13 @@ public class World implements Serializable {
 		if (!pass)
 			return;
 
-		int ix = (int) (x / Tile.TILEWIDTH);
+		int ix = (int) (x / Tile.WIDTH);
 
-		double y = (heights.get(ix).size() > 0 ? (heights.get(ix).get(0)) * Tile.TILEHEIGHT : 0);
+		double y = (heights.get(ix).size() > 0 ? (heights.get(ix).get(0)) * Tile.HEIGHT : 0);
 
 		while (y > maxy || y < miny) {
 			y = (heights.get(ix).size() > 0
-					? (heights.get(ix).get((int) Public.random(0, heights.get(ix).size() - 1))) * Tile.TILEHEIGHT
+					? (heights.get(ix).get((int) Public.expandedRand(0, heights.get(ix).size() - 1))) * Tile.HEIGHT
 					: maxy - 1);
 		}
 
@@ -3526,12 +2536,12 @@ public class World implements Serializable {
 		entityManager.addEntity(e, false);
 
 		if (e instanceof Creature) {
-			if (origEntities.containsKey(((Creature) e).getName()))
-				origEntities.put(((Creature) e).getName(), origEntities.get(((Creature) e).getName()) + 1);
+			if (entityCount.containsKey(((Creature) e).getName()))
+				entityCount.put(((Creature) e).getName(), entityCount.get(((Creature) e).getName()) + 1);
 			else
 				updateOrigEntities(((Creature) e).getName());
-		} else if (origEntities.containsKey(e.getClass().getName())) {
-			origEntities.put(e.getClass().getName(), origEntities.get(e.getClass().getName()) + 1);
+		} else if (entityCount.containsKey(e.getClass().getName())) {
+			entityCount.put(e.getClass().getName(), entityCount.get(e.getClass().getName()) + 1);
 		} else {
 			updateOrigEntities(e.getClass().getName());
 		}
@@ -3542,13 +2552,13 @@ public class World implements Serializable {
 		boolean pass = true;
 
 		if (e instanceof Creature) {
-			if (origEntities.containsKey(((Creature) e).getName()))
-				if (origEntities.get(((Creature) e).getName()) < maxEntities.get(((Creature) e).getName()))
+			if (entityCount.containsKey(((Creature) e).getName()))
+				if (entityCount.get(((Creature) e).getName()) < entityCaps.get(((Creature) e).getName()))
 					pass = true;
 				else
 					pass = nameScheming(((Creature) e).getName());
-		} else if (origEntities.containsKey(e.getClass().getName())) {
-			pass = (origEntities.get(e.getClass().getName()) < maxEntities.get(e.getClass().getName()));
+		} else if (entityCount.containsKey(e.getClass().getName())) {
+			pass = (entityCount.get(e.getClass().getName()) < entityCaps.get(e.getClass().getName()));
 		} else {
 			pass = nameScheming(e.getClass().getName());
 		}
@@ -3561,67 +2571,39 @@ public class World implements Serializable {
 		entityManager.addEntity(e, false);
 
 		if (e instanceof Creature) {
-			if (origEntities.containsKey(((Creature) e).getName()))
-				origEntities.put(((Creature) e).getName(), origEntities.get(((Creature) e).getName()) + 1);
+			if (entityCount.containsKey(((Creature) e).getName()))
+				entityCount.put(((Creature) e).getName(), entityCount.get(((Creature) e).getName()) + 1);
 			else
 				updateOrigEntities(((Creature) e).getName());
-		} else if (origEntities.containsKey(e.getClass().getName())) {
-			origEntities.put(e.getClass().getName(), origEntities.get(e.getClass().getName()) + 1);
+		} else if (entityCount.containsKey(e.getClass().getName())) {
+			entityCount.put(e.getClass().getName(), entityCount.get(e.getClass().getName()) + 1);
 		} else {
 			updateOrigEntities(e.getClass().getName());
-		}
-	}
-
-	public void addConBee(int x, int y, long timer) {
-		if (bee < maxBee) {
-			entityManager.addEntity(new Bee(handler, x, y, false, timer), true);
-		}
-	}
-
-	public void addConButterfly(int x, int y, long timer) {
-		if (butterfly < maxButterfly) {
-			entityManager.addEntity(new Butterfly(handler, x, y, false, timer), true);
-		}
-	}
-
-	public void addCloud(int amount, int type) {
-		for (int i = 0; i < amount; i++) {
-			int y = (int) (Math.random() * -handler.getHeight() + cloudY * Tile.TILEHEIGHT);
-			double x = Math.random() * (Tile.TILEWIDTH * (width + 8)) - Tile.TILEWIDTH * 4;
-			entityManager.addEntity(new Cloud(handler, x, y, type, Math.random() / 2.0D), true);
 		}
 	}
 
 	private void addCannibalTribe(int amount, int groupX) {
 		entityManager.addEntity(new Cannibal(handler, groupX,
 
-				((Integer) ((ArrayList<?>) heights.get(groupX / Tile.TILEWIDTH)).get(
-						(int) Public.random(0.0D, ((ArrayList<?>) heights.get(groupX / Tile.TILEWIDTH)).size() - 1)))
+				((Integer) ((ArrayList<?>) heights.get(groupX / Tile.WIDTH)).get(
+						(int) Public.expandedRand(0.0D, ((ArrayList<?>) heights.get(groupX / Tile.WIDTH)).size() - 1)))
 								.intValue()
 						- 2,
-				Public.random(0.1D, 0.6D), 1, true), true);
+				Public.expandedRand(0.1D, 0.6D), 1, true), true);
 		for (int i = 0; i < amount - 1; i++) {
-			int x = (int) Public.random(groupX - 2, groupX + 2);
-			int y = ((Integer) ((ArrayList<?>) heights.get(x / Tile.TILEWIDTH))
-					.get((int) Public.random(0.0D, ((ArrayList<?>) heights.get(x / Tile.TILEWIDTH)).size() - 1)))
+			int x = (int) Public.expandedRand(groupX - 2, groupX + 2);
+			int y = ((Integer) ((ArrayList<?>) heights.get(x / Tile.WIDTH))
+					.get((int) Public.expandedRand(0.0D, ((ArrayList<?>) heights.get(x / Tile.WIDTH)).size() - 1)))
 							.intValue()
 					- 2;
 
-			entityManager.addEntity(new Cannibal(handler, x * Tile.TILEWIDTH, y * Tile.TILEHEIGHT,
-					Public.random(0.51D, 0.8D), 1, false), true);
+			entityManager.addEntity(new Cannibal(handler, x * Tile.WIDTH, y * Tile.HEIGHT,
+					Public.expandedRand(0.51D, 0.8D), 1, false), true);
 		}
 	}
 
-	private void addShrubbery(int amount) {
-		for (int i = 0; i < amount; i++) {
-			int x = (int) Public.random(0.0D, width);
-			int y = ((Integer) ((ArrayList<?>) heights.get(x))
-					.get((int) Public.random(0.0D, ((ArrayList<?>) heights.get(x)).size() - 1))).intValue() - 1;
-
-			entityManager.addEntity(
-					new Shrubbery(handler, x * Tile.TILEWIDTH, y * Tile.TILEHEIGHT, (int) Public.random(3.0D, 4.0D)),
-					true);
-		}
+	public String getType() {
+		return type;
 	}
 
 	public String toString() {

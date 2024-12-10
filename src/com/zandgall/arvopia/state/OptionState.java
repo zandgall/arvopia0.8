@@ -5,8 +5,6 @@ import com.zandgall.arvopia.Game;
 import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.gfx.transform.Tran;
 import com.zandgall.arvopia.input.KeyManager;
-import com.zandgall.arvopia.utils.ArraySlider;
-import com.zandgall.arvopia.utils.BevelPlatform;
 import com.zandgall.arvopia.utils.Button;
 import com.zandgall.arvopia.utils.FileLoader;
 import com.zandgall.arvopia.utils.Public;
@@ -25,21 +23,19 @@ import java.util.Map;
 
 public class OptionState extends State {
 	public static float fxVolume = 1, msVolume = 1;
-	public static boolean clipRender = false, renderbackground = true, individualtilerender = true, splitstreamrender = true, splitstreamlighting = true;
+	public static boolean render_background = true, individual_tile_render = true, split_stream_render = true, split_stream_lighting = true;
 	public static int lightType = 0, renType = 0;
-	private Button back, reset;
-
-	BevelPlatform body;
+	private final Button back, reset;
 
 	double scroll = 0;
 
-	ArrayList<Button> keybinds = new ArrayList<Button>();
+	ArrayList<Button> keybinds = new ArrayList<>();
 	public static final String[] LIGHT_TYPES = new String[] { "Fast", "Smooth", "Quality", "Hyper" },
 			RENDER_TYPES = new String[] { "Speed", "Normal", "Quality" };
 
-	public Map<String, ArrayList<Option>> options;
+	public final Map<String, ArrayList<Option>> options;
 
-	TabMenu tabs;
+	final TabMenu tabs;
 
 	public OptionState(Handler handler) {
 		super(handler);
@@ -48,10 +44,8 @@ public class OptionState extends State {
 
 		tabs = new TabMenu(handler, new String[] { "General", "Controls/Keybinds" }, 0, 0, 720, 400, true);
 
-		options = new HashMap<String, ArrayList<Option>>();
-		options.put("Toggleables", new ArrayList<Option>());
-
-		body = new BevelPlatform(2, 2, 720, 400);
+		options = new HashMap<>();
+		options.put("Toggleables", new ArrayList<>());
 
 		back = new Button(handler, handler.getWidth() - 70, handler.getHeight() - 40,
 				"Brings you back to the main menu", "Back");
@@ -59,16 +53,16 @@ public class OptionState extends State {
 		addSlider("Game control", "FPS", 1, 90, 60, "fps");
 		addSlider("Game control", "Render Type", 0, RENDER_TYPES.length - 1, 0, "none");
 
-		addSlider("Enviornment", "Time Speed", 0, 100, 2, "min/sec");
-		addSlider("Enviornment", "Light Quality", 1, 36, 9, "px per cell");
-		addSlider("Enviornment", "Light Smoothing", 0, LIGHT_TYPES.length - 1, 0, "none");
+		addSlider("Environment", "Time Speed", 0, 100, 2, "min/sec");
+		addSlider("Environment", "Light Quality", 1, 36, 9, "px per cell");
+		addSlider("Environment", "Light Smoothing", 0, LIGHT_TYPES.length - 1, 0, "none");
 
 		addSlider("Volume", "Music Volume", 0, 100, 75, "%");
 		addSlider("Volume", "Sound Volume", 0, 100, 75, "%");
 
 		addToggle("Slider Debug", "Use if sliders don't work for you", true);
 		addToggle("Pause on Mouse Exit", "Pauses the game when the cursor leaves the screen", false);
-		addToggle("Extra Debug", "Prints every little detail, not reccomended unless needed for debugging", false);
+		addToggle("Extra Debug", "Prints every little detail, not recommended unless needed for debugging", false);
 		addToggle("Render Background", "Draws hills in the background in each world, Lower framerate", true);
 		addToggle("Glow near sun", "On: Tiles and entities will show an outline when nearby sun. (Possible loss in fps)", true);
 		addToggle("Sound per layer", "On: Plays a new audio clip for everything, (RAM heavy?); \nOff: Every bird will use the one same singing sound, every fox with barking, etc", true);
@@ -96,18 +90,16 @@ public class OptionState extends State {
 
 		Console.log("Finished");
 		reset = new Button(handler, back.getX() - 85, handler.getHeight() - 40, "", "Reset");
+
+		init();
 	}
 
 	public void addSlider(String section, String name, double min, double max, double start, String ps) {
 		if (!options.containsKey(section))
-			options.put(section, new ArrayList<Option>());
+			options.put(section, new ArrayList<>());
 		options.get(section).add(new Option(handler, name, min, max, start, ps));
 	}
 
-	public void addToggle(String name, boolean start) {
-		options.get("Toggleables").add(new Option(handler, name, start));
-	}
-	
 	public void addToggle(String name, String desc, boolean start) {
 		Option o = new Option(handler, name, start);
 		o.setDescription(desc);
@@ -123,19 +115,15 @@ public class OptionState extends State {
 	}
 
 	public String getValue(String sec, int index) {
-
-		String output = ""
-				+ (options.get(sec).get(index).toggle == null ? options.get(sec).get(index).slider.getWholeValue()
-						: options.get(sec).get(index).toggle.on);
-
-		return output;
+		return "" + (options.get(sec).get(index).toggle == null ? options.get(sec).get(index).slider.getWholeValue()
+				: options.get(sec).get(index).toggle.on);
 	}
 
 	public double getSlider(String sec, int index) {
 		return options.get(sec).get(index).slider.getWholeValue();
 	}
 
-	public int getSlideri(String sec, int index) {
+	public int getIntSlider(String sec, int index) {
 		return options.get(sec).get(index).slider.getValue();
 	}
 
@@ -147,8 +135,8 @@ public class OptionState extends State {
 		return getSlider(sec, nameIndex(sec, name));
 	}
 
-	public int getSlideri(String sec, String name) {
-		return getSlideri(sec, nameIndex(sec, name));
+	public int getIntSlider(String sec, String name) {
+		return getIntSlider(sec, nameIndex(sec, name));
 	}
 
 	public boolean getToggle(String name) {
@@ -165,9 +153,9 @@ public class OptionState extends State {
 	public void get(String sec, int index, String file) {
 		String val = get(options.get(sec).get(index).name.replaceAll(" ", ""), file);
 
-		if (val != "")
+		if (!val.equals(""))
 			if (options.get(sec).get(index).slider == null)
-				options.get(sec).get(index).toggle.on = val.toLowerCase().equals("true");
+				options.get(sec).get(index).toggle.on = val.equalsIgnoreCase("true");
 			else
 				options.get(sec).get(index).slider.setValue(Utils.parseDouble(val));
 
@@ -178,17 +166,27 @@ public class OptionState extends State {
 		if ((back.on) || (KeyManager.esc)) {
 			State.setState(State.getPrev());
 
-			String out = "";
+			StringBuilder out = new StringBuilder();
 			for (String s : options.keySet())
 				for (int i = 0; i < options.get(s).size(); i++) {
 					if (options.get(s).get(i).slider != null)
-						out += options.get(s).get(i).name.replaceAll(" ", "") + " "
-								+ options.get(s).get(i).slider.getWholeValue() + System.lineSeparator();
+						out.append(options.get(s).get(i).name.replaceAll(" ", "")).append(" ").append(options.get(s).get(i).slider.getWholeValue()).append(System.lineSeparator());
 					else
-						out += options.get(s).get(i).name.replaceAll(" ", "") + " " + options.get(s).get(i).toggle.on
-								+ System.lineSeparator();
+						out.append(options.get(s).get(i).name.replaceAll(" ", "")).append(" ").append(options.get(s).get(i).toggle.on).append(System.lineSeparator());
 				}
-			Utils.fileWriter(out, Game.prefix + "/Arvopia/Options0.8.txt");
+			Utils.fileWriter(out.toString(), Game.prefix + "/Arvopia/Options0.8.txt");
+
+			out = new StringBuilder();
+			for(int i = 0; i < KeyManager.keybinds.getKeys().size(); i++) {
+				String key = KeyManager.keybinds.getKeys().get(i);
+				out.append(key).append("~");
+				out.append(KeyManager.keysections.keyFrom(key)).append("~");
+				for(int j = 0; j < KeyManager.keybinds.getValues(key).size(); j++)
+					out.append(KeyManager.keybinds.getValues(key).get(j)).append(" ");
+				out.append(System.lineSeparator());
+			}
+
+			Utils.fileWriter(out.toString(), Game.prefix + "/Arvopia/Keybinds.txt");
 		}
 
 		scroll -= handler.getMouse().getMouseScroll() * 8;
@@ -199,22 +197,20 @@ public class OptionState extends State {
 
 		reset.tick();
 
-		if (tabs.getTab() == "General")
+		if (tabs.getTab().equals("General"))
 			generalTick();
-		else if (tabs.getTab() == "Controls/Keybinds")
+		else if (tabs.getTab().equals("Controls/Keybinds"))
 			controlTick();
-
-//		scroll = Public.range(-90, 0, scroll);
 	}
 
 	public void generalTick() {
 
 		handler.getMouse().setSliderMalfunction(getToggle("Slider Debug"));
 
-		lightType = getSlideri("Enviornment", "Light Smoothing");
-		renType = getSlideri("Game control", "Render Type");
+		lightType = getIntSlider("Environment", "Light Smoothing");
+		renType = getIntSlider("Game control", "Render Type");
 
-		renderbackground = getToggle("Render Background");
+		render_background = getToggle("Render Background");
 
 		fxVolume = (float) Math.pow(getSlider("Volume", "Sound Volume") / 100.0f, 3);
 		msVolume = (float) Math.pow(getSlider("Volume", "Music Volume") / 100.0f, 3);
@@ -225,7 +221,7 @@ public class OptionState extends State {
 		for (String s : options.keySet()) {
 			for (int j = 0; j < options.get(s).size(); j++) {
 
-				if (s != "Toggleables") {
+				if (!s.equals("Toggleables")) {
 					options.get(s).get(j).tick(18, (int) (i + 40 + scroll));
 					i += 54;
 					max += 54;
@@ -235,21 +231,21 @@ public class OptionState extends State {
 				}
 
 			}
-			if (s != "Toggleables")
+			if (!s.equals("Toggleables"))
 				i += 18;
 		}
 
 		scroll = Public.range(-max + 320, 0, scroll);
 
 		options.get("Game control").get(1).custom = RENDER_TYPES[options.get("Game control").get(1).slider.getValue()];
-		options.get("Enviornment").get(2).custom = LIGHT_TYPES[options.get("Enviornment").get(2).slider.getValue()];
+		options.get("Environment").get(2).custom = LIGHT_TYPES[options.get("Environment").get(2).slider.getValue()];
 
-		handler.getWorld().getEnviornment().lightQuality = getSlideri("Enviornment", "Light Quality");
+		handler.getWorld().getEnvironment().lightQuality = getIntSlider("Environment", "Light Quality");
 
 		handler.getGame().setFps((int) getSlider("Game control", "FPS"));
-		handler.getWorld().getEnviornment().setTimeSpeed((int) getSlider("Enviornment", "Time Speed"));
-		splitstreamrender = getToggle("Split-Stream Rendering");
-		splitstreamlighting = getToggle("Split-Stream Lighting");
+		handler.getWorld().getEnvironment().setTimeSpeed((int) getSlider("Environment", "Time Speed"));
+		split_stream_render = getToggle("Split-Stream Rendering");
+		split_stream_lighting = getToggle("Split-Stream Lighting");
 
 		//handler.soundSystem.setVolume("music", msVolume);
 
@@ -264,13 +260,12 @@ public class OptionState extends State {
 		for (Button b : keybinds) {
 			b.tick(handler.getMouse().rMouseX(), handler.getMouse().rMouseY() - (int) scroll);
 			if (b.data) {
-				if (b.getName() != "+") {
+				if (!b.getName().equals("+")) {
 					String key = b.getDescription().split("~`~")[1].replaceAll("\\n", "");
 					int val = Utils.parseInt(b.getDescription().split("~`~")[0]);
 					if (KeyManager.keybinds.getValues(key.intern()).size() > 1) {
 						Console.log("Removed", KeyManager.keybinds.getValues().get(val), "(" + val + ")", "from", key);
 						KeyManager.keybinds.remove(val);
-//						Thread.sleep(100);
 						init();
 					} else
 						Console.log("Too small to remove from", key.intern(),
@@ -279,20 +274,13 @@ public class OptionState extends State {
 			}
 			b.data = false;
 			if (b.on) {
-				if (b.getName() == "+") {
-					while (!KeyManager.pressed) {
-						Console.log(KeyManager.pressed);
-						if (KeyManager.pressed)
-							break;
-					}
+				while (!KeyManager.pressed) {
+					System.out.print("");
+				}
+				if (b.getName().equals("+")) {
 					KeyManager.keybinds.put(b.getDescription(), KeyManager.lastKey);
 					init();
 				} else {
-					while (!KeyManager.pressed) {
-						Console.log(KeyManager.pressed);
-						if (KeyManager.pressed)
-							break;
-					}
 					Console.log("Setting", b.getDescription().split("~`~")[0], KeyManager.lastKey);
 					KeyManager.keybinds.getValues().set(Utils.parseInt(b.getDescription().split("~`~")[0]),
 							KeyManager.lastKey);
@@ -313,9 +301,9 @@ public class OptionState extends State {
 		tabs.render(g);
 //		body.render(g, 0, 0);
 
-		if (tabs.getTab() == "General")
-			g.drawImage(renderGeneral(), 0, 30, null);
-		else if (tabs.getTab() == "Controls/Keybinds")
+		if (tabs.getTab().equals("General"))
+			g.drawImage(renderGeneral(), 0, 37, null);
+		else if (tabs.getTab().equals("Controls/Keybinds"))
 			g.drawImage(renderControl(), 0, 37, null);
 
 		back.render(g);
@@ -337,7 +325,7 @@ public class OptionState extends State {
 				options.get(s).get(j).render(g);
 				i = options.get(s).get(j).y + 54;
 			}
-			if (s != "Toggleables")
+			if (!s.equals("Toggleables"))
 				g.drawLine(10, i, 300, i);
 		}
 
@@ -351,8 +339,6 @@ public class OptionState extends State {
 
 		g.translate(0, -30);
 
-//		int i = 0;
-
 		g.setColor(Color.black);
 		g.setFont(Public.defaultFont.deriveFont(20.0f));
 
@@ -364,16 +350,13 @@ public class OptionState extends State {
 		g.translate(0, -scroll);
 
 		for (int s = 0; s < KeyManager.keysections.getKeys().size(); s++) {
-			String section = (String) KeyManager.keysections.getKeys().get(s);
+			String section = KeyManager.keysections.getKeys().get(s);
 			off += 62;
 			g.setFont(Public.runescape.deriveFont(40.0f));
-//			g.drawString(section, 10, off + (int) scroll);
 			Tran.drawOutlinedText(g, 10, off + scroll, section, 2, Color.black, Color.lightGray);
 			for (int i = 0; i < KeyManager.keybinds.getKeys().size(); i++) {
 
 				String option = KeyManager.keybinds.getKeys().get(i);
-
-//				Console.log(option, KeyManager.keysections.getValues(section));
 
 				if (option.contains("_SECTION") || !KeyManager.keysections.getValues(section).contains(option))
 					continue;
@@ -382,11 +365,10 @@ public class OptionState extends State {
 
 				g.setFont(Public.runescape.deriveFont(30.0f));
 
-				Color c = new Color(153, 153, 175);
+				Color c;
 				c = Color.white;
 				if (KeyManager.checkBind(KeyManager.keybinds.getKeys().get(i)))
 					c = (Color.yellow);
-//				g.drawString(KeyManager.keybinds.getKeys().get(i).toUpperCase(), 10, off + (int) scroll);
 
 				Tran.drawOutlinedText(g, 10, off + scroll+5, KeyManager.keybinds.getKeys().get(i).toUpperCase(), 2,
 						Color.black, c);
@@ -406,12 +388,24 @@ public class OptionState extends State {
 
 	public void init() {
 
-		keybinds = new ArrayList<Button>();
+		if (new File(Game.prefix + "/Keybinds.txt").exists()) {
+			String[] opts = FileLoader.readFile(Game.prefix + "/Keybinds.txt").split(System.lineSeparator());
+			KeyManager.keybinds.clear();
+			KeyManager.keysections.clear();
+			for(String line : opts) {
+				String[] elements = line.split("~");
+				String[] numbers = elements[2].split("\\s+");
+				for (String number : numbers)
+					KeyManager.addKeybind(elements[0], elements[1], Utils.parseInt(number));
+			}
+		}
+
+		keybinds = new ArrayList<>();
 
 		int off = 0;
 
 		for (int s = 0; s < KeyManager.keysections.getKeys().size(); s++) {
-			String section = (String) KeyManager.keysections.getKeys().get(s);
+			String section = KeyManager.keysections.getKeys().get(s);
 			off += 62;
 			for (int i = 0; i < KeyManager.keybinds.getKeys().size(); i++) {
 
@@ -422,10 +416,9 @@ public class OptionState extends State {
 
 				off += 46;
 
-				int j = 0;
+				int j;
 				for (j = 0; j < KeyManager.keybinds.getValues(option).size(); j++) {
-					int index = j;
-					index = KeyManager.keybinds.indexOfVal(option, KeyManager.keybinds.getValues(option).get(j));
+					int index = KeyManager.keybinds.indexOfVal(option, KeyManager.keybinds.getValues(option).get(j));
 
 					keybinds.add(new Button(handler, j * 100 + 290, off - 26, 80, 24, index + "~`~" + option, ""));
 				}
@@ -448,18 +441,20 @@ class Option {
 	public Slider slider;
 	public ToggleButton toggle;
 
-	public Button nametag;
+	public Button name_tag;
 
 	int y, x;
 
-	String ps = "", custom = "", name = "";
+	String ps = "";
+	String custom = "";
+	final String name;
 
-	Object start;
+	final Object start;
 
 	public Option(Handler game, String name, double min, double max, double start, String ps) {
 		this.name = name;
 		slider = new Slider(game, min, max, start, false, name);
-		nametag = new Button(game, 18, 0, "", name);
+		name_tag = new Button(game, 18, 0, "", name);
 		this.ps = ps;
 		this.start = start;
 	}
@@ -476,25 +471,25 @@ class Option {
 		this.y = y;
 
 		if (slider != null)
-			slider.tick(x + nametag.getWidth() + 10, y + 8);
+			slider.tick(x + name_tag.getWidth() + 10, y + 8);
 		if (toggle != null) {
 			toggle.setY(y);
 			toggle.tick();
 		}
-		if (nametag != null) {
-			nametag.setY(y);
+		if (name_tag != null) {
+			name_tag.setY(y);
 		}
 	}
 
 	public void render(Graphics2D g) {
 		if (slider != null) {
-			nametag.render(g);
+			name_tag.render(g);
 			slider.render(g);
 			g.setFont(Public.defaultFont.deriveFont(20.0f));
-			if (custom != "")
-				g.drawString(custom, x + nametag.getWidth() + 130, nametag.getY() + 22);
+			if (!custom.equals(""))
+				g.drawString(custom, x + name_tag.getWidth() + 130, name_tag.getY() + 22);
 			else
-				g.drawString(slider.getValue() + " " + ps, x + nametag.getWidth() + 130, nametag.getY() + 22);
+				g.drawString(slider.getValue() + " " + ps, x + name_tag.getWidth() + 130, name_tag.getY() + 22);
 		} else {
 			toggle.render(g);
 		}
@@ -511,7 +506,7 @@ class Option {
 	public void setDescription(String desc) {
 		if(toggle!=null)
 			toggle.setDescription(desc);
-		else nametag.setDescription(desc);
+		else name_tag.setDescription(desc);
 	}
 	
 }

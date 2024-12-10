@@ -8,115 +8,106 @@ import com.zandgall.arvopia.items.Item;
 import com.zandgall.arvopia.items.PlayerItem;
 import com.zandgall.arvopia.utils.Public;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class Flower extends StaticEntity {
 	private static final long serialVersionUID = -5001443636584775793L;
-	public int type;
-	public int randomSpeed;
-	public int widthflip = 1;
-	double deathOffset;
-	
-	Animation outline, outline1, outline2, outline3, outline4;
+	private final int type, randomSpeed, widthflip;
 
-	public Flower(Handler handler, double x, double y, int type, double layer) {
-		super(handler, x, y, 18, 18, false, 1, PlayerItem.SCYTHE);
-		this.type = type;
+	private final Animation outline;
 
-		this.layer = layer;
+	public Flower(Handler handler, double x, double y) {
+		super(handler, x-9, y-18, 18, 18, false, 10, PlayerItem.SCYTHE);
+		this.type = Public.randInt(3);
 
-		if (Math.random() < 0.5D) {
+		this.layer = Public.rand(-1, 1);
+
+		if (Math.random() < 0.5D)
 			widthflip = -1;
-		}
+		else widthflip = 1;
 
-		randomSpeed = ((int) Public.random(-100.0D, 100.0D));
-
-		deathOffset = Public.random(-10.0D, 0.0D);
+		randomSpeed = ((int) Public.expandedRand(-100.0D, 100.0D));
 
 		bounds.x = -4;
 		bounds.width = 7;
 		bounds.y = 5;
 		bounds.height = 13;
+
+		BufferedImage pre0 = Tran.litUp(Tran.flip(PublicAssets.flower[type*3+1], widthflip, 1));
+		BufferedImage pre1 = Tran.litUp(Tran.flip(PublicAssets.flower[type*3+1], widthflip, 1));
+		BufferedImage pre2 = Tran.litUp(Tran.flip(PublicAssets.flower[type*3+2], widthflip, 1));
+
+		outline = new Animation(400, new BufferedImage[] {pre0, pre1, pre2, pre1}, "", "");
+
+	}
+
+	public Flower(Handler handler, double x, double y, int type, double layer) {
+		super(handler, x, y, 18, 18, false, 10, PlayerItem.SCYTHE);
+		this.type = type;
+
+		this.layer = layer;
+
+		if (Math.random() < 0.5D)
+			widthflip = -1;
+		else widthflip = 1;
+
+		randomSpeed = ((int) Public.expandedRand(-100.0D, 100.0D));
+
+		bounds.x = 5;
+		bounds.width = 7;
+		bounds.y = 5;
+		bounds.height = 13;
 		
-		BufferedImage pre0 = defaultLightEffect(Tran.flip(PublicAssets.flower[type*3+1], widthflip, 1));
-		BufferedImage pre1 = defaultLightEffect(Tran.flip(PublicAssets.flower[type*3+1], widthflip, 1));
-		BufferedImage pre2 = defaultLightEffect(Tran.flip(PublicAssets.flower[type*3+2], widthflip, 1));
-		
-		BufferedImage p0 = pre0;
-		BufferedImage p1 = pre1;
-		BufferedImage p2 = pre2;
-		outline = new Animation(400, new BufferedImage[] {p0, p1, p2, p1}, "", "");
-		p0 = Tran.effectAlpha(pre0, 200);
-		p1 = Tran.effectAlpha(pre1, 200);
-		p2 = Tran.effectAlpha(pre2, 200);
-		outline1 = new Animation(400, new BufferedImage[] {p0, p1, p2, p1}, "", "");
-		p0 = Tran.effectAlpha(pre0, 150);
-		p1 = Tran.effectAlpha(pre1, 150);
-		p2 = Tran.effectAlpha(pre2, 150);
-		outline2 = new Animation(400, new BufferedImage[] {p0, p1, p2, p1}, "", "");
-		p0 = Tran.effectAlpha(pre0, 100);
-		p1 = Tran.effectAlpha(pre1, 100);
-		p2 = Tran.effectAlpha(pre2, 100);
-		outline3 = new Animation(400, new BufferedImage[] {p0, p1, p2, p1}, "", "");
-		p0 = Tran.effectAlpha(pre0, 50);
-		p1 = Tran.effectAlpha(pre1, 50);
-		p2 = Tran.effectAlpha(pre2, 50);
-		outline4 = new Animation(400, new BufferedImage[] {p0, p1, p2, p1}, "", "");
-		
-//		outline1 = Tran.effectAlpha(outline, 200);
-//		outline2 = Tran.effectAlpha(outline, 150);
-//		outline3 = Tran.effectAlpha(outline, 100);
-//		outline4 = Tran.effectAlpha(outline, 50);
+		BufferedImage pre0 = Tran.litUp(Tran.flip(PublicAssets.flower[type*3+1], widthflip, 1));
+		BufferedImage pre1 = Tran.litUp(Tran.flip(PublicAssets.flower[type*3+1], widthflip, 1));
+		BufferedImage pre2 = Tran.litUp(Tran.flip(PublicAssets.flower[type*3+2], widthflip, 1));
+
+		outline = new Animation(400, new BufferedImage[] {pre0, pre1, pre2, pre1}, "", "");
 		
 	}
 
 	public void tick() {
-		PublicAssets.flowerFinal[type].setResetTime((int) Math.abs((400 + randomSpeed) / game.getWind()));
+		PublicAssets.flowerFinal[type].setResetTime((int) Math.abs((400 + randomSpeed) / game.getWind(x, y)));
 
 		PublicAssets.flowerFinal[type].tick();
 		
 		outline.frameInt=PublicAssets.flowerFinal[type].frameInt;
-		outline1.frameInt=PublicAssets.flowerFinal[type].frameInt;
-		outline2.frameInt=PublicAssets.flowerFinal[type].frameInt;
-		outline3.frameInt=PublicAssets.flowerFinal[type].frameInt;
-		outline4.frameInt=PublicAssets.flowerFinal[type].frameInt;
 
-		if (snowy > 0) {
-			game.getWorld().kill(this);
-		}
+//		if (snowy > 0)
+//			game.getWorld().kill(this);
 	}
 
 	public void render(Graphics2D g) {
+		AffineTransform p = g.getTransform();
+		g.translate(x, y);
+
 		if (variety)
-			g.drawImage(Tran.flip(PublicAssets.flowerFinal[type].getFrame(), widthflip, 1), (int) (Public.xO(x) - 9.0D),
-					(int) (Public.yO(y)), width, height, null);
-		else {
-			g.drawImage(PublicAssets.flowerFinal[type].getFrame(), (int) (Public.xO(x) - 9.0D), (int) (Public.yO(y)),
+			g.drawImage(Tran.flip(PublicAssets.flowerFinal[type].getFrame(), widthflip, 1), 0,
+					0, width, height, null);
+		else
+			g.drawImage(PublicAssets.flowerFinal[type].getFrame(), 0, 0,
 					width, height, null);
-		}
+
+		g.setTransform(p);
 	}
 	
-	public void renderLight(Graphics2D g, int opacity) {
-		if(opacity>200)
-			g.drawImage(outline.getFrame(), (int) (Public.xO(x-10)), (int) (Public.yO(y-1)), null);
-		else if(opacity>150)
-			g.drawImage(outline1.getFrame(), (int) (Public.xO(x-10)), (int) (Public.yO(y-1)), null);
-		else if(opacity>100)
-			g.drawImage(outline2.getFrame(), (int) (Public.xO(x-10)), (int) (Public.yO(y-1)), null);
-		else if(opacity>50)
-			g.drawImage(outline3.getFrame(), (int) (Public.xO(x-10)), (int) (Public.yO(y-1)), null);
-		else if(opacity>0)
-			g.drawImage(outline4.getFrame(), (int) (Public.xO(x-10)), (int) (Public.yO(y-1)), null);
+	public void renderLight(Graphics2D g, float opacity) {
+		AffineTransform pre = g.getTransform();
+		Composite pre_comp = g.getComposite();
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+		g.translate(x, y);
+		g.drawImage(outline.getFrame(), -1, -1, null);
+		g.setTransform(pre);
+		g.setComposite(pre_comp);
 	}
 
 	public int getType() {
 		return type;
 	}
 
-	public String outString() {
+	public String toString() {
 		return "Flower " + x + " " + y + " " + layer + " " + type;
 	}
 	
@@ -125,15 +116,19 @@ public class Flower extends StaticEntity {
 		for (int i = 0; i < items; i++) {
 			if(type == 0)
 				game.getWorld().getItemManager()
-						.addItem(Item.whitePetal.createNew((int) (x+Public.random(-9, 9)), (int) (y+Public.random(-9, 9))));
+						.addItem(Item.whitePetal.createNew((int) (x+Public.expandedRand(-9, 9)), (int) (y+Public.expandedRand(-9, 9))));
 			else if(type == 1)
 				game.getWorld().getItemManager()
-				.addItem(Item.pinkPetal.createNew((int) (x+Public.random(-9, 9)), (int) (y+Public.random(-9, 9))));
+				.addItem(Item.pinkPetal.createNew((int) (x+Public.expandedRand(-9, 9)), (int) (y+Public.expandedRand(-9, 9))));
 			else if(type == 2)
 				game.getWorld().getItemManager()
-				.addItem(Item.bluePetal.createNew((int) (x+Public.random(-9, 9)), (int) (y+Public.random(-9, 9))));
+				.addItem(Item.bluePetal.createNew((int) (x+Public.expandedRand(-9, 9)), (int) (y+Public.expandedRand(-9, 9))));
 		}
 		game.getEntityManager().getEntities().remove(this);
 	}
 
+	@Override
+	public boolean canCurrentlySpawn(Handler game) {
+		return (game.getEnvironment().getTemp() > 32.0D) && (game.getEnvironment().getHumidity() > 2.0D);
+	}
 }

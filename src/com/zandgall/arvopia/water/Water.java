@@ -64,12 +64,12 @@ public class Water implements Serializable {
 		xP[resolution] = (x + width);
 		yP[resolution] = y;
 
-		yP[source] = (y + Public.random(-5.0D, 5.0D));
+		yP[source] = (y + Public.expandedRand(-5.0D, 5.0D));
 
 		for (int i = 0; i < mP.length; i++) {
 			mP[i] = 0.0D;
 		}
-		mP[source] = Public.random(-0.5D, 0.5D);
+		mP[source] = Public.expandedRand(-0.5D, 0.5D);
 
 		int[] ix = new int[resolution + 2];
 		int[] iy = new int[resolution + 2];
@@ -113,7 +113,7 @@ public class Water implements Serializable {
 	}
 
 	public void tick() {
-		double wind = game.getWind() / 10.0D;
+		double wind = game.getWind(x, y) / 10.0D;
 		if (sourceTimer > 100L) {
 			if (calmness > Math.max(Math.abs(wind), 0.1D)) {
 				calmness -= 0.005D;

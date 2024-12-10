@@ -1,5 +1,6 @@
 package com.zandgall.arvopia.utils;
 
+import java.io.BufferedWriter;
 import java.io.File;
 
 public class Utils {
@@ -44,7 +45,7 @@ public class Utils {
 
 	public static void fileWriter(String string, String fileName) {
 		if(fileName.startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
-			fileName.replace("C:", "~/Applications");
+			fileName.replace("C:", System.getProperty("user.home"));
 		File file = new File(fileName);
 
 		try {
@@ -56,7 +57,7 @@ public class Utils {
 			if (file.createNewFile()) {
 //				System.out.println("File: " + file + " created!");
 			}
-			java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(fileName));
+			BufferedWriter writer = new BufferedWriter(new java.io.FileWriter(fileName));
 
 			writer.write(string);
 
@@ -69,29 +70,30 @@ public class Utils {
 
 	public static void existWriter(String string, String fileName) {
 		if(fileName.startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
-			fileName.replace("C:", "~/Applications");
+			fileName.replace("C:", System.getProperty("user.home"));
 		File file = new File(fileName);
 
 		try {
-			if ((!file.exists()) && (file.createNewFile())) {
-				System.out.println("File exception");
+			if ((!file.exists()) && (!file.createNewFile())) {
+				System.out.println("File exception with \"" + fileName + "\"");
 			}
-			java.io.BufferedWriter writer = new java.io.BufferedWriter(new java.io.FileWriter(fileName));
+			BufferedWriter writer = new BufferedWriter(new java.io.FileWriter(fileName));
 
 			writer.write(string);
 
 			writer.close();
 		} catch (java.io.IOException e) {
+			System.err.println("Could not write to file \"" + fileName + "\"");
 			e.printStackTrace();
 		}
 	}
 
 	public static void createDirectory(String fileName) {
 		File file = new File(fileName);
-		System.out.println("Trying to create directory " + file.getAbsolutePath());
-		if (file.exists()) {
+		if (file.exists())
 			return;
+		if(!file.mkdirs()) {
+			System.err.println("Failed to create directory " + file.getAbsolutePath());
 		}
-		System.out.println("Directory : " + file.mkdirs());
 	}
 }

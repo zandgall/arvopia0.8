@@ -1,0 +1,7 @@
+*.wav
+*/bin
+*/build
+*/target
+*.iml
+*.jar
+.settings

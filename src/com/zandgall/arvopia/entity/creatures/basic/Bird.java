@@ -1,11 +1,11 @@
 package com.zandgall.arvopia.entity.creatures.basic;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-import com.zandgall.arvopia.ArvopiaLauncher;
+import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.entity.creatures.Creature;
 import com.zandgall.arvopia.gfx.ImageLoader;
 import com.zandgall.arvopia.gfx.transform.Tran;
@@ -39,15 +39,15 @@ public class Bird extends BasicTemplate {
 		ImageLoader.addRedirect("Bird", createSheet(new Color(200, 200, 255)).getSubimage(0, 0, s, s));
 	}
 	
-	public Bird() {
-		super(ArvopiaLauncher.game.handler, 0, 0, s, s-1, 1, Creature.DEFAULT_ACCELERATION, 3, "Bird", BasicTemplate.PASSIVE, 3, 5, 5, 1, 1);
+	public Bird(Handler handler, double x, double y) {
+		super(handler, x-s/2.0, y-s/2.0, s, s-1, 1, Creature.DEFAULT_ACCELERATION, 3, "Bird", BasicTemplate.PASSIVE, 3, 5, 5, 1, 1);
 		
 		if(Public.chance(33))
 			type="Red";
 		else if(Public.chance(50))
 			type="Green";
 		
-		layer = Public.debugRandom(-3, -2);
+		layer = Public.rand(-3, -2);
 		bounce = ImageLoader.loadImage("Bird"+type).getSubimage(108, 0, 36, 36);
 		fall = ImageLoader.loadImage("Bird"+type).getSubimage(72, 0, 36, 36);
 		move0 = ImageLoader.loadImage("Bird"+type).getSubimage(0, 0, 36, 36);
@@ -98,12 +98,12 @@ public class Bird extends BasicTemplate {
 			yVol = Math.max(yVol, -1.5);
 			
 			if(Public.chance(0.5))
-				flightPercent = (int) Public.random(10, 20);
+				flightPercent = (int) Public.expandedRand(10, 20);
 			
 			bouncing = (Public.chance(flightPercent));
 			
 			if(Public.chance(10))
-				walkingState = (int) Public.random(0, 2);
+				walkingState = (int) Public.expandedRand(0, 2);
 			
 			if(walkingState == 1)
 				xVol+=0.1;
@@ -122,7 +122,7 @@ public class Bird extends BasicTemplate {
 			bouncing=false;
 			
 			if(Public.chance(10))
-				walkingState = (int) Public.random(0, 2);
+				walkingState = (int) Public.expandedRand(0, 2);
 			if(walkingState == 1)
 				xVol=1;
 			if(walkingState == 2)
@@ -160,12 +160,12 @@ public class Bird extends BasicTemplate {
 	}
 	
 	public void render(Graphics2D g) {
-		g.drawImage(com.zandgall.arvopia.gfx.transform.Tran.flip(getFrame(), widthFlip, 1),
-				(int) (x - game.getGameCamera().getxOffset()), (int) (y - game.getGameCamera().getyOffset()), s, s, null);
+		AffineTransform p = g.getTransform();
+		g.translate(x, y);
 
-		if (health < MAX_HEALTH) {
-			showHealthBar(g);
-		}
+		g.drawImage(Tran.flip(getFrame(), widthFlip, 1), 0, 0, s, s, null);
+
+		g.setTransform(p);
 	}
 
 	public BufferedImage getFrame() { 
@@ -235,15 +235,11 @@ public class Bird extends BasicTemplate {
 	}
 	
 	private void sing() {
-		int n = (int) Public.random(1, 3);
+		int n = (int) Public.expandedRand(1, 3);
 		String addition = "" + (((OptionState) game.getGame().optionState).getToggle("Sound per layer") ? layer : "");
 		game.setPosition("BirdSong"+n+addition, x, y, 0);
 		game.play("BirdSong"+n+addition);
 		
-	}
-	
-	public boolean alwaysTick() {
-		return false;
 	}
 	
 }

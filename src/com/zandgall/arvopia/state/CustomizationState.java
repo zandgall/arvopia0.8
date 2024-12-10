@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.zandgall.arvopia.*;
 import com.zandgall.arvopia.gfx.ImageLoader;
@@ -26,141 +27,81 @@ import com.zandgall.arvopia.utils.Utils;
 
 public class CustomizationState extends State {
 
-	public static Color[] SKINCOLORS = new Color[] { new Color(254, 227, 198), new Color(253, 231, 173),
-			new Color(248, 217, 152), new Color(249, 212, 160),
+	private final TextEditor user;
+	private final upArrow valueUp;
+	private final downArrow valueDown;
+	private final Button back, export, random;
+	private final TabMenu tabs;
+	private String previousTab = "None";
 
-			new Color(236, 192, 145), new Color(242, 194, 128), new Color(212, 158, 122), new Color(187, 101, 54),
-
-			new Color(207, 150, 95), new Color(173, 138, 96), new Color(147, 95, 55),
-
-			new Color(178, 102, 68), new Color(127, 68, 34), };
-
-	private TextEditor user;
-
-	int selected = 0;
-
-	Map<String, typeIndex> indexes;
-	Map<String, Costume> costumes;
+	private Map<String, typeIndex> indexes;
+	private final Map<String, Costume> costumes;
 
 	private HueCube hue;
 
-	private upArrow valueUp;
-	private downArrow valueDown;
-
-	private Button back, export, random;
-
-	TabMenu tabs;
-
 	boolean useCostume = false;
-	String costumeIndex = "";
-
-	SmartCostume c;
+	private String costumeIndex = "";
 
 	public CustomizationState(Handler handler) {
 		super(handler);
 
 		valueUp = new upArrow(handler, 232, 36);
 		valueDown = new downArrow(handler, 232, 314);
-
 		back = new Button(handler, 10, handler.getHeight() - 40, "Go back", "Back");
 		export = new Button(handler, 70, handler.getHeight() - 40, "Exports the image to Arvopia/Player0.8/out.png",
 				"Export");
 		random = new Button(handler, 150, handler.getHeight() - 40, "Randomizes the selections", "Randomize");
-
-		Reporter.init();
-		user = new TextEditor(handler, 20, 40, 200, 1, Reporter.user, Public.defaultFont.deriveFont(20));
-
-		costumes = new HashMap<String, Costume>();
-		init();
-
-		c = new SmartCostume();
-
+		user = new TextEditor(handler, 20, 40, 200, 1, Reporter.user, Public.defaultFont.deriveFont(20.0F));
 		tabs = new TabMenu(handler, new String[] { "Hair", "Face", "Eyes", "Pupils", "Body", "Arms", "Pants", "Shoes",
 				"Hands", "Costumes" }, 0, 0, handler.getWidth(), handler.getHeight(), true);
+
+//		Reporter.init();
+
+		costumes = new HashMap<>();
+		init();
+
 	}
 
 	public void save() {
-		if (!FileLoader.readFile(Game.prefix + "/Arvopia/01.arv").contains("No Name") && Reporter.user != user.getContent()) {
+		if (!FileLoader.readFile(Game.prefix + "/01.arv").contains("No Name") && !Reporter.user.equals(user.getContent())) {
 			Reporter.user = user.getContent();
 			Reporter.addUser();
 			Achievement.award(Achievement.noname);
 		}
 
-		/*
-		 * ImageLoader.addRedirect("PlayerFace", Tran.effectColor(faceIn.get(), faceC));
-		 * ImageLoader.addRedirect("PlayerHair", Tran.effectColor(hairIn.get(), hairC));
-		 * ImageLoader.addRedirect("PlayerEyes", Tran.effectColor(pupilsIn.get(),
-		 * pupilsC)); ImageLoader.addRedirect("PlayerShirt",
-		 * Tran.effectColor(bodyIn.get(), bodyC));
-		 * ImageLoader.addRedirect("PlayerHands", Tran.effectColor(handsIn.get(),
-		 * handsC)); ImageLoader.addRedirect("PlayerShoes",
-		 * Tran.effectColor(shoesIn.get(), shoesC));
-		 * ImageLoader.addRedirect("PlayerPants", Tran.effectColor(pantsIn.get(),
-		 * pantsC)); ImageLoader.addRedirect("PlayerPupils",o
-		 * Tran.effectColor(eyesIn.get(), eyesC));
-		 * 
-		 * BufferedImage clear = new BufferedImage(faceIn.get().getWidth(),
-		 * faceIn.get().getHeight(), BufferedImage.TYPE_4BYTE_ABGR); if(useCostume) {
-		 * ImageLoader.addRedirect("PlayerFace", costumes.get(costumeIndex).src());
-		 * ImageLoader.addRedirect("PlayerHair", clear);
-		 * ImageLoader.addRedirect("PlayerEyes", clear);
-		 * ImageLoader.addRedirect("PlayerShirt", clear);
-		 * ImageLoader.addRedirect("PlayerHands", clear);
-		 * ImageLoader.addRedirect("PlayerShoes", clear);
-		 * ImageLoader.addRedirect("PlayerPants", clear);
-		 * ImageLoader.addRedirect("PlayerPupils", clear);
-		 * ImageLoader.addRedirect("PlayerShine", clear); }
-		 * 
-		 * Reporter.fc = faceC; Reporter.hc = hairC; Reporter.ec = pupilsC; Reporter.shc
-		 * = bodyC; Reporter.hac = handsC; Reporter.scs = shoesC; Reporter.pc = pantsC;
-		 * Reporter.ep = eyesC; Reporter.save();
-		 * 
-		 * String s = faceIn.index + System.lineSeparator(); s += hairIn.index +
-		 * System.lineSeparator(); s += pupilsIn.index + System.lineSeparator(); s +=
-		 * handsIn.index + System.lineSeparator(); s += bodyIn.index +
-		 * System.lineSeparator(); s += shoesIn.index + System.lineSeparator(); s +=
-		 * pantsIn.index + System.lineSeparator(); s += eyesIn.index +
-		 * System.lineSeparator(); s += useCostume + System.lineSeparator(); s +=
-		 * costumeIndex + System.lineSeparator(); Utils.fileWriter(s,
-		 * "C:/Arvopia/Player0.8/Indexes.txt"); System.out.println("Saved indexes " +
-		 * s);
-		 */
-
-		String s = "";
+		StringBuilder s = new StringBuilder();
 
 		for (String in : indexes.keySet()) {
 			if(indexes.get(in)==null)
 				Console.log("Index is null");
 			else if(indexes.get(in).c==null)
 				Console.log("Color is null");
-			s += in + " " + indexes.get(in).c.getRed() + " " + indexes.get(in).c.getGreen() + " "
-					+ indexes.get(in).c.getBlue() + " " + indexes.get(in).index + System.lineSeparator();
+			s.append(in).append(" ").append(indexes.get(in).c.getRed()).append(" ").append(indexes.get(in).c.getGreen())
+					.append(" ").append(indexes.get(in).c.getBlue()).append(" ").append(indexes.get(in).index)
+					.append(System.lineSeparator());
 		}
-		Utils.fileWriter(s, Game.prefix + "/Arvopia/Player0.8/Indexes.txt");
-		
+		Utils.fileWriter(s.toString(), Game.prefix + "/Player0.8/Indexes.txt");
+
 		SmartCostume.body = new SerialImage(indexes.get("Body").getCo());
 		SmartCostume.arm = new SerialImage(indexes.get("Arms").getCo());
 		SmartCostume.hair = new SerialImage(indexes.get("Hair").getCo());
 		SmartCostume.hand = new SerialImage(indexes.get("Hands").getCo());
 		SmartCostume.leg = new SerialImage(indexes.get("Pants").getCo());
 		SmartCostume.eye = new SerialImage(indexes.get("Pupils").getCo());
-		SmartCostume.whiteye = new SerialImage(indexes.get("Eyes").getCo());
+		SmartCostume.eye_whites = new SerialImage(indexes.get("Eyes").getCo());
 		SmartCostume.face = new SerialImage(indexes.get("Face").getCo());
 		SmartCostume.shoe = new SerialImage(indexes.get("Shoes").getCo().getSubimage(0, 0, 36, 36));
-		SmartCostume.barearm = new SerialImage(
+		SmartCostume.bare_arm = new SerialImage(
 				Tran.effectColor(ImageLoader.loadImage("/textures/Player/Skin/Arm.png"), indexes.get("Face").c));
-		SmartCostume.bareleg = new SerialImage(
+		SmartCostume.bare_leg = new SerialImage(
 				Tran.effectColor(ImageLoader.loadImage("/textures/Player/Skin/Leg.png"), indexes.get("Face").c));
 		SmartCostume.barefoot = new SerialImage(
 				Tran.effectColor(ImageLoader.loadImage("/textures/Player/Skin/Feet.png").getSubimage(0, 0, 36, 36),
 						indexes.get("Face").c));
-		SmartCostume.barechest = new SerialImage(
+		SmartCostume.bare_chest = new SerialImage(
 				Tran.effectColor(ImageLoader.loadImage("/textures/Player/Skin/Body.png").getSubimage(0, 0, 36, 36),
 						indexes.get("Face").c));
-		
 	}
-
-	String pre = "nothing";
 
 	@Override
 	public void tick() {
@@ -173,12 +114,9 @@ public class CustomizationState extends State {
 			State.setState(handler.getGame().menuState);
 
 			save();
-		}
-
-		if (export.on)
+		} else if (export.on)
 			write();
-
-		if (random.on)
+		else if (random.on)
 			randomize();
 
 		hue.tick(handler.getMouse());
@@ -187,18 +125,16 @@ public class CustomizationState extends State {
 		String val = tabs.getTab();
 
 		valueUp.tick();
-		valueDown.tick();
-
 		valueUp.selected = valueUp.selected || (KeyManager.checkBind("Up"));
+		valueDown.tick();
 		valueDown.selected = valueDown.selected || (KeyManager.checkBind("Down"));
 
-		if (valueUp.selected || valueDown.selected) {
+		if (valueUp.selected || valueDown.selected)
 			useCostume = false;
-		}
 
 		for (String s : indexes.keySet()) {
 			if (val.equals(s)) {
-				if (pre != val)
+				if (!previousTab.equals(val))
 					hue.setColor(indexes.get(s).c);
 				indexes.get(s).c = hue.getColor();
 				if (valueUp.selected)
@@ -212,27 +148,29 @@ public class CustomizationState extends State {
 			}
 		}
 
-		SmartCostume.body = new SerialImage(indexes.get("Body").getCo());
-		SmartCostume.arm = new SerialImage(indexes.get("Arms").getCo());
-		SmartCostume.hair = new SerialImage(indexes.get("Hair").getCo());
-		SmartCostume.hand = new SerialImage(indexes.get("Hands").getCo());
-		SmartCostume.leg = new SerialImage(indexes.get("Pants").getCo());
-		SmartCostume.eye = new SerialImage(indexes.get("Pupils").getCo());
-		SmartCostume.whiteye = new SerialImage(indexes.get("Eyes").getCo());
-		SmartCostume.face = new SerialImage(indexes.get("Face").getCo());
-		SmartCostume.shoe = new SerialImage(indexes.get("Shoes").getCo().getSubimage(0, 0, 36, 36));
-		SmartCostume.barearm = new SerialImage(
-				Tran.effectColor(ImageLoader.loadImageEX("Player/Skin/Arm.png"), indexes.get("Face").c));
-		SmartCostume.bareleg = new SerialImage(
-				Tran.effectColor(ImageLoader.loadImageEX("Player/Skin/Leg.png"), indexes.get("Face").c));
-		SmartCostume.barefoot = new SerialImage(
-				Tran.effectColor(ImageLoader.loadImageEX("Player/Skin/Feet.png").getSubimage(0, 0, 36, 36),
-						indexes.get("Face").c));
-		SmartCostume.barechest = new SerialImage(
-				Tran.effectColor(ImageLoader.loadImageEX("Player/Skin/Body.png").getSubimage(0, 0, 36, 36),
-						indexes.get("Face").c));
-
-//		SmartCostume.setup();
+		switch (tabs.getTab()) {
+			case "Hair" -> SmartCostume.hair = new SerialImage(indexes.get("Hair").getCo());
+			case "Eyes" -> SmartCostume.eye_whites = new SerialImage(indexes.get("Eyes").getCo());
+			case "Pupils" -> SmartCostume.eye = new SerialImage(indexes.get("Pupils").getCo());
+			case "Body" -> SmartCostume.body = new SerialImage(indexes.get("Body").getCo());
+			case "Arms" -> SmartCostume.arm = new SerialImage(indexes.get("Arms").getCo());
+			case "Pants" -> SmartCostume.leg = new SerialImage(indexes.get("Pants").getCo());
+			case "Shoes" -> SmartCostume.shoe = new SerialImage(indexes.get("Shoes").getCo().getSubimage(0, 0, 36, 36));
+			case "Hands" -> SmartCostume.hand = new SerialImage(indexes.get("Hands").getCo());
+			case "Face" -> {
+				SmartCostume.face = new SerialImage(indexes.get("Face").getCo());
+				SmartCostume.bare_arm = new SerialImage(
+						Tran.effectColor(ImageLoader.loadImageEX("Player/Skin/Arm.png"), indexes.get("Face").c));
+				SmartCostume.bare_leg = new SerialImage(
+						Tran.effectColor(ImageLoader.loadImageEX("Player/Skin/Leg.png"), indexes.get("Face").c));
+				SmartCostume.barefoot = new SerialImage(
+						Tran.effectColor(ImageLoader.loadImageEX("Player/Skin/Feet.png").getSubimage(0, 0, 36, 36),
+								indexes.get("Face").c));
+				SmartCostume.bare_chest = new SerialImage(
+						Tran.effectColor(ImageLoader.loadImageEX("Player/Skin/Body.png").getSubimage(0, 0, 36, 36),
+								indexes.get("Face").c));
+			}
+		}
 
 		if (val.equals("Costumes")) {
 			for (String s : costumes.keySet()) {
@@ -244,7 +182,7 @@ public class CustomizationState extends State {
 			}
 		}
 
-		pre = tabs.getTab();
+		previousTab = tabs.getTab();
 
 		if (KeyManager.function[2])
 			init();
@@ -263,7 +201,7 @@ public class CustomizationState extends State {
 		back.render(g);
 		random.render(g);
 
-		if (tabs.getTab() != "Costumes")
+		if (!tabs.getTab().equals("Costumes"))
 			hue.render(g);
 		else
 			for (Costume c : costumes.values())
@@ -291,91 +229,9 @@ public class CustomizationState extends State {
 
 	}
 
-	public void initIndex() {
-		System.out.println("players not printing maybe?");
-		File parent;
-		parent = new File("Player/Face");
-		if (parent != null)
-			System.out.println("\t\tPlayer textures exist? : " + (parent.exists()) + " Has kids? : "
-					+ (parent.list() != null && parent.list().length > 0));
-		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Face");
-		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Arms");
-		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Hair");
-		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Eyes");
-		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Pants");
-		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Hands");
-		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Body");
-		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Shoes");
-		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Pupils");
-		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Costumes");
-		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Skin");
-
-//		if(true)
-//			return;
-
-		copyImages("Face");
-		copyImages("Arms");
-		copyImages("Hair");
-		copyImages("Eyes");
-		copyImages("Pants");
-		copyImages("Hands");
-		copyImages("Body");
-		copyImages("Shoes");
-		copyImages("Pupils");
-		//copyImages("Costumes");
-		copyImages("Skin");
-
-		// Using TODO
-
-		indexes = new HashMap<String, typeIndex>();
-
-		initiateIndex("Face");
-		initiateIndex("Arms");
-		initiateIndex("Hair");
-		initiateIndex("Eyes");
-		initiateIndex("Pants");
-		initiateIndex("Hands");
-		initiateIndex("Body");
-		initiateIndex("Shoes");
-		initiateIndex("Pupils");
-
-		int cx = 0, cy = 0;
-
-		for (String s : new File(Game.prefix + "/Arvopia/Player0.8/Costumes").list()) {
-			costumes.put(s, new Costume(handler, ImageLoader.loadImageEX(Game.prefix + "/Arvopia/Player0.8/Costumes/" + s), s, s,
-					handler.getWidth() - 375 + cx, 50 + cy));
-
-			cx += 73;
-
-			if (cx + 73 > 375) {
-				cx = 0;
-				cy += 109;
-			}
-		}
-
-	}
-
-	private void copyImages(String path) {
-		String[] list = new File("Player/" + path).list();
-		for (String s : list) {
-			ImageLoader.saveImage(ImageLoader.loadImageEX("Player/" + path + "/" + s),
-					Game.prefix + "/Arvopia/Player0.8/" + path + "/" + s);
-		}
-	}
-
-	private void initiateIndex(String path) {
-		ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
-		for (String s : new File(Game.prefix + "/Arvopia/Player0.8/" + path).list()) {
-			images.add(ImageLoader.loadImageEX(Game.prefix + "/Arvopia/Player0.8/" + path + "/" + s));
-		}
-		indexes.put(path, new typeIndex(images));
-	}
-
 	@Override
 	public void init() {
 		hue = new HueCube(handler.getWidth() - 375, 50, 300, 300);
-
-		String parentFiles = "Player/";
 
 		initIndex();
 
@@ -404,6 +260,81 @@ public class CustomizationState extends State {
 		save();
 	}
 
+	public void initIndex() {
+
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Face");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Arms");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Hair");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Eyes");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Pants");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Hands");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Body");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Shoes");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Pupils");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Costumes");
+		Utils.createDirectory(Game.prefix + "/Arvopia/Player0.8/Skin");
+
+		copyImages("Face");
+		copyImages("Arms");
+		copyImages("Hair");
+		copyImages("Eyes");
+		copyImages("Pants");
+		copyImages("Hands");
+		copyImages("Body");
+		copyImages("Shoes");
+		copyImages("Pupils");
+		//copyImages("Costumes");
+		copyImages("Skin");
+
+		// Using TODO
+
+		indexes = new HashMap<>();
+
+		initiateIndex("Face");
+		initiateIndex("Arms");
+		initiateIndex("Hair");
+		initiateIndex("Eyes");
+		initiateIndex("Pants");
+		initiateIndex("Hands");
+		initiateIndex("Body");
+		initiateIndex("Shoes");
+		initiateIndex("Pupils");
+
+		int cx = 0, cy = 0;
+
+		for (String s : Objects.requireNonNull(new File(Game.prefix + "/Arvopia/Player0.8/Costumes").list())) {
+			costumes.put(s, new Costume(handler, ImageLoader.loadImageEX(Game.prefix + "/Arvopia/Player0.8/Costumes/" + s), s, s,
+					handler.getWidth() - 375 + cx, 50 + cy));
+
+			cx += 73;
+
+			if (cx + 73 > 375) {
+				cx = 0;
+				cy += 109;
+			}
+		}
+
+	}
+
+	private void copyImages(String path) {
+		String[] list = new File("Player/" + path).list();
+		if(list != null)
+			for (String s : list) {
+				ImageLoader.saveImage(ImageLoader.loadImageEX("Player/" + path + "/" + s),
+						Game.prefix + "/Arvopia/Player0.8/" + path + "/" + s);
+			}
+	}
+
+	private void initiateIndex(String path) {
+		ArrayList<BufferedImage> images = new ArrayList<>();
+		String[] list = new File(Game.prefix + "/Arvopia/Player0.8/" + path).list();
+		if(list!=null)
+			for (String s : list) {
+				images.add(ImageLoader.loadImageEX(Game.prefix + "/Arvopia/Player0.8/" + path + "/" + s));
+			}
+		indexes.put(path, new typeIndex(images));
+	}
+
 	public void write() {
 		BufferedImage image = getFull();
 
@@ -412,16 +343,16 @@ public class CustomizationState extends State {
 	}
 
 	public static Color generateHairColor() {
-		float h = (float) Public.debugRandom(0.05, 0.15);
-		float s = (float) Public.debugRandom(0.35, 0.85);
-		float v = (float) Public.debugRandom(0.05, 0.85);
+		float h = (float) Public.rand(0.05, 0.15);
+		float s = (float) Public.rand(0.35, 0.85);
+		float v = (float) Public.rand(0.05, 0.85);
 		return Color.getHSBColor(h, s, v);
 	}
 
 	public static Color generateSkinColor() {
-		float h = (float) Public.debugRandom(0.02, 0.15);
-		float s = (float) Public.debugRandom(0.25, 0.65);
-		float v = (float) Public.debugRandom(0.45, 0.98);
+		float h = (float) Public.rand(0.02, 0.15);
+		float s = (float) Public.rand(0.25, 0.65);
+		float v = (float) Public.rand(0.45, 0.98);
 		return Color.getHSBColor(h, s, v);
 	}
 
@@ -431,7 +362,7 @@ public class CustomizationState extends State {
 
 		Color c = generateSkinColor();
 
-		indexes.get("Eyes").c = new Color((int) Public.random(245, 255), (int) Public.random(240, 255), 255);
+		indexes.get("Eyes").c = new Color((int) Public.expandedRand(245, 255), (int) Public.expandedRand(240, 255), 255);
 		indexes.get("Face").c = c;
 		indexes.get("Pupils").c = Tran.randomColor();
 		if (Public.chance(1))
@@ -447,43 +378,11 @@ public class CustomizationState extends State {
 		else
 			indexes.get("Shoes").c = generateHairColor();
 
-		pre = "nothing";
+		previousTab = "None";
 	}
 
 	public BufferedImage getRandom() {
-		/*
-		 * Color c = generateSkinColor();
-		 * 
-		 * Color EyePupilsColor = new Color((int) Public.random(245, 255), (int)
-		 * Public.random(240, 255), 255); Color FaceColor = c; Color EyeColor =
-		 * Tran.randomColor(); Color HairColor; if (Public.chance(1)) HairColor =
-		 * Tran.randomColor(); else HairColor = generateHairColor(); Color PantsColor =
-		 * Tran.randomColor(); Color HandsColor = c; Color ShirtColor =
-		 * Tran.randomColor(); Color ShoesColor; if (Public.chance(1)) ShoesColor =
-		 * Tran.randomColor(); else ShoesColor = generateHairColor();
-		 * 
-		 * BufferedImage EyePupils = Tran.effectColor(eyesIn.getRandom(),
-		 * EyePupilsColor); BufferedImage Face = Tran.effectColor(faceIn.getRandom(),
-		 * FaceColor); BufferedImage Hair = Tran.effectColor(hairIn.getRandom(),
-		 * HairColor); BufferedImage Hands = Tran.effectColor(handsIn.getRandom(),
-		 * HandsColor); BufferedImage Shirt = Tran.effectColor(bodyIn.getRandom(),
-		 * ShirtColor); BufferedImage Eyes = Tran.effectColor(pupilsIn.getRandom(),
-		 * EyeColor); BufferedImage Pants = Tran.effectColor(pantsIn.getRandom(),
-		 * PantsColor); BufferedImage Shoes = Tran.effectColor(shoesIn.getRandom(),
-		 * ShoesColor);
-		 * 
-		 * BufferedImage image = new BufferedImage(Face.getWidth(), Face.getHeight(),
-		 * BufferedImage.TYPE_4BYTE_ABGR); Graphics2D g = image.createGraphics();
-		 * 
-		 * g.drawImage(EyePupils, 0, 0, null); g.drawImage(Face, 0, 0, null);
-		 * g.drawImage(Eyes, 0, 0, null); g.drawImage(Pants, 0, 0, null);
-		 * g.drawImage(Hands, 0, 0, null); g.drawImage(Shirt, 0, 0, null);
-		 * g.drawImage(Hair, 0, 0, null); g.drawImage(Shoes, 0, 0, null);
-		 * g.drawImage(Shine, 0, 0, null);
-		 * 
-		 * g.dispose();
-		 */ BufferedImage image = new BufferedImage(1000, 1000, BufferedImage.TYPE_4BYTE_ABGR);
-		return image;
+		return new BufferedImage(1000, 1000, BufferedImage.TYPE_4BYTE_ABGR);
 	}
 
 	public BufferedImage getFull() {
@@ -535,11 +434,11 @@ class typeIndex {
 	}
 
 	public void random() {
-		index = (int) Public.random(0, types.size() - 1);
+		index = (int) Public.expandedRand(0, types.size() - 1);
 	}
 
 	public BufferedImage getRandom() {
-		return get((int) Public.random(0, types.size() - 1));
+		return get((int) Public.expandedRand(0, types.size() - 1));
 	}
 
 	public BufferedImage get(int i) {

@@ -113,7 +113,7 @@ public class ToggleButton implements Serializable {
 		mouseRight = game.getMouse().isRight();
 		preOn = on;
 		if ((mouseX > x - 1) && (mouseX < x + width + 1) && (mouseY > y - 1) && (mouseY < y + height + 1)) {
-			if ((mouseLeft && game.getMouse().isClicked())) {
+			if (game.getMouse().isLeftClicked()) {
 				on = !on;
 				data = false;
 			} else if (mouseRight) {
@@ -203,7 +203,7 @@ public class ToggleButton implements Serializable {
 	private static boolean draw = false;
 	private static String ddesc = "";
 	
-	public static void renderDec(Graphics2D g) {
+	public static void renderDescription(Graphics2D g) {
 		if(draw) {
 			g.setColor(java.awt.Color.black);
 			g.drawRect(dx, dy, dw, dh);

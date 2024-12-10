@@ -3,16 +3,14 @@ package com.zandgall.arvopia.items;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Map;
 
-import com.zandgall.arvopia.Console;
 import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.entity.Entity;
 import com.zandgall.arvopia.entity.creatures.Creature;
-import com.zandgall.arvopia.enviornment.Light;
+import com.zandgall.arvopia.environment.Light;
 import com.zandgall.arvopia.gfx.Accessory;
 import com.zandgall.arvopia.gfx.Animation;
 import com.zandgall.arvopia.gfx.ImageLoader;
@@ -113,8 +111,8 @@ public class PlayerItem {
 		item.tick();
 		if (hasLight) {
 			if (!light.isOn()) {
-				if (!game.getEnviornment().getLightManager().getList().contains(light))
-					game.getEnviornment().getLightManager().addLight(light);
+				if (!game.getEnvironment().getLightManager().getList().contains(light))
+					game.getEnvironment().getLightManager().addLight(light);
 				light.turnOn();
 			}
 //			light.setMax(80);

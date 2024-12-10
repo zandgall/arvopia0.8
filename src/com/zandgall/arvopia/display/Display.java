@@ -50,6 +50,7 @@ public class Display {
 //		frame.setVisible(true);
 		
 		canvas.setPreferredSize(new Dimension(width, height));
+		canvas.setSize(width, height);
 //		canvas.setMaximumSize(new Dimension(width, height));
 //		canvas.setMinimumSize(new Dimension(width, height));
 		

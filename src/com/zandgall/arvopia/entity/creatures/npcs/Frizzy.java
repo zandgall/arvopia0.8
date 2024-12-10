@@ -10,14 +10,12 @@ import com.zandgall.arvopia.gfx.transform.Tran;
 import com.zandgall.arvopia.guis.Trading;
 import com.zandgall.arvopia.guis.trading.TradingKeys;
 import com.zandgall.arvopia.quests.Achievement;
-import com.zandgall.arvopia.quests.Quest;
 import com.zandgall.arvopia.tiles.Tile;
-import com.zandgall.arvopia.utils.FileLoader;
 import com.zandgall.arvopia.utils.Public;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,13 +39,13 @@ public class Frizzy extends NPC {
 	boolean d = false;
 
 	public Frizzy(Handler handler, double x, double y) {
-		super(handler, x, y, Creature.DEFAULT_SPEED, "Lia",
+		super(handler, x-18, y-54, Creature.DEFAULT_SPEED, "Frizzy",
 				new String[] { "Welcome to Arvopia " + Reporter.user + "! (CLICK)",
 						"Please walk around and enjoy yourself!", "Hey, while you're at it,",
 						"could you get me some wood?", "10 logs will do!", "Thanks so much!",
 						"You see, that's how quests work", "Have fun exploring!" });
 
-		texture = ImageLoader.loadImage("/textures/NPCs/Villagers/Varient5.png");
+		texture = ImageLoader.loadImage("/textures/NPCs/Villagers/Variant5.png");
 
 		set = new Assets(texture, 36, 54, "Player");
 
@@ -68,7 +66,7 @@ public class Frizzy extends NPC {
 
 		t = new Trading(handler,
 				"Some... \nBody once told me the world was going to roll me, I ain't the sharpest tool in the shed",
-				"Frizzy", ImageLoader.loadImage("/textures/NPCs/Villagers/Varient5.png").getSubimage(0, 0, 36, 36));
+				"Frizzy", ImageLoader.loadImage("/textures/NPCs/Villagers/Variant5.png").getSubimage(0, 0, 36, 36));
 
 		Trading.addVoice(handler, "Sounds/Voices/Frizzy.ogg", "FrizzyVoice");
 		t.voice="FrizzyVoice";
@@ -184,7 +182,7 @@ public class Frizzy extends NPC {
 		setUseSpeech(true);
 	}
 
-	public boolean alwaysTick() {
+	public boolean shouldTick() {
 		return true;
 	}
 
@@ -235,7 +233,7 @@ public class Frizzy extends NPC {
 			Achievement.award(Achievement.disrespectful);
 			setHealth(20);
 			dead = false;
-			y = ((game.getWorld().getLowest(x) - 4) * Tile.TILEHEIGHT);
+			y = ((game.getWorld().getLowest(x) - 4) * Tile.HEIGHT);
 		}
 
 	}
@@ -248,9 +246,9 @@ public class Frizzy extends NPC {
 		boolean[] bools = follow(game.getEntityManager().getPlayer(), this);
 
 		if ((right) && (r)) {
-			int tx = (int) ((x + getxMove() + bounds.x + bounds.width) / Tile.TILEWIDTH);
+			int tx = (int) ((x + getxMove() + bounds.x + bounds.width) / Tile.WIDTH);
 
-			if (!collisionWithTile(tx, (int) (y + bounds.y - 36.0D) / Tile.TILEHEIGHT)) {
+			if (!collisionWithTile(tx, (int) (y + bounds.y - 36.0D) / Tile.HEIGHT)) {
 				u = true;
 			} else {
 				r = false;
@@ -258,9 +256,9 @@ public class Frizzy extends NPC {
 				u = false;
 			}
 		} else if ((left) && (l)) {
-			int tx = (int) ((x + getxMove() + bounds.x) / Tile.TILEWIDTH);
+			int tx = (int) ((x + getxMove() + bounds.x) / Tile.WIDTH);
 
-			if (!collisionWithTile(tx, (int) (y + bounds.y - 36.0D) / Tile.TILEHEIGHT)) {
+			if (!collisionWithTile(tx, (int) (y + bounds.y - 36.0D) / Tile.HEIGHT)) {
 				u = true;
 			} else {
 				r = true;
@@ -294,14 +292,14 @@ public class Frizzy extends NPC {
 			jumping = false;
 		}
 
-		if (!game.getWorld().SAFETOWALK(x - 20, y + height / 2)) {
-			if (game.getWorld().SAFETOWALK(x - 110, y + height / 2, 90)) {
+		if (!game.getWorld().safeToWalk(x - 20, y + height / 2)) {
+			if (game.getWorld().safeToWalk(x - 110, y + height / 2, 90)) {
 				u = true;
 			} else {
 				l = false;
 			}
-		} else if (!game.getWorld().SAFETOWALK(x + 20, y + height / 2)) {
-			if (game.getWorld().SAFETOWALK(x + 20, y + height / 2, 90)) {
+		} else if (!game.getWorld().safeToWalk(x + 20, y + height / 2)) {
+			if (game.getWorld().safeToWalk(x + 20, y + height / 2, 90)) {
 				u = true;
 			} else {
 				r = false;
@@ -353,21 +351,22 @@ public class Frizzy extends NPC {
 	}
 
 	public void render(Graphics2D g) {
-		g.drawImage(Tran.flip(getFrame(), (widthFlip == 0 ? 1 : widthFlip), 1), (int) (x - game.xOffset()),
-				(int) (y - game.yOffset()), null);
+		AffineTransform p = g.getTransform();
+		g.translate(x, y);
 
-		if ((t.speeches.getSpeech(t.speechindex) != "~end~")
-				&& (game.getEntityManager().getPlayer().closestNPC == this)) {
+		g.drawImage(Tran.flip(getFrame(), widthFlip, 1), 0, 0, null);
 
-			if (Math.sin(game.getGameTime() / 200) > 0) {
+		if (t.speeches.getSpeech(t.speechindex)!="~end~" && game.getEntityManager().getPlayer().closestNPC == this) {
+
+			if(Math.sin(game.getGameTime()/200.0)>0) {
 				g.setFont(Public.runescape.deriveFont(20f));
 
-				Tran.drawOutlinedText(g, Public.xO(x + width / 2 - 10), Public.yO(y), " C ", 1, Color.white,
-						Color.black);
+				Tran.drawOutlinedText(g, width/2.0-10, 0, " C ", 1, Color.white, Color.black);
 			}
 
 			g.setFont(Public.defaultFont);
 		}
+		g.setTransform(p);
 	}
 
 	public boolean mapable() {
@@ -380,9 +379,5 @@ public class Frizzy extends NPC {
 
 	public Point mapSize() {
 		return new Point(3, 9);
-	}
-
-	public String toString() {
-		return "Lia " + x + " " + y + " " + use.use;
 	}
 }

@@ -1,16 +1,12 @@
 package com.zandgall.arvopia.input;
 
 import com.zandgall.arvopia.Console;
-import com.zandgall.arvopia.Game;
 import com.zandgall.arvopia.utils.Mapper;
 
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class KeyManager implements java.awt.event.KeyListener {
-	public static boolean[] keys, typedKeys, typedIteration, num = new boolean[11], function = new boolean[12];
+	public static boolean[] keys, preKeys, typedKeys, typedIteration, num = new boolean[11], function = new boolean[12];
 	
 //	public boolean up, down, left, right, invtry, crft, b, c, m, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12;
 
@@ -38,31 +34,39 @@ public class KeyManager implements java.awt.event.KeyListener {
 		addKeybind("Interact", "General", KeyEvent.VK_C);
 		addKeybind("Debug", "General", KeyEvent.VK_V);
 		addKeybind("Toggle Map", "General", KeyEvent.VK_M);
-		
+
+		addKeybind("Sculpt", "Level Creator", KeyEvent.VK_Q);
+		addKeybind("Smart Rect", "Level Creator", KeyEvent.VK_S);
+		addKeybind("Rectangle", "Level Creator", KeyEvent.VK_R);
+		addKeybind("Format", "Level Creator", KeyEvent.VK_F);
+		addKeybind("Single Tile", "Level Creator", KeyEvent.VK_T);
+		addKeybind("Eraser", "Level Creator", KeyEvent.VK_E);
+		addKeybind("Fill", "Level Creator", KeyEvent.VK_G);
+		addKeybind("Line", "Level Creator", KeyEvent.VK_W);
 	}
 	
 	public static void addKeybind(String name, int key) {
-		keysections.put(name, "Misc");
+		keysections.put("Misc", name);
 		keybinds.put(name, key);
 		
-		resetbind = (Mapper<String, Integer>) keybinds.clone();
+		resetbind = keybinds.clone();
 	}
 	
 	public static void addKeybind(String name, String section, int key) {
 		keybinds.put(name, key);
 		keysections.put(section, name);
-		Console.log(section, name, keysections.getValues(section));
+//		Console.log(section, name, keysections.getValues(section));
 		
-		resetbind = (Mapper<String, Integer>) keybinds.clone();
+		resetbind = keybinds.clone();
 	}
 	
 	public static void addKeybind(String name, String section, int... key) {
 		for(int i : key)
 			keybinds.put(name, i);
 		keysections.put(section, name);
-		Console.log(section, name, keysections.getValues(section));
+//		Console.log(section, name, keysections.getValues(section));
 		
-		resetbind = (Mapper<String, Integer>) keybinds.clone();
+		resetbind = keybinds.clone();
 	}
 	
 	public static void addKeybind(String name, int... key) {
@@ -164,7 +168,9 @@ public class KeyManager implements java.awt.event.KeyListener {
 
 //		if(typed||preTyped)
 //			pressed = false;
-		
+	}
+
+	public void postTick() {
 		existantTyped = false;
 		for(int i = 0; i<typedKeys.length; i++) {
 			existantTyped = typedKeys[i]||existantTyped;
@@ -172,9 +178,9 @@ public class KeyManager implements java.awt.event.KeyListener {
 				typedKeys[i]=false;
 //			typedIteration[i]=typedKeys[i];
 		}
-			
+
 		preTyped = typed;
-		
+
 		typed = false;
 	}
 
@@ -182,15 +188,16 @@ public class KeyManager implements java.awt.event.KeyListener {
 		if(settingKeybind)
 			keybinds.put(selectedBind, e.getKeyCode());
 		
-		if (!keys[e.getKeyCode()]) {
-			Game.log.log("Key Code pressed: " + e.getKeyCode() + " Name: " + e.getKeyChar());
-		}
+//		if (!keys[e.getKeyCode()]) {
+//			Game.log.log("Key Code pressed: " + e.getKeyCode() + " Name: " + e.getKeyChar());
+//		}
 		pressed = true;
 		keys[e.getKeyCode()] = true;
+		typedKeys[e.getKeyCode()] = true;
 		lastKey = e.getKeyCode();
 		typed = false;
 		preTyped = true;
-		typedKey = Character.valueOf(e.getKeyChar());
+		typedKey = e.getKeyChar();
 	}
 
 	public void keyReleased(KeyEvent e) {
@@ -204,7 +211,7 @@ public class KeyManager implements java.awt.event.KeyListener {
 	public void keyTyped(KeyEvent e) {
 		keys[e.getKeyCode()] = true;
 		typedKeys[e.getKeyCode()] = true;
-		typedKey = Character.valueOf(e.getKeyChar());
+		typedKey = e.getKeyChar();
 		preTyped = true;
 		typed = true;
 	}
