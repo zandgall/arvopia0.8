@@ -9,7 +9,6 @@ public class Log implements Serializable {
 	private static final long serialVersionUID = -4362712707400368144L;
 	public String file;
 	public String log;
-	public boolean exists = false;
 
 	public Log(String file, String source) {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -20,29 +19,21 @@ public class Log implements Serializable {
 
 		this.file = (file + " " + dateString + " (" + System.currentTimeMillis() + ").txt");
 
-		log = (log + "Logger Initiated for " + source + " at " + dateString + System.lineSeparator());
+		log = "Logger Initiated for " + source + " at " + dateString + System.lineSeparator();
 
-		Utils.fileWriter("Logger Initiated for " + source + " at " + dateString, this.file);
+		Utils.fileWriter(log, this.file);
 
-		System.out.println("Logger Initiated for " + source + " at " + dateString);
-
-		exists = true;
-	}
-
-	public boolean exists() {
-		if (exists)
-			return exists;
-		return false;
+		System.out.print(log);
 	}
 
 	public void log(String log) {
 		System.out.println(log);
+		// Log Disables
+		this.log = (this.log + System.lineSeparator() + log);
 
-//		this.log = (this.log + System.lineSeparator() + log);
+		ArvopiaLauncher.game.actions.add(log);
 
-//		ArvopiaLauncher.game.actions.add(log);
-
-//		Utils.existWriter(this.log, file);
+		Utils.existWriter(this.log, file);
 	}
 
 	public void out(String string) {
@@ -54,8 +45,7 @@ public class Log implements Serializable {
 	public void logSilent(String log) {
 		this.log = (this.log + System.lineSeparator() + log);
 
-//		ArvopiaLauncher.game.actions.add(log);
-//		
-//		Utils.existWriter(this.log, file);
+		ArvopiaLauncher.game.actions.add(log);
+		Utils.existWriter(this.log, file);
 	}
 }

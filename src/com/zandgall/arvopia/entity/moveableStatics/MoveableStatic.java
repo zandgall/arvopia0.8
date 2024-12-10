@@ -13,4 +13,5 @@ public abstract class MoveableStatic extends Entity {
 	public abstract void tick();
 
 	public abstract void init();
+
 }

@@ -61,6 +61,10 @@ public class BevelPlatform {
 	public BufferedImage h() {
 		return h;
 	}
+
+	public void setImage(BufferedImage image) {
+		this.h = image;
+	}
 	
 	public int width() {
 		return h.getWidth();

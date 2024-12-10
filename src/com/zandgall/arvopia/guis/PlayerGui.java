@@ -9,7 +9,6 @@ import com.zandgall.arvopia.utils.BevelPlatform;
 import com.zandgall.arvopia.utils.Public;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -124,7 +123,7 @@ public class PlayerGui extends Gui {
 			Tran.drawOutlinedText(g, 152, 42, "Breath: " + Public.grid(p.breath, 0.1, 0) / 10.0, 1, Color.black,
 					Color.white);
 			
-			Tran.drawOutlinedText(g, 152, 60, "Age: " + (game.getEnviornment().rohundo + game.getEnviornment().lapse*81) + " days", 1, Color.black, Color.white);
+			Tran.drawOutlinedText(g, 152, 60, "Age: " + (game.getEnvironment().rohundo + game.getEnvironment().lapse*81) + " days", 1, Color.black, Color.white);
 		} else {
 			g.setFont(new java.awt.Font("Dialog", 1, 12));
 

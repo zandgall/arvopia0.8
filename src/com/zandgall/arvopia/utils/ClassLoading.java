@@ -1,6 +1,7 @@
 package com.zandgall.arvopia.utils;
 
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -117,13 +118,13 @@ public class ClassLoading {
 				if (je.getName().startsWith("com/") || je.getName() == "com")
 					continue;
 				if (je.isDirectory()) {
-					Utils.createDirectory(Game.prefix + "/Arvopia/tmp/" + je.getName());
+					Utils.createDirectory(Game.prefix + "/tmp/" + je.getName());
 				} else if(je.getName().endsWith(".png")) {
 					BufferedImage image = ImageLoader.loadImage(new URL("jar:file:" + pathToJar + "!/"+je.getName()));
-					ImageLoader.saveImage(image, Game.prefix + "/Arvopia/tmp/" + je.getName());
+					ImageLoader.saveImage(image, Game.prefix + "/tmp/" + je.getName());
 				} else {
 					String b = FileLoader.streamToString(new URL("jar:file:" + pathToJar + "!/"+je.getName()).openStream(), ("jar:file:" + pathToJar + "!/"+je.getName()).length());
-					Utils.fileWriter(b, Game.prefix + "/Arvopia/tmp/" + je.getName());
+					Utils.fileWriter(b, Game.prefix + "/tmp/" + je.getName());
 				}
 			}
 		} catch(Exception e) {
@@ -310,8 +311,8 @@ public class ClassLoading {
 	@SuppressWarnings({ "rawtypes" })
 	public static Object getC(Class c) {
 		try {
-			return c.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
+			return c.getDeclaredConstructor().newInstance();
+		} catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
 		return null;

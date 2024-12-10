@@ -1,229 +1,153 @@
 package com.zandgall.arvopia.tiles;
 
 import com.zandgall.arvopia.Handler;
+import com.zandgall.arvopia.gfx.ImageLoader;
 import com.zandgall.arvopia.gfx.transform.Tran;
-import com.zandgall.arvopia.state.OptionState;
+import com.zandgall.arvopia.utils.Public;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Tile {
-	public static ArrayList<Tile> tiles = new ArrayList<Tile>();
-	public static Tile n0 = new EmptyTile(0);
+	public static ArrayList<Tile> tiles = new ArrayList<>();
+	public static HashMap<String, Tile> tileMap = new HashMap<>();
 
-	public static Tile g1 = new GrassTile(1, 0, 0);
-	public static Tile g2 = new GrassTile(2, 1, 0);
-	public static Tile g3 = new GrassTile(3, 2, 0);
-	public static Tile g4 = new GrassTile(4, 0, 1);
-	public static Tile g5 = new GrassTile(5, 1, 1);
-	public static Tile g6 = new GrassTile(6, 2, 1);
-	public static Tile g7 = new GrassTile(7, 0, 2);
-	public static Tile g8 = new GrassTile(8, 1, 2);
-	public static Tile g9 = new GrassTile(9, 2, 2);
-	public static Tile g10 = new GrassTile(10, 0, 3);
-	public static Tile g11 = new GrassTile(11, 1, 3);
-	public static Tile g12 = new GrassTile(12, 2, 3);
-	public static Tile g13 = new GrassTile(13, 3, 0);
-	public static Tile g14 = new GrassTile(14, 3, 1);
-	public static Tile g15 = new GrassTile(15, 3, 2);
-	public static Tile g16 = new GrassTile(16, 4, 0);
-	public static Tile g17 = new GrassTile(17, 3, 3);
-	public static Tile g18 = new GrassTile(18, 4, 3);
-	public static Tile g19 = new GrassTile(19, 4, 1);
-	public static Tile g20 = new GrassTile(20, 4, 2);
-	public static Tile g21 = new GrassTile(21, 5, 0);
-	public static Tile g22 = new GrassTile(22, 5, 1);
-	public static Tile g23 = new GrassTile(23, 5, 2);
-	public static Tile g24 = new GrassTile(24, 5, 3);
-	public static Tile g25 = new GrassTile(25, 6, 0);
-	public static Tile g26 = new GrassTile(26, 6, 1);
-	public static Tile g27 = new GrassTile(27, 6, 2);
-	public static Tile g28 = new GrassTile(28, 6, 3);
-	
-	public static Tile b0 = new Bridge(2, 29);
-	public static Tile b1 = new Bridge(1, 30);
-	public static Tile b2 = new Bridge(0, 31);
-	public static Tile b3 = new Bridge(3, 32);
-	public static Tile b4 = new Bridge(4, 33);
-	public static Tile b5 = new Bridge(5, 34);
-	public static Tile b6 = new Bridge(6, 35);
-	public static Tile b7 = new Bridge(7, 36);
+	public static final String[] pre_0_7_identities = {
+		"TILE0", "TILE162", "TILE34", "TILE35", "TILE146", "TILE2", "TILE67", "TILE160", "TILE8", "TILE73", "TILE166", "TILE54", "TILE55", "TILE163", "TILE211", "TILE215", "TILE167", "TILE66", "TILE34", "TILE7", "TILE136", "TILE210", "TILE83", "TILE6", "TILE0", "TILE3", "TILE130", "TILE149", "TILE195",
+			"BRIDGE16", "FENCE112", "FENCE240", "FENCE49", "FENCE49", "BRIDGE32", "FENCE240", "BRIDGE0",
+			"TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0",
+			"TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0", "TILE0",
+			"TILE0"
+	};
+	public static EmptyTile n0 = new EmptyTile();
+	public static Tile barrier = new Tile(ImageLoader.loadImage("/textures/Null.png"), "TILE1") {
+		@Override
+		public void tick(Handler paramHandler, int paramInt1, int paramInt2) {
 
-	public static Tile f0 = new WoodFloor(37, 0, 0);
-	public static Tile f1 = new WoodFloor(38, 1, 0);
-	public static Tile f2 = new WoodFloor(39, 2, 0);
-	public static Tile f3 = new WoodFloor(40, 0, 1);
-	public static Tile f4 = new WoodFloor(41, 1, 1);
-	public static Tile f5 = new WoodFloor(42, 2, 1);
-	public static Tile f6 = new WoodFloor(43, 0, 2);
-	public static Tile f7 = new WoodFloor(44, 1, 2);
-	public static Tile f8 = new WoodFloor(45, 2, 2);
-	public static Tile f9 = new WoodFloor(46, 0, 3);
-	public static Tile f10 = new WoodFloor(47, 1, 3);
-	public static Tile f11 = new WoodFloor(48, 2, 3);
-	public static Tile f12 = new WoodFloor(49, 3, 0);
-	public static Tile f13 = new WoodFloor(50, 3, 1);
-	public static Tile f14 = new WoodFloor(51, 3, 2);
-	public static Tile f15 = new WoodFloor(52, 3, 3);
+		}
 
-	public static Tile w0 = new WoodWall(53, 0, 0);
-	public static Tile w1 = new WoodWall(54, 1, 0);
-	public static Tile w2 = new WoodWall(55, 2, 0);
-	public static Tile w3 = new WoodWall(56, 0, 1);
-	public static Tile w4 = new WoodWall(57, 1, 1);
-	public static Tile w5 = new WoodWall(58, 2, 1);
-	public static Tile w6 = new WoodWall(59, 0, 2);
-	public static Tile w7 = new WoodWall(60, 1, 2);
-	public static Tile w8 = new WoodWall(61, 2, 2);
-	public static Tile w9 = new WoodWall(62, 0, 3);
-	public static Tile w10 = new WoodWall(63, 1, 3);
-	public static Tile w11 = new WoodWall(64, 2, 3);
-	public static Tile w12 = new WoodWall(65, 3, 0);
-	public static Tile w13 = new WoodWall(66, 3, 1);
-	public static Tile w14 = new WoodWall(67, 3, 2);
-	public static Tile w15 = new WoodWall(68, 3, 3);
+		@Override
+		public boolean isSolid() {
+			return true;
+		}
 
-	public static Tile w16 = new WoodBackTile(69);
+		@Override
+		public Color getColor() {
+			return new Color(100, 200, 255);
+		}
+	};
 
-	public static Tile g29 = new GrassTile(7, 0);
-	public static Tile g30 = new GrassTile(7, 1);
-	public static Tile g31 = new GrassTile(7, 2);
-	public static Tile g32 = new GrassTile(7, 3);
-	
-	public static int TILEWIDTH = 18;
-	public static int TILEHEIGHT = 18;
-	public static final int DEFAULT_WIDTH = 18;
-	public static final int DEFAULT_HEIGHT = 18;
+	public static final int WIDTH = 18;
+	public static final int HEIGHT = 18;
 	protected int x;
 	protected int y;
-	protected static int[][] snowy;
+	protected static HashMap<Point, Double> snowy = new HashMap<>();
+
+	public enum VALID_STATES {
+		AIR, SOLID, ANYTHING, TOP_SOLID, NON_SOLID, SAME_TYPE, NOT_AIR, SUPPORTS_SHRUBBERY, DOESNT_SUPPORT_SHRUBBERY, SAME_TYPE_OR_SOLID
+	}
+	public static Map<Integer, VALID_STATES> VALID_STATES_COLOR_CODE = Map.of(Color.white.getRGB(), VALID_STATES.AIR, Color.black.getRGB(), VALID_STATES.SOLID, Color.red.getRGB(), VALID_STATES.ANYTHING, Color.green.getRGB(), VALID_STATES.TOP_SOLID,
+			Color.blue.getRGB(), VALID_STATES.NON_SOLID, Color.yellow.getRGB(), VALID_STATES.SAME_TYPE, Color.magenta.getRGB(), VALID_STATES.NOT_AIR, Color.cyan.getRGB(), VALID_STATES.SUPPORTS_SHRUBBERY, Color.gray.getRGB(), VALID_STATES.DOESNT_SUPPORT_SHRUBBERY,
+			new Color(0, 128, 255).getRGB(), VALID_STATES.SAME_TYPE_OR_SOLID);
+	protected VALID_STATES[][] validityKernel;
 	protected String id;
-	private BufferedImage texture;
-	BufferedImage sundrift, sundrift1, sundrift2, sundrift3, sundrift4;
+	protected boolean solid = false, top_solid = false, organic = false;
+	private final BufferedImage texture, glow;
 	
 	public String modIdentifier = "Vanilla", tileIdentifier = "Tile";
 
-	public Tile(BufferedImage texture, int id) {
-		this.id = "TILE"+tiles.size();
+	public Tile(BufferedImage texture, String id) {
+		this.id = id;
 
 		this.texture = texture;
 
 		tiles.add(this);
-		
-		BufferedImage full = Tran.bleachImage(texture, Color.orange);
-		full = Tran.effectAlpha(full, 128);
-		sundrift = new BufferedImage(20, 20, BufferedImage.TYPE_4BYTE_ABGR);
-		Graphics2D g = sundrift.createGraphics();
-		
-//		g.drawImage(full, 0, 0, null);
-		g.drawImage(full, 1, 0, null);
-//		g.drawImage(full, 2, 0, null);
-		g.drawImage(full, 0, 1, null);
-		
-		g.drawImage(full, 2, 1, null);
-//		g.drawImage(full, 0, 2, null);
-		g.drawImage(full, 1, 2, null);
-//		g.drawImage(full, 2, 2, null);
-		
-		g.dispose();
-		
-		sundrift1 = Tran.effectAlpha(sundrift, 200);
-		sundrift2 = Tran.effectAlpha(sundrift, 150);
-		sundrift3 = Tran.effectAlpha(sundrift, 100);
-		sundrift4 = Tran.effectAlpha(sundrift, 50);
+		tileMap.put(id, this);
+
+		validityKernel = new VALID_STATES[3][3];
+		setValidityKernel(
+				VALID_STATES.ANYTHING, VALID_STATES.ANYTHING, VALID_STATES.ANYTHING,
+				VALID_STATES.ANYTHING, VALID_STATES.SAME_TYPE, VALID_STATES.ANYTHING,
+				VALID_STATES.ANYTHING, VALID_STATES.ANYTHING, VALID_STATES.ANYTHING);
+
+		glow = Tran.litUp(texture);
 		
 	}
-	
+
 	public Tile(BufferedImage texture) {
-		this.id = "TILE"+tiles.size();
-
-		this.texture = texture;
-
-		tiles.add(this);
-		sundrift = Tran.bleachImage(texture, Color.orange);
+		this(texture, "TILE"+tiles.size());
 	}
 
-	public static void set(int width, int height) {
-		snowy = new int[width][height];
+	protected void setValidityKernel(VALID_STATES m00, VALID_STATES m10, VALID_STATES m20, VALID_STATES m01, VALID_STATES m11, VALID_STATES m21, VALID_STATES m02, VALID_STATES m12, VALID_STATES m22){
+		validityKernel[0][0] = m00;
+		validityKernel[1][0] = m10;
+		validityKernel[2][0] = m20;
+		validityKernel[0][1] = m01;
+		validityKernel[1][1] = m11;
+		validityKernel[2][1] = m21;
+		validityKernel[0][2] = m02;
+		validityKernel[1][2] = m12;
+		validityKernel[2][2] = m22;
 	}
-	
+	protected void setValidityKernel(int m00, int m10, int m20, int m01, int m11, int m21, int m02, int m12, int m22) {
+		setValidityKernel(
+				VALID_STATES_COLOR_CODE.get(m00), VALID_STATES_COLOR_CODE.get(m10), VALID_STATES_COLOR_CODE.get(m20),
+				VALID_STATES_COLOR_CODE.get(m01), VALID_STATES_COLOR_CODE.get(m11), VALID_STATES_COLOR_CODE.get(m21),
+				VALID_STATES_COLOR_CODE.get(m02), VALID_STATES_COLOR_CODE.get(m12), VALID_STATES_COLOR_CODE.get(m22));
+	}
+
+	public static void resetSnowiness() {
+		snowy.clear();
+	}
+
 	public static Tile getTile(String id) {
-		for(Tile t: tiles) {
-			if(t.id.equals(id))
-				return t;
-		}
-		return n0;
+//		if(tileMap.containsKey(id))
+		return tileMap.get(id);
+//		return n0;
 	}
 
-	public abstract void tick(Handler paramHandler, int paramInt1, int paramInt2);
+	public void tick(Handler handler, int x, int y) {
 
-	public abstract void init();
+	}
 
-	public abstract void reset();
-
-	public void render(Graphics2D g, int x, int y, int gridx, int gridy) {
-//		g.drawImage(texture, x, y, TILEWIDTH, TILEHEIGHT, null);
+	public void render(Handler handler, Graphics2D g, int x, int y) {
+		g.drawImage(getImage(), x*18, y*18, null);
 	}
 	
-	public void lightRender(Graphics2D g, int x, int y, int opacity) {
-		if(opacity>200)
-			g.drawImage(sundrift, x-1, y-1, null);
-		else if(opacity>150)
-			g.drawImage(sundrift1, x-1, y-1, null);
-		else if(opacity>100)
-			g.drawImage(sundrift2, x-1, y-1, null);
-		else if(opacity>50)
-			g.drawImage(sundrift3, x-1, y-1, null);
-		else if(opacity>0)
-			g.drawImage(sundrift4, x-1, y-1, null);
-	}
-	
-	public boolean customRender() {
-		return false;
-	}
-	
-	public void overRender(Graphics2D g, int x, int y) {
-		g.drawImage(texture, x, y, TILEWIDTH, TILEHEIGHT, null);
+	public void lightRender(Graphics2D g, int x, int y, float opacity) {
+		Composite pre = g.getComposite();
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+		g.drawImage(glow, x-1, y-1, null);
+		g.setComposite(pre);
 	}
 
 	public boolean isSolid() {
-		return false;
+		return solid;
 	}
 
-	public boolean varietable() {
-		return false;
+	public static void setSnowy(int x, int y, double snowiness) {
+		Tile.snowy.put(new Point(x, y), snowiness);
 	}
 
-	public boolean tickable() {
-		return false;
+	public static void updateSnowy(int x, int y, double snowiness) {
+		snowy.put(new Point(x, y), Tile.snowiness(x, y)+snowiness);
 	}
 
-	public void setSnowy(int x, int y, int snowy) {
-		Tile.snowy[x][y] = snowy;
-	}
-
-	public void updateSnowy(int x, int y, int snowy) {
-		Tile.snowy[x][y] += snowy;
-	}
-
-	public int snowyness(int x, int y) {
-		return snowy[x][y];
-	}
-	
-	public int getY(int xOff) {
+	public static double snowiness(int x, int y) {
+		if(snowy.containsKey(new Point(x, y)))
+			return snowy.get(new Point(x, y));
 		return 0;
 	}
 	
 	public boolean isTop() {
-		return false;
+		return top_solid;
 	}
 	
-	public boolean supportsShrubbery() {
-		return false;
+	public boolean isOrganic() {
+		return organic;
 	}
 
 	public String getId() {
@@ -236,12 +160,84 @@ public abstract class Tile {
 		return texture;
 	}
 
-	public Image getSnowy() {
-		return null;
+	// Checks whether any particular tile would be valid at a location in the given context
+	public int isValid(ArrayList<ArrayList<String>> context, int x, int y) {
+		int out = 9; // Anytime a 'Anything' call is made, the priority of the output decreases
+		for(int i = x-1; i < x+2; i++)
+			for (int j = y-1; j < y+2; j++) {
+				Tile other;
+				if(i < 0 || i >= context.size() || j < 0 || j >= context.get(i).size())
+					other = barrier;
+				else other = getTile(context.get(i).get(j));
+				switch(validityKernel[i-x+1][j-y+1]) {
+					case AIR -> {
+						if (other!=n0)
+							return 0;
+					}
+					case NOT_AIR -> {
+						if(other==n0)
+							return 0;
+					}
+					case SAME_TYPE -> {
+						if(other.getClass() != getClass())
+							return 0;
+					}
+					case SOLID -> {
+						if(!other.isSolid())
+							return 0;
+					}
+					case TOP_SOLID -> {
+						if(!other.isTop())
+							return 0;
+					}
+					case NON_SOLID -> {
+						if(other.isSolid())
+							return 0;
+					}
+					case SUPPORTS_SHRUBBERY -> {
+						if(!other.isOrganic())
+							return 0;
+					}
+					case DOESNT_SUPPORT_SHRUBBERY -> {
+						if(other.isOrganic())
+							return 0;
+					}
+					case SAME_TYPE_OR_SOLID -> {
+						if(j>y&&other.isTop())
+							continue;
+						if(!other.isSolid()&&other.getClass() != getClass())
+							return 0;
+					}
+					case ANYTHING -> out--;
+				}
+			}
+		return out;
 	}
-
-	public BufferedImage shadowMap() {
-		return null;
+	public static void formatTile(ArrayList<ArrayList<String>> tile_map, int x, int y) {
+		if(x<0||x >= tile_map.size()||y<0||y>=tile_map.get(x).size())
+			return;
+		ArrayList<String> possibilities = new ArrayList<>();
+		int highestPriority = 1;
+		for(Tile t: tiles) {
+			int validity = t.isValid(tile_map, x, y);
+			if (validity >= highestPriority) {
+				if(highestPriority<validity)
+					possibilities.clear();
+				possibilities.add(t.id);
+				highestPriority = validity;
+			}
+		}
+		if(possibilities.size()==0) {
+			System.err.println("Couldn't find a tile that fits the given context, " + x + ", " + y);
+			System.err.println("Returning air instead");
+			tile_map.get(x).set(y, "TILE0");
+		} else
+			tile_map.get(x).set(y, possibilities.get((int)Public.rand(0, possibilities.size())));
+	}
+	public static void formatTiles(ArrayList<ArrayList<String>> tile_map, int begin_x, int begin_y, int end_x, int end_y) {
+		for(int x = begin_x; x <= end_x; x++)
+			for(int y = begin_y; y <= end_y; y++)
+				formatTile(tile_map, x, y);
 	}
 
 }

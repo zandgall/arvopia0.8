@@ -19,11 +19,10 @@ public class Bear extends BasicTemplate {
 	BufferedImage jump;
 	
 	public static final Color[] types = new Color[] {new Color(255, 255, 255), new Color(150, 200, 0)};
-	
-//	public static long 
+
 
 	public Bear(Handler handler, double x, double y) {
-		super(handler, x, y, 108, 72, Creature.DEFAULT_SPEED-0.2, Creature.DEFAULT_ACCELERATION*0.8, 3, "Bear",
+		super(handler, x, y-72, 108, 72, Creature.DEFAULT_SPEED-0.2, Creature.DEFAULT_ACCELERATION*0.8, 3, "Bear",
 				BasicTemplate.PREDATOR, 200, 20, 20, 3.0, 60);
 
 		layer = Math.random();
@@ -31,9 +30,9 @@ public class Bear extends BasicTemplate {
 		bounds.y = 0;
 		bounds.width = 72;
 		bounds.height = 71;
-		BufferedImage img=ImageLoader.loadImage("/textures/Creatures/bear.png");
-		double ratio = Public.debugRandom(0.8, 1.0);
-		int i = (int) Public.random(0, types.length-1);
+		BufferedImage img=ImageLoader.loadImage("/textures/Creatures/Bear.png");
+		double ratio = Public.rand(0.8, 1.0);
+		int i = (int) Public.expandedRand(0, types.length-1);
 		Color effect = new Color((int) (ratio*types[i].getRed()), (int) (ratio*types[i].getGreen()), (int) (ratio*types[i].getBlue()));
 		img = Tran.effectColor(img, effect);
 		Assets bear = new Assets(img, 108, 72, "Bear");

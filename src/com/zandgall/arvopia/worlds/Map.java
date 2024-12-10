@@ -32,7 +32,7 @@ public class Map implements Serializable {
 				int px = (int) e.getX();
 				int py = (int) e.getY();
 				g.setColor(e.mapColor());
-				g.fillRect(xOff + px / Tile.TILEWIDTH * 3 + 3, yOff + py / Tile.TILEHEIGHT * 3, e.mapSize().x,
+				g.fillRect(xOff + px / Tile.WIDTH * 3 + 3, yOff + py / Tile.HEIGHT * 3, e.mapSize().x,
 						e.mapSize().y);
 			}
 		}
@@ -41,7 +41,7 @@ public class Map implements Serializable {
 		int py = (int) game.getEntityManager().getPlayer().getY();
 
 		g.setColor(java.awt.Color.red);
-		g.fillRect(xOff + px / Tile.TILEWIDTH * 3 + 3, yOff + py / Tile.TILEHEIGHT * 3, 3, 9);
+		g.fillRect(xOff + px / Tile.WIDTH * 3 + 3, yOff + py / Tile.HEIGHT * 3, 3, 9);
 
 		g.setColor(java.awt.Color.black);
 		g.drawRect(xOff, yOff, World.getWidth() * 3, World.getHeight() * 3);

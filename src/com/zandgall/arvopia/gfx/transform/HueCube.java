@@ -1,8 +1,6 @@
 package com.zandgall.arvopia.gfx.transform;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import com.zandgall.arvopia.input.MouseManager;
@@ -10,12 +8,13 @@ import com.zandgall.arvopia.utils.Public;
 
 public class HueCube {
 
-	private int x, y, width, height;
+	private final int x, y, width, height;
 
 	private int sX, sY, hY;
 	private float huy;
 
-	private BufferedImage hueSelect, colSelect;
+	private final BufferedImage hueSelect;
+	private BufferedImage colSelect;
 
 	public HueCube(int x, int y, int width, int height) {
 		this.x = x;
@@ -55,17 +54,14 @@ public class HueCube {
 		colSelect = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D i = colSelect.createGraphics();
 
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
+		GradientPaint saturationStroke = new GradientPaint(0f, 0f, Color.white, width, 0f, Color.getHSBColor(huy, 1.0f, 1.0f));
+		GradientPaint valueStroke = new GradientPaint(0f, 0f, new Color(0, 0, 0, 0), 0f, height, Color.black);
+		i.setPaint(saturationStroke);
+		i.fillRect(0, 0, width, height);
+		i.setPaint(valueStroke);
+		i.fillRect(0, 0, width, height);
 
-				float sat = (float) ((x + 0.0) / (width + 0.0));
-				float val = 1 - (float) ((y + 0.0) / (height + 0.0));
-
-				i.setColor(Color.getHSBColor(huy, sat, val));
-
-				i.fillRect(x, y, 1, 1);
-			}
-		}
+		i.dispose();
 
 	}
 

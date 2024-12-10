@@ -27,7 +27,7 @@ public class Fox extends BasicTemplate {
 	double timer = 200, timed = 0;
 
 	public Fox(Handler handler, double x, double y) {
-		super(handler, x, y, 54, 36, Creature.DEFAULT_SPEED, Creature.DEFAULT_ACCELERATION, 3, "Fox",
+		super(handler, x-27, y-36, 54, 36, Creature.DEFAULT_SPEED, Creature.DEFAULT_ACCELERATION, 3, "Fox",
 				BasicTemplate.PASSIVE, 200, 10, 10, 3.0, 60);
 
 		layer = Math.random();
@@ -47,7 +47,7 @@ public class Fox extends BasicTemplate {
 			tail = ImageLoader.loadImage("/textures/Creatures/Fox.png").getSubimage(108, 72, 36, 36);
 		}
 
-		String addition = "" + (((OptionState) game.getGame().optionState).getToggle("Sound per layer") ? Public.random(0, 2): "");
+		String addition = "" + (((OptionState) game.getGame().optionState).getToggle("Sound per layer") ? Public.expandedRand(0, 2): "");
 		yip = "Yip" + addition;
 		game.addSound("Sounds/FoxBark.ogg", yip, false, 0, 0, 0);
 	}
@@ -75,21 +75,20 @@ public class Fox extends BasicTemplate {
 
 	@Override
 	public void render(Graphics2D g) {
-//		g.drawImage(com.zandgall.arvopia.gfx.transform.Tran.flip(getFrame(), widthFlip, 1),
-//				(int) (x - game.getGameCamera().getxOffset()), (int) (y - game.getGameCamera().getyOffset()), null);
-		if  (!(custState || (Math.round(yMove - speed + 0.49D) > 0L) || !bottoms)) {
-			g.drawImage(Tran.flip(System.currentTimeMillis() % 2000 < 1200 ? body : body2, widthFlip, 1), (int) Public.xO(x), (int) Public.yO(y), null);
-		}
-		g.drawImage(Tran.flip(getFrame(), widthFlip, 1), (int) Public.xO(x), (int) Public.yO(y), null);
+		AffineTransform p = g.getTransform();
+		g.translate(x, y);
+
+		if  (!(custState || (Math.round(yMove - speed + 0.49D) > 0L) || !bottoms))
+			g.drawImage(Tran.flip(System.currentTimeMillis() % 2000 < 1200 ? body : body2, widthFlip, 1), 0, 0, null);
+
+		g.drawImage(Tran.flip(getFrame(), widthFlip, 1), 0, 0, null);
 		AffineTransform pre = g.getTransform();
-		double xo = Public.xO(x + (widthFlip==1 ? 40 : 14) + (custState ? widthFlip*-5 : (Math.round(yMove - speed + 0.49D) > 0L) ? widthFlip*-2 : 0));
-		double yo = Public.yO(y + (custState ? 32 : (Math.round(yMove - speed + 0.49D) > 0L) ? 14 : 22));
+		double xo = (widthFlip==1 ? 40 : 14) + (custState ? widthFlip*-5 : (Math.round(yMove - speed + 0.49D) > 0L) ? widthFlip*-2 : 0);
+		double yo = (custState ? 32 : (Math.round(yMove - speed + 0.49D) > 0L) ? 14 : 22);
 		g.rotate(Math.sin(System.currentTimeMillis() / 500.0 + layer * 10) * 0.4 + widthFlip*0.4 + (custState ? widthFlip * 0.6 : 0), (int) xo, (int) yo);
 		g.drawImage(Tran.flip(tail, widthFlip, 1), (int) xo-18, (int) yo-18, null);
 		g.setTransform(pre);
-		if (health < MAX_HEALTH) {
-				showHealthBar(g);
-			}
+		g.setTransform(p);
 	}
 
 	public BufferedImage getFrame() {

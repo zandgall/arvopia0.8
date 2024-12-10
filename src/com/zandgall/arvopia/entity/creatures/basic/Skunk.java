@@ -16,9 +16,9 @@ public class Skunk extends BasicTemplate {
 	
 	Animation bearWalk, bearSit, bearStill;
 	BufferedImage jump;
-	
+
 	public Skunk(Handler handler, double x, double y) {
-		super(handler, x, y, 54, 36, Creature.DEFAULT_SPEED-0.2, Creature.DEFAULT_ACCELERATION*0.8, 3, "Skunk",
+		super(handler, x-27, y-36, 54, 36, Creature.DEFAULT_SPEED-0.2, Creature.DEFAULT_ACCELERATION*0.8, 3, "Skunk",
 				BasicTemplate.FLEER, 200, 20, 20, 3.0, 60);
 
 		layer = Math.random();

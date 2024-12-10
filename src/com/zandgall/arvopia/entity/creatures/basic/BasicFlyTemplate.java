@@ -21,7 +21,7 @@ public abstract class BasicFlyTemplate extends BasicTemplate {
 		n = new Noise((long) (Math.random() * 10000));
 	}
 
-	public void aiMove() {
+    public void aiMove() {
 
 		// Set velocity based on directions
 		setxMove(0.0F);

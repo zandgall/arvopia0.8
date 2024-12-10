@@ -1,6 +1,5 @@
 package com.zandgall.arvopia.gfx;
 
-import com.zandgall.arvopia.Console;
 import com.zandgall.arvopia.Game;
 import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.entity.Entity;
@@ -23,21 +22,21 @@ public class GameCamera {
 	public void checkBlankSpace() {
 		if (xOffset < -(Game.scale - 1.0D) * handler.getWidth() / (2.0D * Game.scale))
 			xOffset = ((float) (-(Game.scale - 1.0D) * handler.getWidth() / (2.0D * Game.scale)));
-		if (xOffset > World.getWidth() * Tile.TILEWIDTH - handler.getWidth()
+		if (xOffset > World.getWidth() * Tile.WIDTH - handler.getWidth()
 				+ handler.getWidth() * (Game.scale - 1.0D) / 2.75D)
-			xOffset = ((float) (World.getWidth() * Tile.TILEWIDTH - handler.getWidth()
+			xOffset = ((float) (World.getWidth() * Tile.WIDTH - handler.getWidth()
 					+ handler.getWidth() * (Game.scale - 1.0D) / 2.75D));
-		if (yOffset > -(8 - (World.getHeight() - 15)) * Tile.TILEHEIGHT
+		if (yOffset > -(8 - (World.getHeight() - 15)) * Tile.HEIGHT
 				+ (Game.scale - 1.0D) * handler.getHeight() / 2.0D)
-			yOffset = ((float) (-(8 - (World.getHeight() - 15)) * Tile.TILEHEIGHT
+			yOffset = ((float) (-(8 - (World.getHeight() - 15)) * Tile.HEIGHT
 					+ (Game.scale - 1.0D) * handler.getHeight() / 2.0D));
 		if (yOffset < -(Game.scale - 1.0D) * handler.getHeight() / (2.0D * Game.scale))
 			yOffset = ((float) (-(Game.scale - 1.0D) * handler.getHeight() / (2.0D * Game.scale)));
 	}
 
 	public void setCenter(Entity e) {
-		centerOffx = ((e.getX() - handler.getWidth() / 2 + e.getWidth() / 2));
-		centerOffy = ((e.getY() - handler.getHeight() / 2 + e.getHeight() / 2));
+		centerOffx = ((e.getX() - handler.getWidth() / 2.0 + e.getWidth() / 2.0));
+		centerOffy = ((e.getY() - handler.getHeight() / 2.0 + e.getHeight() / 2.0));
 	}
 	
 	public void apply() {
@@ -55,8 +54,8 @@ public class GameCamera {
 	}
 	
 	public void centerOnEntity(Entity e) {
-		double nxOffset = ((e.getX() - handler.getWidth() / 2 + e.getWidth() / 2));
-		double nyOffset = ((e.getY() - handler.getHeight() / 2 + e.getHeight() / 2));
+		double nxOffset = ((e.getX() - handler.getWidth() / 2.0 + e.getWidth() / 2.0));
+		double nyOffset = ((e.getY() - handler.getHeight() / 2.0 + e.getHeight() / 2.0));
 		
 		float ratio = 0.05f;
 		
@@ -78,7 +77,7 @@ public class GameCamera {
 	}
 
 	public double getxOffset() {
-		return (int) Math.round(xOffset);
+		return xOffset;
 //		return 0;
 	}
 
@@ -87,7 +86,7 @@ public class GameCamera {
 	}
 
 	public double getyOffset() {
-		return (int) Math.round(yOffset);
+		return yOffset;
 //		return 0;
 	}
 

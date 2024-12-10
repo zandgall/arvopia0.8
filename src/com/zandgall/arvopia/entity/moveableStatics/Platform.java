@@ -1,7 +1,7 @@
 package com.zandgall.arvopia.entity.moveableStatics;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -9,7 +9,6 @@ import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.entity.Entity;
 import com.zandgall.arvopia.entity.creatures.Creature;
 import com.zandgall.arvopia.tiles.Tile;
-import com.zandgall.arvopia.worlds.World;
 
 public class Platform extends MoveableStatic {
 	
@@ -24,27 +23,45 @@ public class Platform extends MoveableStatic {
 	int type;
 	
 	double yOffset, ORIGINY, yMomentum;
-	
+
+	public Platform(Handler game, double x, double y) {
+		super(game, x-9, y-9, 18, 18, true);
+		texture = new BufferedImage(18, 18, BufferedImage.TYPE_4BYTE_ABGR);
+
+		this.type = 0;
+
+		ArrayList<ArrayList<String>> tiles = new ArrayList<>();
+
+		ORIGINY = y;
+
+		tiles.add(new ArrayList<>());
+		tiles.get(0).add("TILE5");
+
+		texture.getGraphics().drawImage(Tile.getTile("TILE5").getImage(), 0, 0, null);
+		texture.getGraphics().dispose();
+	}
+
 	public Platform(Handler game, int x, int y, int w, int h, int type) {
 		super(game, x, y, w*18, h*18, true);
 		texture = new BufferedImage(w*18, h*18, BufferedImage.TYPE_4BYTE_ABGR);
-		
+
 		this.type = type;
-		
-		ArrayList<ArrayList<String>> tiles = new ArrayList<ArrayList<String>>();
-		
+
+		ArrayList<ArrayList<String>> tiles = new ArrayList<>();
+
 		ORIGINY = y;
-		
+
 		for(int i = 0; i<w; i++) {
-			tiles.add(new ArrayList<String>());
+			tiles.add(new ArrayList<>());
 			for(int j = 0; j<h; j++) {
 				tiles.get(i).add("TILE5");
 			}
 		}
-		
+		Tile.formatTiles(tiles, 0, 0, w, h);
+
 		for(int i = 0; i<w; i++) {
 			for(int j = 0; j<h; j++) {
-				texture.getGraphics().drawImage(Tile.getTile(World.formatTiles(tiles, i, j)).getImage(), i*18, j*18, null);
+				texture.getGraphics().drawImage(Tile.getTile(tiles.get(i).get(j)).getImage(), i*18, j*18, null);
 			}
 		}
 		texture.getGraphics().dispose();
@@ -83,7 +100,10 @@ public class Platform extends MoveableStatic {
 
 	@Override
 	public void render(Graphics2D g) {
-		g.drawImage(texture, (int) (x-game.xOffset()), (int) (y-game.yOffset()), null);
+		AffineTransform p = g.getTransform();
+		g.translate(x, y);
+		g.drawImage(texture, 0, 0, null);
+		g.setTransform(p);
 	}
 	
 }

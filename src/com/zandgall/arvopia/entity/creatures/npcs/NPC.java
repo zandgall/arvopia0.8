@@ -1,7 +1,7 @@
 package com.zandgall.arvopia.entity.creatures.npcs;
 
 import com.zandgall.arvopia.Handler;
-import com.zandgall.arvopia.entity.EntityAdder;
+import com.zandgall.arvopia.entity.EntityEntry;
 import com.zandgall.arvopia.entity.EntityManager;
 import com.zandgall.arvopia.entity.creatures.Creature;
 import com.zandgall.arvopia.gfx.ImageLoader;
@@ -50,11 +50,13 @@ public abstract class NPC extends Creature implements Cloneable {
 		for (int i = 0; i < speeches.length - 1; i++) {
 			trader.put(speeches[i], "...", speeches[i + 1]);
 		}
-		trader.put(speeches[speeches.length - 1], "Ok bye!", "~end~");
-		t.useownSpeech(true);
-		t.setSpeeches(trader);
-		t.useSpeech(speeches[0]);
-		t.setText("Goodbye!");
+		if(speeches.length>0) {
+			trader.put(speeches[speeches.length - 1], "Ok bye!", "~end~");
+			t.useownSpeech(true);
+			t.setSpeeches(trader);
+			t.useSpeech(speeches[0]);
+			t.setText("Goodbye!");
+		}
 
 		blankSpeech = new Speech(x + width / 2, y - 15.0D, " ... ");
 
@@ -91,7 +93,7 @@ public abstract class NPC extends Creature implements Cloneable {
 
 	public void uniTick() {
 
-		if (KeyManager.checkBind("Interact") && KeyManager.preTyped)
+		if (KeyManager.checkBind("Interact") && KeyManager.typed)
 			t.shown = !t.shown && game.getEntityManager().getPlayer().closestNPC == this;
 		if (t.shown)
 			t.tick();
@@ -183,79 +185,79 @@ public abstract class NPC extends Creature implements Cloneable {
 				touchingWater = true;
 			}
 		}
-		int ty = (int) ((y + yMove + bounds.y + bounds.height) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 3.0D) / Tile.TILEWIDTH), ty))
+		int ty = (int) ((y + yMove + bounds.y + bounds.height) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 3.0D) / Tile.WIDTH), ty))
 				|| (checkCollision(0.0F, yMove))) {
 			bottom = true;
-		} else if ((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithDown((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))) {
-			if (y + bounds.y + bounds.height < ty * Tile.TILEHEIGHT + 4) {
+		} else if ((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithDown((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))) {
+			if (y + bounds.y + bounds.height < ty * Tile.HEIGHT + 4) {
 				down = true;
 			}
 
-			if ((y + bounds.y + bounds.height <= ty * Tile.TILEHEIGHT + 1) && (yMove >= 0.0F)) {
+			if ((y + bounds.y + bounds.height <= ty * Tile.HEIGHT + 1) && (yMove >= 0.0F)) {
 				bottoms = true;
 				bottom = true;
 			}
 		}
-		ty = (int) ((y + yMove + bounds.y + bounds.height + 2.0D) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
+		ty = (int) ((y + yMove + bounds.y + bounds.height + 2.0D) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))
 				|| (checkCollision(0.0F, yMove + 1.0F))
-				|| (((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-						|| (collisionWithDown((int) ((x + bounds.x + bounds.width + 2.0D) / Tile.TILEWIDTH), ty)))
-						&& (y + bounds.y + bounds.height <= ty * Tile.TILEHEIGHT + 1) && (!jumping))) {
+				|| (((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+						|| (collisionWithDown((int) ((x + bounds.x + bounds.width + 2.0D) / Tile.WIDTH), ty)))
+						&& (y + bounds.y + bounds.height <= ty * Tile.HEIGHT + 1) && (!jumping))) {
 			bottoms = true;
 		}
 
-		ty = (int) ((y + yMove + bounds.y) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
+		ty = (int) ((y + yMove + bounds.y) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))
 				|| (checkCollision(0.0F, yMove))) {
 			top = true;
 		}
-		ty = (int) ((y + yMove + bounds.y - 2.0D) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
+		ty = (int) ((y + yMove + bounds.y - 2.0D) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))
 				|| (checkCollision(0.0F, yMove - 1.0F))) {
 			tops = true;
 		}
 
-		int tx = (int) ((x + getxMove() + bounds.x + bounds.width) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.TILEHEIGHT))
+		int tx = (int) ((x + getxMove() + bounds.x + bounds.width) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.HEIGHT))
 				|| (checkCollision(getxMove() + 1.0F, 0.0F))) {
 			right = true;
 		}
-		tx = (int) ((x + getxMove() + bounds.x + bounds.width + 2.0D) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.TILEHEIGHT))
+		tx = (int) ((x + getxMove() + bounds.x + bounds.width + 2.0D) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.HEIGHT))
 				|| (checkCollision(getxMove() + 1.0F, 0.0F))) {
 			rights = true;
 		}
 
-		tx = (int) ((x + getxMove() + bounds.x) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.TILEHEIGHT))
+		tx = (int) ((x + getxMove() + bounds.x) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.HEIGHT))
 				|| (checkCollision(getxMove(), 0.0F))) {
 			left = true;
 		}
-		tx = (int) ((x + getxMove() + bounds.x - 2.0D) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.TILEHEIGHT))
+		tx = (int) ((x + getxMove() + bounds.x - 2.0D) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 2) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height / 4) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height * 0.75D) / Tile.HEIGHT))
 				|| (checkCollision(getxMove() - 1.0F, 0.0F))) {
 			lefts = true;
 		}
@@ -381,13 +383,13 @@ public abstract class NPC extends Creature implements Cloneable {
 				}
 
 			for (NPC out : npcs)
-				e.adders.add(new EntityAdder(e, out));
+				e.entityEntries.put(out.name, new EntityEntry(out));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 	
-	public static void loadMODNPC(String directory, Handler handler, EntityManager e) {
+	public static void loadMODNPC(String directory, Handler handler) {
 		try {
 			long pre = System.currentTimeMillis();
 			String name = FileLoader.readFile(directory + "/name.txt").replaceAll(" ", "");
@@ -399,7 +401,7 @@ public abstract class NPC extends Creature implements Cloneable {
 			out.initSounds();
 
 //			e.adders.add(new EntityAdder(handler, directory, name));
-			e.adders.add(new EntityAdder(e, out));
+			EntityManager.entityEntries.put(out.name, new EntityEntry(out));
 
 			pre = System.currentTimeMillis() - pre;
 			handler.log("~~~~~~LOADED MOD NPC ~~~ " + name + " ~~~ ");

@@ -18,8 +18,8 @@ public class WaterManager implements Serializable {
 	}
 
 	public Water newWater(int x, int y, int width, int height) {
-		Water newater = new Water(game, x * Tile.TILEWIDTH - 1, y * Tile.TILEHEIGHT + 10, width * Tile.TILEWIDTH + 3,
-				height * Tile.TILEHEIGHT - 9, width * 4, new java.awt.Color(10, 100, 200, 200));
+		Water newater = new Water(game, x * Tile.WIDTH - 1, y * Tile.HEIGHT + 10, width * Tile.WIDTH + 3,
+				height * Tile.HEIGHT - 9, width * 4, new java.awt.Color(10, 100, 200, 200));
 
 		water.add(newater);
 

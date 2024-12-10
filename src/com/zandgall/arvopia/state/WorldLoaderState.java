@@ -2,7 +2,6 @@ package com.zandgall.arvopia.state;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,8 +10,6 @@ import java.util.Date;
 
 import com.zandgall.arvopia.Game;
 import com.zandgall.arvopia.Handler;
-import com.zandgall.arvopia.gfx.BlendedAnimation;
-import com.zandgall.arvopia.gfx.PublicAssets;
 import com.zandgall.arvopia.gfx.transform.Tran;
 import com.zandgall.arvopia.utils.Button;
 import com.zandgall.arvopia.utils.FileChooser;
@@ -21,33 +18,15 @@ import com.zandgall.arvopia.utils.Public;
 import com.zandgall.arvopia.utils.Utils;
 
 public class WorldLoaderState extends State {
-	public File fworld1;
-	public File fworld2;
-	public File fworld3;
-	public File fworld4;
-	public File fworld5;
-	public Button level1;
-	public Button level2;
-	public Button staircase;
-	public Button defaultworld;
-	public Button loadWorld;
-	public Button loadSave;
-	public Button back, installMod, installPack;
-	int init = 0;
+	private final Button loadOtherWorld, loadOtherSave, back, installMod, installPack;
 
-	double scroll;
 
-	BufferedImage flow1, flow2, blend;
-
-	BlendedAnimation aniTest;
-
-	ArrayList<worldfile> worlds;
+	private final Button generate, customize;
+	ArrayList<world_file> worlds;
 
 	boolean saves = false;
-
-	Button generate, customize;
-
 	boolean packs = false;
+	double scroll;
 
 	public WorldLoaderState(Handler handler) {
 		super(handler);
@@ -55,102 +34,81 @@ public class WorldLoaderState extends State {
 		generate = new Button(handler, handler.getWidth() / 2 + 54, 20, 510, 35, "Generates a world", "", 1);
 		customize = new Button(handler, handler.getWidth() / 2 + 54, 75, 510, 35, "Switches to the level maker", "", 1);
 
-		flow1 = PublicAssets.flowerFinal[0].getArray()[0];
-		flow2 = PublicAssets.flowerFinal[0].getArray()[1];
+		// Get default worlds
+		File world_file = new File(Game.prefix + "/World/World 1.arv");
+		handler.getGame().initMessage("Downloading Content: LevelOne");
+		if (!world_file.exists())
+			Utils.fileWriter(FileLoader.readFile("Packed Worlds/LevelOne"), world_file.getPath());
+
+		world_file = new File(Game.prefix + "/World/World 2.arv");
+		handler.getGame().initMessage("Downloading Content: LevelTwo");
+		if (!world_file.exists())
+			Utils.fileWriter(FileLoader.readFile("Packed Worlds/LevelTwo"), world_file.getPath());
+
+		world_file = new File(Game.prefix + "/World/World 3.arv");
+		handler.getGame().initMessage("Downloading Content: 0.5Forest");
+		if (!world_file.exists())
+			Utils.fileWriter(FileLoader.readFile("Packed Worlds/0.5Forest"), world_file.getPath());
+
+		world_file = new File(Game.prefix + "/World/World 4.arv");
+		handler.getGame().initMessage("Downloading Content: 0.6World");
+		if (!world_file.exists())
+			Utils.fileWriter(FileLoader.readFile("Packed Worlds/0.6World"), world_file.getPath());
+
+		world_file = new File(Game.prefix + "/World/World 1 (2nd edition).arv");
+		handler.getGame().initMessage("Downloading Content: World 1 remake");
+		if (!world_file.exists())
+			Utils.fileWriter(FileLoader.readFile("Packed Worlds/World 1 remake"), world_file.getPath());
 
 		loadStuff();
 
-		loadWorld = new Button(handler, 10, 10, 123, 13, "Opens a file browser to select a file", "Open Other");
+		loadOtherWorld = new Button(handler, 10, 10, 123, 20, "Opens a file browser to select a file", "Choose World");
+		loadOtherSave = new Button(handler, 10, 50, 123, 20, "Opens a save file of your choice", "Choose Save");
+		installPack = new Button(handler, 10, 90, 123, 20, "Installs selected story pack", "Install Pack");
+		installMod = new Button(handler, 10, 130, 123, 20, "Installs selected mod", "Install Mod");
+		back = new Button(handler, 10, handler.height-40, 123, 20, "Takes you back to title screen", "Back");
 
-		loadSave = new Button(handler, 10, 40, 123, 13, "Opens a save file of your choice", "Saves");
-
-		back = new Button(handler, 10, 70, 123, 13, "Takes you back to title screen", "Back");
-		
-		installMod = new Button(handler, 10, 100, 123, 13, "Installs selected mod", "Install Mod");
-		
-		installPack = new Button(handler, 10, 130, 123, 13, "Installs selected story pack", "Install Pack");
-		
 	}
 	
 	public void loadStuff() {
-		fworld1 = new File(Game.prefix + "//Arvopia//World//World 1.arv");
-		if (!fworld1.exists() || fworld1.length() < 1) {
-			System.out.println("\t\tDownloading Content: LevelOne");
-			Utils.fileWriter(FileLoader.readFile("Packed Worlds/LevelOne"), fworld1.getPath());
-		}
-
-		fworld2 = new File(Game.prefix + "//Arvopia//World//World 2.arv");
-		if (!fworld2.exists() || fworld2.length() < 1) {
-			System.out.println("\t\tDownloading Content: LevelTwo");
-			Utils.fileWriter(FileLoader.readFile("Packed Worlds/LevelTwo"), fworld2.getPath());
-		}
-
-		fworld3 = new File(Game.prefix + "//Arvopia//World//World 3.arv");
-		if (!fworld3.exists() || fworld3.length() < 1) {
-			System.out.println("\t\tDownloading Content: 0.5Forest");;
-			Utils.fileWriter(FileLoader.readFile("Packed Worlds/0.5Forest"), fworld3.getPath());
-		}
-
-		fworld4 = new File("//Arvopia//World//World 4.arv");
-		if (!fworld4.exists() || fworld4.length() < 1) {
-			System.out.println("\t\tDownloading Content: 0.6World");
-			Utils.fileWriter(FileLoader.readFile("Packed Worlds/0.6World"), fworld4.getPath());
-		}
-		
-		fworld5 = new File(Game.prefix + "//Arvopia//World//World 1 (2nd edition).arv");
-		if (!fworld5.exists() || fworld5.length() < 1) {
-			System.out.println("\t\tDownloading Content: World 1 remake");
-			Utils.fileWriter(FileLoader.readFile("Packed Worlds/World 1 remake"), fworld5.getPath());
-		}
 
 		// Directory's file paths = directory.list();
+		worlds = new ArrayList<>();
 
-		File world = new File(Game.prefix + "/Arvopia/Pack");
-
+		// Load and add pack worlds
+		File world = new File(Game.prefix + "/Pack");
 		String[] paths = world.list();
-
-		worlds = new ArrayList<worldfile>();
-
-		for (int i = 0; i < paths.length; i++) {
-			worlds.add(new worldfile(handler, worlds.size(), new File(Game.prefix + "/Arvopia/Pack/" + paths[i]), "Pack"));
+		if(paths!=null && paths.length > 0) {
 			packs = true;
+			for (String path : paths)
+				worlds.add(new world_file(handler, worlds.size(), new File(Game.prefix + "/Pack/" + path), "Pack"));
 		}
 
-		world = new File(Game.prefix + "/Arvopia/World");
-
+		// Load and add default worlds
+		world = new File(Game.prefix + "/World");
 		paths = world.list();
+		if(paths!=null)
+			for (String path : paths)
+				worlds.add(new world_file(handler, worlds.size(), new File(Game.prefix + "/World/" + path)));
 
-//		worlds.add(new worldfile(handler, 0, new File("Generate new world")));
-
-		for (int i = 0; i < paths.length; i++) {
-			worlds.add(new worldfile(handler, worlds.size(), new File(Game.prefix + "/Arvopia/World/" + paths[i])));
-		}
-
-		world = new File(Game.prefix + "/Arvopia/Saves");
-
+		// Load and add save worlds
+		world = new File(Game.prefix + "/Saves");
 		paths = world.list();
-
-		for (int i = 0; i < paths.length; i++) {
-
+		if(paths!=null && paths.length > 0) {
 			saves = true;
-
-			worlds.add(new worldfile(handler, worlds.size(), new File(Game.prefix + "/Arvopia/Saves/" + paths[i]), "Save"));
-
+			for (String path : paths)
+				worlds.add(new world_file(handler, worlds.size(), new File(Game.prefix + "/Saves/" + path), "Save"));
 		}
 	}
 
 	public void tick() {
 
-		loadWorld.tick();
-
-		loadSave.tick();
-
+		loadOtherWorld.tick();
+		loadOtherSave.tick();
 		back.tick();
-		
 		installMod.tick();
-		
 		installPack.tick();
-		
+
 		if(installMod.on) {
 			FileChooser f = new FileChooser();
 			
@@ -159,30 +117,47 @@ public class WorldLoaderState extends State {
 			
 			if(file.exists()) {
 				try {
-					Files.copy(file.toPath(), new File(Game.prefix + "/Arvopia/Mods/"+new File(path).getName()).toPath());
+					Files.copy(file.toPath(), new File(Game.prefix + "/Mods/"+new File(path).getName()).toPath());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 			
-			handler.loadMods(handler.getEntityManager());
-			
-		}
-		
-		if(installPack.on) {
+			handler.loadMods();
+			return;
+		} else if(installPack.on) {
 			FileChooser f = new FileChooser();
 			
 			String path = f.getFolder("Home");
 			File file = new File(path);
 			
-			if(file.exists()) {
-				FileLoader.copyFolder(path, Game.prefix + "/Arvopia/Pack/"+file.getName());
-			}
+			if(file.exists())
+				FileLoader.copyFolder(path, Game.prefix + "/Pack/"+file.getName());
 			
 			loadStuff();
-			
+			return;
+		} else if (back.on) {
+			State.setState(handler.getGame().menuState);
+			return;
+		} else if (loadOtherWorld.on) {
+			handler.getMouse().setLeftClicked(false);
+			State.setState(handler.getGame().gameState);
+			handler.getGame().gameState.openWorld(true, 0);
+			return;
+		} else if (loadOtherSave.on) {
+			handler.getMouse().setLeftClicked(false);
+			handler.getMouse().fullLeft = false;
+			State.setState(handler.getGame().gameState);
+			handler.getGame().gameState.openSave();
+			return;
 		}
-			
+
+		if (handler.getMouse().fullLeft && handler.getMouse().rMouseX() > handler.getWidth() - 30) {
+			scroll -= handler.getMouse().rMouseY() - handler.getMouse().rPMouseY();
+		}
+
+		scroll -= handler.getMouse().getMouseScroll() * 10;
+		scroll = Public.range(handler.getHeight()-(worlds.size() * 55 + 240), 0, scroll);
 
 		generate.setY((int) (20 + scroll));
 		generate.tick();
@@ -196,36 +171,11 @@ public class WorldLoaderState extends State {
 		if (customize.on)
 			State.setState(handler.getGame().levelMakerState);
 
-		if (back.on)
-			State.setState(handler.getGame().menuState);
-
-		if (loadWorld.on) {
-			handler.getMouse().setClicked(false);
-			State.setState(handler.getGame().gameState);
-			handler.getGame().gameState.openWorld(true, 0);
-		} else if (loadSave.on) {
-			handler.getMouse().setClicked(false);
-			handler.getMouse().fullLeft = false;
-			State.setState(handler.getGame().gameState);
-			((GameState) handler.getGame().gameState).openSave();
-		}
-
-		if (handler.getMouse().fullLeft && handler.getMouse().rMouseX() > handler.getWidth() - 30) {
-			scroll = Public.Map(handler.getMouse().rMouseY(), handler.getHeight() - 10, 10,
-					-(worlds.size() * 55 + 240) + handler.getHeight(), 0);
-		}
-//    	aniTest.tick();
-
-		scroll -= handler.getMouse().getMouseScroll() * 20;
-
-		scroll = Public.range(-(worlds.size() * 55 + 240) + handler.getHeight(), 0, scroll);
-
-		for (worldfile w : worlds) {
+		for (world_file w : worlds)
 			w.tick(scroll);
-		}
 	}
 
-	public void render(java.awt.Graphics2D g) {
+	public void render(Graphics2D g) {
 		g.setColor(new Color(120, 225, 255));
 		g.fillRect(0, 0, handler.getWidth(), handler.getHeight());
 
@@ -245,15 +195,15 @@ public class WorldLoaderState extends State {
 		if(packs)
 			g.drawString("--- Story Packs ---",
 					handler.getWidth() / 2 + 60 - Tran.measureString("--- Story Packs ---", Public.defaultBoldFont).x / 2,
-					(int) (worldfile.defaultoffset - 30 + scroll));
+					(int) (world_file.default_offset - 30 + scroll));
 
-		for (worldfile w : worlds) {
+		for (world_file w : worlds) {
 			if (!savesYET && w.type.contains("Save")) {
 				g.setColor(Color.black);
 				g.setFont(Public.defaultBoldFont);
 				g.drawString("--- Saves ---",
 						handler.getWidth() / 2 + 60 - Tran.measureString("--- Saves ---", Public.defaultBoldFont).x / 2,
-						(int) (w.index * 55 + worldfile.saveoffset - 30 + scroll));
+						(int) (w.index * 55 + world_file.save_offset - 30 + scroll));
 				savesYET = true;
 			}
 			if (!worldsYET && w.type.contains("World")) {
@@ -262,21 +212,18 @@ public class WorldLoaderState extends State {
 				g.drawString("--- Worlds ---",
 						handler.getWidth() / 2 + 60
 								- Tran.measureString("--- Worlds ---", Public.defaultBoldFont).x / 2,
-						(int) (w.index * 55 + worldfile.worldoffset - 30 + scroll));
+						(int) (w.index * 55 + world_file.world_offset - 30 + scroll));
 				worldsYET = true;
 			}
 			w.render(g, scroll);
 
 			if (w.body.on) {
-				g.setColor(Color.black);
-				g.fillRect(0, 0, handler.getWidth(), handler.getHeight());
-				g.setColor(Color.white);
-//				g.drawString("Loading " + w.type + "...", 100, 100);
+				handler.getGame().initMessage("Loading...");
 			}
 		}
 
-		loadWorld.render(g);
-		loadSave.render(g);
+		loadOtherWorld.render(g);
+		loadOtherSave.render(g);
 
 		back.render(g);
 		
@@ -298,24 +245,12 @@ public class WorldLoaderState extends State {
 		g.drawString("Customize World", 170, (int) (100 + scroll));
 
 		// TODO Test and configure BlendedAnimation
-
-//    blend = Tran.blendImages(flow1, flow2, (float) ((Math.sin(System.currentTimeMillis()/100)+1)/4));
-//    g.drawImage(aniTest.getFrame(), 100, 190, 200, 250, null);
-//    g.drawImage(aniTest.getArray()[0], 100, 130, 50, 75, null);
-//    g.drawImage(aniTest.getArray()[1], 150, 130, 50, 75, null);
-//    g.drawImage(aniTest.getArray()[2], 200, 130, 50, 75, null);
-//    g.drawImage(aniTest.getArray()[3], 250, 130, 50, 75, null);
-
 		g.setColor(Color.gray);
 		g.fillRoundRect(handler.getWidth() - 30, 10, 20, handler.getHeight() - 20, 5, 5);
 		g.setColor(Color.darkGray);
 
 		double max = -(worlds.size() * 55 + 240) + handler.getHeight();
-
-		g.fillRoundRect(handler.getWidth() - 30,
-				(int) (10 + ((handler.getHeight() - 20 - ((handler.getHeight() - 20) / worlds.size()))) * scroll / max),
-				20, ((handler.getHeight() - 20) / worlds.size()), 5, 5);
-
+		g.fillRoundRect(handler.getWidth()-30, (int) (10-scroll), 20, (int) (handler.getHeight()-20 + max), 5, 5);
 	}
 
 	public void init() {
@@ -327,9 +262,9 @@ public class WorldLoaderState extends State {
 	}
 }
 
-class worldfile {
+class world_file {
 
-	public static final int defaultoffset = 185, worldoffset = 185, saveoffset = 200;
+	public static final int default_offset = 185, world_offset = 185, save_offset = 200;
 
 	Handler handler;
 
@@ -341,13 +276,13 @@ class worldfile {
 	String type = "World", version = "0.6";
 	int offset = 185;
 
-	int length = 0;
+	int length;
 
 	Button body;
 
 	Date modified;
 
-	public worldfile(Handler handler, int index, File file) {
+	public world_file(Handler handler, int index, File file) {
 		this.index = index;
 		this.file = file;
 
@@ -355,7 +290,7 @@ class worldfile {
 
 		length = (int) (file.length() / 1000);
 
-		if (file.getPath() != "Generate new world") {
+		if (!file.getPath().equals("Generate new world")) {
 
 			modified = new Date(file.lastModified());
 			if (file.isDirectory()) {
@@ -364,11 +299,11 @@ class worldfile {
 				version = s[1];
 
 				if (type.contains("Pack"))
-					offset = defaultoffset;
+					offset = default_offset;
 				else if (type.contains("World"))
-					offset = worldoffset;
+					offset = world_offset;
 				else if (type.contains("Save"))
-					offset = saveoffset;
+					offset = save_offset;
 				else {
 					type = "Unknown";
 					version = "???";
@@ -379,11 +314,11 @@ class worldfile {
 				version = s[1];
 
 				if (type.contains("Pack"))
-					offset = defaultoffset;
+					offset = default_offset;
 				else if (type.contains("World"))
-					offset = worldoffset;
+					offset = world_offset;
 				else if (type.contains("Save"))
-					offset = saveoffset;
+					offset = save_offset;
 				else {
 					type = "Unknown";
 					version = "???";
@@ -394,18 +329,18 @@ class worldfile {
 				"Loads the displayed world", "", 1);
 	}
 
-	public worldfile(Handler handler, int index, File file, String type) {
+	public world_file(Handler handler, int index, File file, String type) {
 		this(handler, index, file);
 
 		length = (int) (file.length() / 1000);
 
 		if (type.contains("Pack")) {
-			offset = defaultoffset;
-			length = (int) (new File(file.getPath() + "/world.arv").length() / 1000);
+			offset = default_offset;
+			length = (int) (new File(file.getPath() + "/World.arv").length() / 1000);
 		} else if (type.contains("World"))
-			offset = worldoffset;
+			offset = world_offset;
 		else if (type.contains("Save"))
-			offset = saveoffset;
+			offset = save_offset;
 		else {
 			type = "Unknown";
 			version = "???";
@@ -425,19 +360,20 @@ class worldfile {
 		if (body.on) {
 			handler.fadeOut(null, 2000);
 
-			handler.getMouse().setClicked(false);
+			handler.getMouse().setLeftClicked(false);
 			handler.getMouse().fullLeft = false;
 
-			if (file.getPath() == "Generate new world") {
-				((GameState) handler.getGame().gameState).loadWorld("generation");
+			if (file.getPath().equals("Generate new world")) {
+				handler.getGame().gameState.loadWorld("generation");
 				return;
 			}
 
-			file.setLastModified(new Date().getTime());
+			if(!file.setLastModified(new Date().getTime()))
+				System.err.println("Error: Unable to set last Modification Time for file " + file.getPath());
 			if (type.contains("World") || type.contains("Pack"))
-				((GameState) handler.getGame().gameState).loadWorld(file.getAbsolutePath());
+				handler.getGame().gameState.loadWorld(file.getAbsolutePath());
 			else if (type.contains("Save"))
-				((GameState) handler.getGame().gameState).openSave(file.getAbsolutePath());
+				handler.getGame().gameState.openSave(file.getAbsolutePath());
 			
 //			if(type.contains("Pack"))
 //				handler.loadMods(file.getParent()+"/mods", handler.getWorld().getEntityManager());

@@ -19,11 +19,10 @@ public class ParticleManager {
 	public void tick() {
 		for (Particle p : particles) {
 			if (p.dead) {
-				p = null;
+				particles.remove(p);
 				continue;
 			}
-			if (p != null)
-				p.tick();
+			p.tick();
 		}
 	}
 
@@ -31,8 +30,7 @@ public class ParticleManager {
 		for (Particle p : particles) {
 			if (p.x > game.xOffset() && p.y > game.yOffset() && p.x < game.xOffset() + game.getWidth()
 					&& p.y < game.yOffset() + game.getHeight())
-				if (p != null)
-					p.render(g);
+				p.render(g);
 		}
 	}
 

@@ -1,7 +1,5 @@
 package com.zandgall.arvopia.entity;
 
-import com.zandgall.arvopia.Console;
-import com.zandgall.arvopia.Game;
 import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.entity.creatures.*;
 import com.zandgall.arvopia.entity.creatures.basic.*;
@@ -11,9 +9,7 @@ import com.zandgall.arvopia.entity.statics.*;
 import com.zandgall.arvopia.input.KeyManager;
 import com.zandgall.arvopia.utils.Public;
 import com.zandgall.arvopia.utils.Utils;
-import com.zandgall.arvopia.worlds.World;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
@@ -26,7 +22,7 @@ public class EntityManager implements Serializable {
 	private Handler handler;
 	private Player player;
 	private ArrayList<Entity> entities;
-	public ArrayList<EntityAdder> adders;
+	public static HashMap<String, EntityEntry> entityEntries = new HashMap<>();
 	private java.util.Comparator<Entity> sort;
 
 	public Map<String, Long> total, number, average, totalr, numberr, averager;
@@ -46,8 +42,6 @@ public class EntityManager implements Serializable {
 			return -1;
 		};
 
-		adders = new ArrayList<EntityAdder>();
-
 	}
 
 	public String saveString() {
@@ -60,7 +54,7 @@ public class EntityManager implements Serializable {
 			if (e instanceof Player)
 				continue;
 
-			content += e.outString();
+			content += e.toString();
 
 			/*
 			 * Misc - x, y, layer Cannibal - x, y, layer, walkspeed, lives, alpha Cloud - x,
@@ -80,16 +74,16 @@ public class EntityManager implements Serializable {
 
 		String[] t = content.split(System.lineSeparator());
 
-		for (int i = 0; i < t.length; i++) {
-			String[] c = t[i].split("\\s+");
+		for (String s : t) {
+			String[] c = s.split("\\s+");
 			c[0] = c[0] + " ";
 
 //			System.out.println(c[0] + (c[0].contains("VillagerPlus ")));
 
-			for (EntityAdder a : adders) {
+			for (EntityEntry a : entityEntries.values()) {
 //				a.add(c[0], 0, 0);
 				if (c[0].contains(a.name + " ")) {
-					a.add(0, 0);
+					addEntity(a.spawn(0, 0));
 					break;
 				}
 			}
@@ -158,79 +152,6 @@ public class EntityManager implements Serializable {
 
 	}
 
-	public String saveStringBACKUP() {
-		String content = entities.size() - 2 + System.lineSeparator();
-
-		for (Entity e : entities) {
-			if (e.getClass() == Bee.class) {
-				Bee b = (Bee) e;
-
-				content = content + "Bee " + b.x + " " + b.y + " " + "false " + b.prevTime;
-			}
-
-			if (e.getClass() == Butterfly.class) {
-				Butterfly b = (Butterfly) e;
-
-				content = content + "Butterfly " + b.x + " " + b.y + " " + "false " + b.prevTime;
-			}
-
-			if (e.getClass() == Cannibal.class) {
-				Cannibal b = (Cannibal) e;
-
-				content = content + "Cannibal " + (int) b.x + " " + (int) b.y + " " + b.walkSpeed + " " + b.lives + " "
-						+ b.alpha;
-			}
-
-			if (e.getClass() == Fox.class) {
-				Fox b = (Fox) e;
-
-				content = content + "Fox " + b.x + " " + b.y;
-			}
-
-			if (e.getClass() == Cloud.class) {
-				Cloud b = (Cloud) e;
-
-				content = content + "Cloud " + b.x + " " + b.y + " " + b.type + " " + b.speed;
-			}
-
-			if (e.getClass() == Flower.class) {
-				Flower b = (Flower) e;
-
-				content = content + "Flower " + b.x + " " + b.y + " " + b.type + " " + b.layer;
-			}
-
-			if (e.getClass() == Shrubbery.class) {
-				Shrubbery b = (Shrubbery) e;
-
-				content = content + "Shrubbery " + b.x + " " + b.y + " " + b.type;
-			}
-
-			if (e.getClass() == Stone.class) {
-				Stone b = (Stone) e;
-
-				content = content + "Stone " + b.x + " " + b.y + " " + b.type;
-			}
-
-			if (e.getClass() == Tree.class) {
-				Tree b = (Tree) e;
-
-				content = content + "Tree " + b.x + " " + b.y + " " + b.age;
-			}
-
-			content = content + System.lineSeparator();
-		}
-
-		return content;
-	}
-
-	//public void upgradeHouses() {
-	//	for (Entity e : entities) {
-	//		if ((e.getClass() == com.zandgall.arvopia.entity.statics.House.class)
-	//				&& (e.getX() < 140 * com.zandgall.arvopia.tiles.Tile.TILEWIDTH))
-	//			((House) e).isStone = true;
-	//	}
-	//}
-
 	public void tick() {
 		othert = 0;
 		bat = 0;
@@ -259,8 +180,7 @@ public class EntityManager implements Serializable {
 			handler.getWorld().outOfBounds(e);
 			if (i >= entities.size())
 				return;
-			if (((e == player || e instanceof Cloud || e.alwaysTick()) || ((e.getX() + e.getWidth() > handler.xOffset())
-					&& (e.getX() - e.getWidth() < handler.xOffset() + handler.getWidth())))) {
+			if (e.shouldTick()) {
 				
 				long pre = System.nanoTime();
 
@@ -273,8 +193,8 @@ public class EntityManager implements Serializable {
 					number.put(name, number.get(name) + 1);
 				}
 				entities.get(i).ticks++;
-				if(entities.get(i).ticks>1)
-					System.out.println(entities.get(i).ticks);
+//				if(entities.get(i).ticks>1)
+//					System.out.println(entities.get(i).ticks);
 				entities.get(i).tick();
 				if (i >= entities.size())
 					return;
@@ -316,34 +236,30 @@ public class EntityManager implements Serializable {
 		boolean counting = KeyManager.checkBind("Debug");
 		
 		if(counting) {
-			totalr = new HashMap<String, Long>();
-			numberr = new HashMap<String, Long>();
-			averager = new HashMap<String, Long>();
+			totalr = new HashMap<>();
+			numberr = new HashMap<>();
+			averager = new HashMap<>();
 		}
 		
 //		handler.getWorld().center.tick();
 		
 		for (Entity e : entities) {
 			e.ticks = 0;
-			if (((e == player) || ((e.getX() + e.getWidth() > handler.xOffset())
-					&& (e.getX() - e.getWidth() < handler.xOffset() + handler.getWidth())
-					&& (e.getY() + e.getHeight() > handler.yOffset())
-					&& (e.getY() - e.getHeight() < handler.yOffset() + handler.getHeight())))) {
-
+			if(e.shouldRender()) {
 				long pre = System.nanoTime();
 
 				String name = e.getClass().getSimpleName();
 
 				if(counting) {
 					if (!numberr.containsKey(name))
-						numberr.put(name, 0l);
+						numberr.put(name, 0L);
 					if (!totalr.containsKey(name))
-						totalr.put(name, 0l);
+						totalr.put(name, 0L);
 					numberr.put(name, numberr.get(name) + 1);
 				}
 				
 				e.render(g);
-				if ((e.creature)) {
+				if (e.creature) {
 					Creature c = (Creature) e;
 
 					if (c.health < c.MAX_HEALTH)
@@ -361,21 +277,18 @@ public class EntityManager implements Serializable {
 		
 		if(counting) {
 			long pre = System.currentTimeMillis();
-			if (total.keySet() != null)
-				for (String e : total.keySet()) {
-					if (totalr.containsKey(e) && numberr.containsKey(e))
-						averager.put(e, totalr.get(e) / numberr.get(e));
-				}
+			for (String e : total.keySet())
+				if (totalr.containsKey(e) && numberr.containsKey(e))
+					averager.put(e, totalr.get(e) / numberr.get(e));
 			averager.put("TICK TIME", System.currentTimeMillis() - pre);
 		}
 	}
 
 	public void renderLight(Graphics2D g) {
-		int sx = (int) (handler.getEnviornment().sunX() + 9);
-		int sy = (int) (handler.getEnviornment().sunY() + 9);
+		int sx = handler.getEnvironment().sunX() + 9;
+		int sy = handler.getEnvironment().sunY() + 9;
 		for (Entity e : getEntitiesTouching(sx - 5 * 18, sy - 5 * 18, 180, 180)) {
-			int opacity = (int) (Math.max(1 - Public.dist(e.centerX(), e.centerY(), sx, sy) / (5 * 18), 0) * 255);
-			e.renderLight(g, opacity);
+			e.renderLight(g, (float) Math.max(1 - Public.dist(e.centerX(), e.centerY(), sx, sy) / (5 * 18), 0));
 		}
 	}
 
@@ -400,7 +313,10 @@ public class EntityManager implements Serializable {
 			entities.add(e);
 		if (tf)
 			handler.logWorld("Entity " + e + " added at (" + e.x + ", " + e.y + ", " + e.layer + ")");
-//		entities.sort(sort);
+	}
+
+	public void addEntity(Entity e) {
+		addEntity(e, false);
 	}
 
 	public ArrayList<Entity> getEntitiesTouching(int x, int y, int w, int h) {

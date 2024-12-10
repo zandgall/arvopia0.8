@@ -25,21 +25,7 @@ public class LongTimeline {
 	long largest = 0l;
 	int largestPos = 0;
 
-	public LongTimeline(Color[] cs, String[] names, String name, int x, int y, int length, int height) {
-		this.x = x;
-		this.y = y;
-		this.name = name;
-
-		this.length = length;
-
-		trackers = new ArrayList<Tracker>();
-		for (int i = 0; i < cs.length; i++) {
-			trackers.add(new Tracker(cs[i], x, y, length, names[i]));
-		}
-	}
-
-	public LongTimeline(double[] valsdontmatter, Color[] cs, String[] names, String name, int x, int y, int length,
-			int height) {
+	public LongTimeline(Color[] cs, String[] names, String name, int x, int y, int length) {
 		this.x = x;
 		this.y = y;
 		this.name = name;
@@ -67,7 +53,7 @@ public class LongTimeline {
 		return larg;
 	}
 
-	public void render(Graphics g, long max, int width, int height) {
+	public void render(Graphics2D g, long max, int width, int height) {
 
 		g.setFont(Public.defaultBoldFont);
 
@@ -104,7 +90,7 @@ public class LongTimeline {
 
 	}
 
-	public void render(Graphics g) {
+	public void render(Graphics2D g) {
 		render(g, getLargest(), 100, 100);
 	}
 
@@ -127,8 +113,8 @@ public class LongTimeline {
 		g.dispose();
 
 		try {
-			ImageIO.write(out, "png", new File(Game.prefix + "/Arvopia/logs/" + name + ".png"));
-			System.out.println("Wrote: " + Game.prefix + "/Arvopia/logs/" + name + ".png");
+			ImageIO.write(out, "png", new File(Game.prefix + "/logs/" + name + ".png"));
+			System.out.println("Wrote: " + Game.prefix + "/logs/" + name + ".png");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

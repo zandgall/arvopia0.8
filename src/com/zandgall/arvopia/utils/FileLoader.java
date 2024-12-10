@@ -78,7 +78,7 @@ public class FileLoader {
 
 	public static String readFile(String path) {
 		if(path.startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
-			path.replace("C:", "~/Applications");
+			path.replace("C:", System.getProperty("user.home"));
 		String output = null;
 		try {
 			File file = new File(path);
@@ -94,7 +94,7 @@ public class FileLoader {
 			}
 			sc.close();
 			if ((ArvopiaLauncher.game != null) && (ArvopiaLauncher.game.handler != null)
-					&& (ArvopiaLauncher.game.handler.filelogger != null)) {
+					&& (ArvopiaLauncher.game.handler.file_log != null)) {
 				ArvopiaLauncher.game.handler.logFiles("File read: " + output);
 			}
 		} catch (IOException e) {
@@ -107,7 +107,7 @@ public class FileLoader {
 	
 	public static String readFile(File file) {
 		if(file.getPath().startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
-			file = new File(file.getPath().replace("C:", "~/Applications"));
+			file = new File(file.getPath().replace("C:", System.getProperty("user.home")));
 		String output = null;
 		try {
 //			System.out.println("File chosen: " + file.getAbsolutePath() + " is " + file.exists());
@@ -121,7 +121,7 @@ public class FileLoader {
 				output = "couldn't read";
 			}
 			if ((ArvopiaLauncher.game != null) && (ArvopiaLauncher.game.handler != null)
-					&& (ArvopiaLauncher.game.handler.filelogger != null)) {
+					&& (ArvopiaLauncher.game.handler.file_log != null)) {
 				ArvopiaLauncher.game.handler.logFiles("File read: " + output);
 			}
 			sc.close();
@@ -134,7 +134,7 @@ public class FileLoader {
 
 	public static String readFile(String path, boolean doesntmatter) {
 		if(path.startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
-			path.replace("C:", "~/Applications");
+			path.replace("C:", System.getProperty("user.home"));
 		String output = null;
 		try {
 			File file = new File(path);
@@ -157,7 +157,7 @@ public class FileLoader {
 
 	public static Object[] readObjects(String path, int length) throws IOException, ClassNotFoundException {
 		if(path.startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
-			path.replace("C:", "~/Applications");
+			path.replace("C:", System.getProperty("user.home"));
 		FileInputStream inputStream = new FileInputStream(new File(path));
 
 		ObjectInputStream reader = new ObjectInputStream(inputStream);
@@ -178,7 +178,7 @@ public class FileLoader {
 
 	public static void writeObjects(String path, Object[] objects) throws IOException {
 		if(path.startsWith("C:") && !System.getProperty("os.name").startsWith("Windows"))
-			path.replace("C:", "~/Applications");
+			path.replace("C:", System.getProperty("user.home"));
 
 		FileOutputStream outputStream = new FileOutputStream(new File(path));
 

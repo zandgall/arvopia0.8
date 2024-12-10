@@ -1,7 +1,6 @@
 package com.zandgall.arvopia.input;
 
 import com.zandgall.arvopia.ArvopiaLauncher;
-import com.zandgall.arvopia.Console;
 import com.zandgall.arvopia.Game;
 import com.zandgall.arvopia.Handler;
 import java.awt.Cursor;
@@ -16,13 +15,13 @@ public class MouseManager
 	private boolean right;
 	private boolean dragged;
 	private boolean in;
-	private boolean clicked;
+	private boolean leftClicked;
 	private boolean held;
 	private boolean prevHeld;
 	private boolean sliderMalfunc;
-	public boolean fullLeft, fullRight;
-	private double mouseX;
-	private double mouseY;
+	public boolean fullLeft, fullRight, pFullLeft, pFullRight;
+	private double mouseX, pMouseX;
+	private double mouseY, pMouseY;
 	private double mouseScroll;
 	private long timer = 0L;
 	private boolean wasClicked = false;
@@ -49,7 +48,16 @@ public class MouseManager
 
 	public int getMouseX() {
 		try {
-			return (int) (((mouseX/Game.resizingx - game.getWidth() / 2) / Game.scale + game.getWidth() / 2));
+			return (int) (((mouseX/Game.resize_X - game.getWidth() / 2) / Game.scale + game.getWidth() / 2));
+		} catch (NullPointerException e) {
+			System.out.println("Error: " + e);
+		}
+		return 0;
+	}
+
+	public int getPMouseX() {
+		try {
+			return (int) (((pMouseX/Game.resize_X - game.getWidth() / 2) / Game.scale + game.getWidth() / 2));
 		} catch (NullPointerException e) {
 			System.out.println("Error: " + e);
 		}
@@ -57,24 +65,45 @@ public class MouseManager
 	}
 
 	public int fullMouseX() {
-		return (int) (getMouseX()/Game.resizingx + game.xOffset());
+		return (int) (getMouseX()/Game.resize_X + game.xOffset());
 	}
 
 	public int rMouseX() {
 		if(ArvopiaLauncher.game.useResize)
-			return (int) (mouseX/Game.resizingx);
+			return (int) (mouseX/Game.resize_X);
 		return (int) (mouseX);
+	}
+
+	public int rPMouseX() {
+		if(ArvopiaLauncher.game.useResize)
+			return (int) (pMouseX/Game.resize_X);
+		return (int) (pMouseX);
 	}
 
 	public int rMouseY() {
 		if(ArvopiaLauncher.game.useResize)
-			return (int) (mouseY/Game.resizingy);
+			return (int) (mouseY/Game.resize_Y);
 		return (int) (mouseY);
+	}
+
+	public int rPMouseY() {
+		if(ArvopiaLauncher.game.useResize)
+			return (int) (pMouseY/Game.resize_Y);
+		return (int) (pMouseY);
 	}
 
 	public int getMouseY() {
 		try {
-			return (int) (((mouseY/Game.resizingy - game.getHeight() / 2) / Game.scale + game.getHeight() / 2));
+			return (int) (((mouseY/Game.resize_Y - game.getHeight() / 2) / Game.scale + game.getHeight() / 2));
+		} catch (NullPointerException e) {
+			System.out.println("Error: " + e);
+		}
+		return 0;
+	}
+
+	public int getPMouseY() {
+		try {
+			return (int) (((pMouseY/Game.resize_Y - game.getHeight() / 2) / Game.scale + game.getHeight() / 2));
 		} catch (NullPointerException e) {
 			System.out.println("Error: " + e);
 		}
@@ -82,7 +111,7 @@ public class MouseManager
 	}
 
 	public int fullMouseY() {
-		return (int) (getMouseY()/Game.resizingy + game.yOffset());
+		return (int) (getMouseY()/Game.resize_Y + game.yOffset());
 	}
 
 	public boolean isDragged() {
@@ -97,20 +126,16 @@ public class MouseManager
 		this.dragged = dragged;
 	}
 
-	public boolean isClicked() {
-//		if(clicked) {
-//			clicked = false;
-//			return true;
-//		}
-		return clicked;
+	public boolean isLeftClicked() {
+		return leftClicked;
 	}
 
 	public boolean wasClicked() {
-		return isClicked();
+		return isLeftClicked();
 	}
 	
-	public void setClicked(boolean clicked) {
-		this.clicked = clicked;
+	public void setLeftClicked(boolean leftClicked) {
+		this.leftClicked = leftClicked;
 		wasClicked = false;
 	}
 
@@ -135,6 +160,10 @@ public class MouseManager
 	}
 
 	public void tick() {
+
+		pFullLeft = fullLeft ? true : false;
+		pFullRight = fullRight ? true : false;
+
 		if ((timer % 100L == 0L) && (prevHeld)) {
 			if (left) {
 				held = true;
@@ -143,17 +172,20 @@ public class MouseManager
 			}
 		}
 
-		if ((!clicked) && (!dragged)) {
+		if ((!leftClicked) && (!dragged)) {
 			left = false;
 			right = false;
 		}
 
 		mouseScroll *= 0.8;
 
+		pMouseX = mouseX;
+		pMouseY = mouseY;
+
 		timer += 1L;
-		wasClicked = clicked;
+		wasClicked = leftClicked;
 //		if(wasClicked)
-			clicked = false;
+			leftClicked = false;
 
 		STILLTIMER++;
 			
@@ -213,15 +245,15 @@ public class MouseManager
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		wasClicked = true;
-		clicked = true;
+//		wasClicked = true;
+//		leftClicked = true;
 		if (e.getButton() == 1) {
 			left = true;
 		} else if (e.getButton() == 3) {
 			right = true;
 		}
 
-		game.log("Mouse clicked: (" + rMouseX() + ", " + rMouseY() + ")");
+//		game.log("Mouse clicked: (" + rMouseX() + ", " + rMouseY() + ")");
 	}
 
 	public void mouseEntered(MouseEvent e) {
@@ -248,6 +280,7 @@ public class MouseManager
 //		clicked = false;
 		dragged = false;
 		if (e.getButton() == 1) {
+			leftClicked = true;
 			left = false;
 			fullLeft = false;
 		} else if (e.getButton() == 3) {
@@ -257,15 +290,21 @@ public class MouseManager
 	}
 
 	public void resets() {
-//		clicked = false;
+		leftClicked = false;
 		dragged = false;
 		left = false;
 		right = false;
+		fullLeft = false;
+		fullRight = false;
+		held = false;
+		prevHeld = false;
+		wasClicked = false;
+		sliderMalfunc = false;
 	}
 
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		mouseScroll = e.getWheelRotation();
-		game.log("Mouse Scrolled: " + mouseScroll);
+//		game.log("Mouse Scrolled: " + mouseScroll);
 	}
 
 	public double getMouseScroll() {

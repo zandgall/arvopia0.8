@@ -3,7 +3,6 @@ package com.zandgall.arvopia.utils;
 import java.util.ArrayList;
 
 import com.zandgall.arvopia.Handler;
-import com.zandgall.arvopia.state.OptionState;
 
 public abstract class ConditionalMusic {
 	
@@ -25,7 +24,7 @@ public abstract class ConditionalMusic {
 			}
 		}
 		
-		int filenum = (int) Public.random(0, files.length-1);
+		int filenum = (int) Public.expandedRand(0, files.length-1);
 		
 		boolean thisplay = false;
 		for(int i = 0; i<files.length; i++) {

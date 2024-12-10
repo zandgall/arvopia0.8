@@ -77,7 +77,7 @@ public abstract class Tool {
 		return false;
 	}
 
-	public com.zandgall.arvopia.enviornment.Light getLight() {
+	public com.zandgall.arvopia.environment.Light getLight() {
 		return null;
 	}
 

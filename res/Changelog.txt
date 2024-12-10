@@ -5,7 +5,7 @@ If you're interested here's what I added.
 
 ~~~~~NORMAL~UPDATES~~~~~
 
-/B0.6 11/11/18 The Enviornmental Update
+/B0.6 11/11/18 The Environmental Update
 + NPCs
 = NPCs have speech bubbles which can allow you to get ↓
 + Quests
@@ -13,24 +13,24 @@ If you're interested here's what I added.
 = Menus for quests and achievements
 + All Shrubbery now respawns
 + Lia will help you start your world
-+ Storing worlds in a seperate folder and loading them
++ Storing worlds in a separate folder and loading them
 	directly from there
 + Crafting!
 + Several items, including fine metal and charcoal
-+ Several tools, including rockchipper and scythe
++ Several tools, including rock-chipper and scythe
 + 3 Background images
 + Trees change in time and drop leaves during the fall
 + It rains!
 + It snows!
 + It storms!
-+ Several graphical capibilities... 
++ Several graphical capabilities...
 : ...Which won't be in effect until next update
 + Window Icon
-+ Several new Saving capibilities
++ Several new Saving capabilities
 + Improved render quality
-+ While holding right click to hit anything, a bubble forms 
++ While holding right click to hit anything, a bubble forms
 	and displays entities that you will hit when you attack
-+ Damage particles that show damage delt off of entities
++ Damage particles that show damage dealt off of entities
 + Umbrella is really important
 + Quit actually closes the window!
 + Sound quality much better
@@ -39,69 +39,69 @@ If you're interested here's what I added.
 ~ Menus look a lot better with improved buttons
 ~ World loader state design changed to fit title state
 ~ World loads within seconds
-~ Attacking requires right-click to be held as to not 
+~ Attacking requires right-click to be held as to not
 	accidentally damage anything
 - FPS doesn't need resetting, it resets automatically with no effort
 - No FPS Zoom when there is lag
 - Torch bug, where light isn't extinguished when torch is put away
 
-/B0.5 5/10/18 The Foilage update
+/B0.5 5/10/18 The Foliage update
 + Trees are entities instead of tiles!
-= Trees spawn with set ages so that you don't 
-  	wait a couple years for them to grow fully
+= Trees spawn with set ages so that you don't
+  	wait a couple of years for them to grow fully
 = 200 Different tree sprites made! Only 20 in use (for now)
 + Grass (entities)
 + Ferns
-+ Dandilions
-~ Flowers (excluding dandilions) dance now!
++ Dandelions
+~ Flowers (excluding dandelions) dance now!
 + Axes have made an appearance!
 + Crafting is added and required for making tools
 + Labels added to tell how to get to crafting and inventory menus
 + Logger will not spew out garbage everytime you load a world
 + When loading a world, it will say loading world
-+ Instead of spawning and things moving super fast, 
++ Instead of spawning and things moving really fast,
 	the game waits until the fps resets
-= If the fps doesn't reset after a certain ammount of time you can skip it
+= If the fps doesn't reset after a certain amount of time you can skip it
 + Smash attack added for players to go with axe
 + Added !, :, and ? labels for the changelog (because why not)
-+ You can save your world and open it later so you can be in the same place!
-+ Days, months and years added in a Rohundi, Collevti, and Lapsis 
++ You can save your world and open it later, so you can be in the same place!
++ Days, months and years added in a Rohundi, Collevti, and Lapsis
 	(Rohundo, Collevti, and Lapse)
 - Scale slider (due to mouse issues)
 
 /B0.4 3/29/18 The light update
 - Fixed wall glitch bug
-- Fixed jumping bug 
-- Fixed bridge clipping issue 
-- Fixed graphical bridge issue 
-- Entity right walking glitch 
+- Fixed jumping bug
+- Fixed bridge clipping issue
+- Fixed graphical bridge issue
+- Entity right walking glitch
 = Stones no longer have collision
-+ Added weapons 
++ Added weapons
 ~ Change fighting to be detected by weapon
 + Cannibals
 = There is an alpha cannibal
-+ Added bounding box shortcut "b" 
-+ Added highlight to buttons 
-+ Menu graphics 
-+ Sliders don't drag fixed 
-~ Change health bars to green with a red background 
++ Added bounding box shortcut "b"
++ Added highlights to buttons
++ Menu graphics
++ Sliders don't drag fixed
+~ Change health bars to green with a red background
 + Health bars show names
 + Esc menu
 ~ Change inventory shortcut from esc to z
-+ Added music 
++ Added music
 + Added sounds
-+ Sun and moon 
++ Sun and moon
 + Stars
-+ Time 
-+ Lights 
++ Time
++ Lights
 + Menu
 + Options screen
 + World selection screen
-~ Transfered FPS slider to the options menu
-+ Ability to scale game display size 
-+ Ability to change time speed 
+~ Transferred FPS slider to the options' menu
++ Ability to scale game display size
++ Ability to change time speed
 + Open custom world files!
-+ Read changelog and new Instructions inside of the program
++ Read changelog and new Instructions inside the program
 ~ Quit doesn't close the program window for some reason
 
 /B0.3 3/11/18 The game quality update
@@ -119,7 +119,7 @@ If you're interested here's what I added.
 = Needs LOTS of improvement
 + Sliders
 = FPS Slider
-= Possibly lead to level cutomization..?
+= Possibly lead to level customization...?
 ~ Inventory replaces onscreen gui
 ~ Improved Dirt Tileset
 ~ Loads game in two seconds from original minute+

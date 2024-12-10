@@ -2,7 +2,6 @@ package com.zandgall.arvopia.state;
 
 import com.zandgall.arvopia.Console;
 import com.zandgall.arvopia.Handler;
-import com.zandgall.arvopia.levelmaker.LevelMakerState;
 
 import java.awt.Graphics2D;
 
@@ -12,22 +11,21 @@ public abstract class State {
 
 	private static State currentState = null;
 	private static State prevState = null;
-	
-	public boolean clip = false;
 
 	public static void setState(State state) {
 		if(state==null) {
 			Console.log("State is null, could not load");
 			return;
 		}
-		
-		if(state instanceof LevelMakerState)
-			((LevelMakerState) state).setupTileIconButtons();
+
 		prevState = currentState;
 		currentState = state;
-		state.init();
+		currentState.init();
 		handlerStatic.log("State is now: " + state);
-		handlerStatic.getMouse().setClicked(false);
+		handlerStatic.getMouse().setLeftClicked(false);
+		handlerStatic.getMouse().fullLeft = false;
+		handlerStatic.getMouse().fullRight = false;
+		handlerStatic.getMouse().resets();
 	}
 
 	public static State getState() {

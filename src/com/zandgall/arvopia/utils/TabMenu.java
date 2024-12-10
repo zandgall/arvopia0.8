@@ -21,7 +21,7 @@ public class TabMenu {
 
 	boolean topbottom;
 
-	public TabMenu(Handler game, String[] menu, int x, int y, int width, int height, boolean topbottom) {
+	public TabMenu(Handler game, String[] menu, int x, int y, int width, int height, boolean tabsOnTop) {
 		yOffset = Tran.measureString(menu[0], Public.fipps).y + 6;
 		body = new BevelPlatform(10, 10, width, height - yOffset);
 		this.x = x;
@@ -29,15 +29,15 @@ public class TabMenu {
 		this.game = game;
 		tabs = new ArrayList<Tab>();
 
-		this.topbottom = topbottom;
+		this.topbottom = tabsOnTop;
 
 		int offset = 6;
 
 		for (String m : menu) {
-			if (topbottom)
-				tabs.add(new Tab(m, x + offset, y, topbottom));
+			if (tabsOnTop)
+				tabs.add(new Tab(m, x + offset, y, tabsOnTop));
 			else
-				tabs.add(new Tab(m, x + offset, y + height - 6 - yOffset, topbottom));
+				tabs.add(new Tab(m, x + offset, y + height - 6 - yOffset, tabsOnTop));
 			offset += tabs.get(tabs.size() - 1).width + 6;
 		}
 
@@ -104,7 +104,7 @@ class Tab {
 		int mouseY = game.getMouse().rMouseY();
 		boolean mouseLeft = game.getMouse().isLeft();
 		if ((mouseLeft) && mouseY > y && mouseY < y + height - 6) {
-			game.getMouse().setClicked(false);
+			game.getMouse().setLeftClicked(false);
 			selected = ((mouseX > x - 1) && (mouseX < x + width + 1) && (mouseY > y - 1) && (mouseY < y + height + 1));
 		}
 

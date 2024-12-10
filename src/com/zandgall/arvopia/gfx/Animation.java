@@ -29,7 +29,7 @@ public class Animation {
 	}
 	
 	public Animation(int speed, BufferedImage[] frames, String name, String source) {
-		this.resetTime = (int) Public.random(speed*0.9, speed*1.1);
+		this.resetTime = (int) Public.expandedRand(speed*0.9, speed*1.1);
 		this.frames = frames;
 
 		index = 0;
@@ -41,7 +41,7 @@ public class Animation {
 	}
 	
 	public Animation(double speed, BufferedImage[] frames, String name, String source) {
-		this.speed = Public.random(speed*0.9, speed*1.1);
+		this.speed = Public.expandedRand(speed*0.9, speed*1.1);
 		this.frames = frames;
 
 		index = 0;

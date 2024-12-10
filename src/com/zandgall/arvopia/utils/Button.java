@@ -11,8 +11,6 @@ import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.gfx.ImageLoader;
 import com.zandgall.arvopia.gfx.transform.Tran;
 
-import paulscode.sound.Vector3D;
-
 public class Button implements Serializable {
 	private static final long serialVersionUID = 2634486299400608942L;
 	
@@ -118,19 +116,20 @@ public class Button implements Serializable {
 		mouseY = game.getMouse().rMouseY();
 		mouseRight = game.getMouse().isRight();
 		
-		boolean react = !game.getMouse().fullLeft && mouseLeft;
+		boolean react = game.getMouse().isLeftClicked();
 		
 		//Vector3D f = game.soundSystem.getListenerData().position;
 		//game.setPosition("button", (int) f.x, (int) f.y, (int) f.z);
+		on = false;
 		if ((mouseX > x - 1) && (mouseX < x + width + 1) && (mouseY > y - 1) && (mouseY < y + height + 1)) {
 			if (react) {
-				game.getMouse().setClicked(false);
+				game.getMouse().setLeftClicked(false);
 				on = true;
 		//		game.soundSystem.stop("button");
 				game.play("button");
 				data = false;
 			} else if ((mouseRight && game.getMouse().wasClicked()) || game.getMouse().STILLTIMER>100) {
-				game.getMouse().setClicked(false);
+				game.getMouse().setLeftClicked(false);
 				data = true;
 			} else {
 				hovered = true;
@@ -155,7 +154,7 @@ public class Button implements Serializable {
 		//game.setPosition("button", (int) f.x, (int) f.y, (int) f.z);
 		if ((mouseX > x - 1) && (mouseX < x + width + 1) && (mouseY > y - 1) && (mouseY < y + height + 1)) {
 			if ((mouseLeft && game.getMouse().wasClicked())) {
-				game.getMouse().setClicked(false);
+				game.getMouse().setLeftClicked(false);
 				on = true;
 				//game.soundSystem.stop("button");
 				game.play("button");

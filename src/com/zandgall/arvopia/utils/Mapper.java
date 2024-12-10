@@ -9,14 +9,20 @@ public class Mapper<A, B> implements Serializable {
 
 	private static final long serialVersionUID = 766412215963546862L;
 
-	private ArrayList<A> keys;
-	private ArrayList<B> vals;
-	private ArrayList<Integer> codes;
+	private final ArrayList<A> keys;
+	private final ArrayList<B> vals;
+	private final ArrayList<Integer> codes;
 
 	public Mapper() {
-		keys = new ArrayList<A>();
-		vals = new ArrayList<B>();
-		codes = new ArrayList<Integer>();
+		keys = new ArrayList<>();
+		vals = new ArrayList<>();
+		codes = new ArrayList<>();
+	}
+
+	public void clear() {
+		keys.clear();
+		vals.clear();
+		codes.clear();
 	}
 
 	public void put(A key, B val) {
@@ -127,7 +133,7 @@ public class Mapper<A, B> implements Serializable {
 	public ArrayList<B> getValues(A key) {
 		ArrayList<B> out = new ArrayList<B>();
 		for (int i = 0; i < vals.size(); i++) {
-			if (keys.get(codes.get(i)) == key)
+			if (keys.get(codes.get(i)).equals(key))
 				out.add(vals.get(i));
 		}
 

@@ -10,7 +10,7 @@ public abstract class Initiator {
 	
 	public String modIdentifier = "Vanilla", initIdentifier = "Initiator";
 	
-	public static ArrayList<Initiator> initiations = new ArrayList<Initiator>();
+	public static ArrayList<Initiator> initiations = new ArrayList<>();
 	
 	public static Initiator getFromClass(String className) {
 		for(Initiator i: initiations) {

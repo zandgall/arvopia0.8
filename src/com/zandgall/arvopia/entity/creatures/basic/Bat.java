@@ -13,12 +13,12 @@ public class Bat extends BasicFlyTemplate {
 	private static final long serialVersionUID = 1L;
 	
 	public Animation animation;
-	
+
 	public Bat(Handler handler, double x, double y) {
-		super(handler, x, y, 36, 18, Creature.DEFAULT_SPEED, Creature.DEFAULT_ACCELERATION, (int) (Creature.DEFAULT_SPEED+2), "Bat", BasicTemplate.PASSIVE, 200, 10, 10, 2,
+		super(handler, x-18, y-9, 36, 18, Creature.DEFAULT_SPEED, Creature.DEFAULT_ACCELERATION, (int) (Creature.DEFAULT_SPEED+2), "Bat", BasicTemplate.PASSIVE, 200, 10, 10, 2,
 				50);
 		
-		layer = Public.random(-5, 5);
+		layer = Public.expandedRand(-5, 5);
 		
 		bounds.x=10;
 		bounds.width=16;

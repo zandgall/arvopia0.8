@@ -2,10 +2,9 @@ package com.zandgall.arvopia.utils;
 
 import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.gfx.transform.Tran;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import com.zandgall.arvopia.input.KeyManager;
+
+import java.awt.*;
 import java.util.ArrayList;
 
 public class TextEditor {
@@ -71,28 +70,24 @@ public class TextEditor {
 	long typeTimer=2, typeSpeed = 5;
 
 	public void tick() {
-		boolean[] keys = game.getKeyManager().keys;
+		boolean[] keys = KeyManager.keys;
 
 		if (game.getMouse().fullLeft) {
 			int x = game.getMouse().rMouseX();
 			int y = game.getMouse().rMouseY();
-			if ((x >= this.x) && (x <= this.x + width) && (y >= this.y) && (y <= this.y + height))
-				selected = true;
-			else {
-				selected = false;
-			}
+			selected = (x >= this.x) && (x <= this.x + width) && (y >= this.y) && (y <= this.y + height);
 		}
 		
 		trippedtimer += 1L;
-		trippin = Math.sin(trippedtimer/8)>0 && selected;
+		trippin = Math.sin(trippedtimer/8.0)>0 && selected;
 		
-		if (game.getKeyManager().existantTyped && (selected)) {
-			if(game.getKeyManager().keys[39]) {
+		if (KeyManager.existantTyped && (selected)) {
+			if(KeyManager.keys[39]) {
 				System.out.println("Moving index");
 				fullIndex+=1;
 				trippin = true;
 				trippedtimer = 8;
-			} else if(game.getKeyManager().keys[37]) {
+			} else if(KeyManager.keys[37]) {
 				System.out.println("Moving index");
 				fullIndex-=1;
 				trippin = true;
@@ -105,7 +100,7 @@ public class TextEditor {
 					String last = oc.substring(index);
 					content = first + last;
 					fullIndex--;
-				} else if ((game.getKeyManager().keys[10])) {
+				} else if ((KeyManager.keys[10])) {
 					if((getGameContent().length < rows)) {
 						String oc = content;
 						String first = oc.substring(0, index);
@@ -118,30 +113,21 @@ public class TextEditor {
 					fullIndex = content.length();
 				} else if(keys[36]) {
 					fullIndex = 0;
-				} else if ((Character.isDefined(game.getKeyManager().getNameOfKey().charValue()) && !game.getKeyManager().getNameOfKey().toString().equals("")) && !(keys[8]||keys[10]||keys[27]||keys[127])) {
-	//				if(Tran.measureString(content+game.getKeyManager().getNameOfKey().toString()+"|", font).x+5<width) {
-	//					content += game.getKeyManager().getNameOfKey().toString();
-						String oc = content;
-						String first = oc.substring(0, index);
-						String last = oc.substring(index);
-						content = first+game.getKeyManager().getNameOfKey().toString() + last;
-						
-						fullIndex++;
-	//				}
+				} else if ((Character.isDefined(game.getKeyManager().getNameOfKey()) && !game.getKeyManager().getNameOfKey().toString().equals("")) && !(keys[8]||keys[10]||keys[27]||keys[127])) {
+					String oc = content;
+					String first = oc.substring(0, index);
+					String last = oc.substring(index);
+					content = first+game.getKeyManager().getNameOfKey().toString() + last;
+
+					fullIndex++;
 				}
 			}
 			typeTimer=0;
 		}
 		typeTimer++;
-		
-//		System.out.println(game.getKeyManager().keys[37] + ", " + game.getKeyManager().existantTyped);
+
 		if (selected) {
 			game.getMouse().changeCursor("TYPE");
-			
-//			game.getKeyManager().up=false;
-//			game.getKeyManager().down=false;
-//			game.getKeyManager().left=false;
-//			game.getKeyManager().right=false;
 			fullIndex= Public.range(0, content.length(), fullIndex);
 		}
 		index = (int) fullIndex;
@@ -153,16 +139,17 @@ public class TextEditor {
 		graphic.render((Graphics2D) g, x, y);
 		g.setColor(Color.black);
 		g.drawRect(x, y, width, height);
-//		for (int i = 0; i < getGameContent().length; i++) {
-//			g.drawString(getGameContent()[i], x + 5, (int) (y + textOffset*0.75) + i * textOffset);
-//		}
-		Tran.drawString(g, Public.limit(getContent(), width, font), x+5, (int) (y+textOffset));
+		Shape prec = g.getClip();
+		g.clipRect(x, y, width, height);
+		Point size = Tran.measureString(content, font);
+		Tran.drawString(g, content, x+5 - Math.max(size.x-width, 0), y+textOffset);
 		if(trippin) { 
-			String[] fullStrings = Public.limit(getContent().substring(0, Math.min(index, content.length())), width, font).split("\n");
+			String[] fullStrings = content.substring(0, Math.min(index, content.length())).split("\n");
 			int offset = Tran.measureString(fullStrings[fullStrings.length-1], font).x;
 			int offsety = fullStrings.length;
 			g.drawLine(x+5+offset, y+textOffset*(offsety-1)+2, x+5+offset, y+textOffset*(offsety)+2);
 		}
+		g.setClip(prec);
 	}
 
 	public String[] getGameContent() {
@@ -189,6 +176,22 @@ public class TextEditor {
 		newString.toArray(array);
 
 		return array;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public void setY(int y) {
+		this.y = y;
 	}
 
 	public String getContent() {

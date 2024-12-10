@@ -7,10 +7,10 @@ import java.awt.image.BufferedImage;
 public class Assets {
 	private Game g;
 	Handler game = new Handler(g);
-	private static int width;
-	private static int height;
+	private int width;
+	private int height;
 	BufferedImage sheetfile;
-	static SpriteSheet sheet;
+	SpriteSheet sheet;
 
 	public Assets(BufferedImage file, int Width, int Height, String name) {
 		sheet = new SpriteSheet(file);

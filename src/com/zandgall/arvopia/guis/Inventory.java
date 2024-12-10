@@ -45,13 +45,11 @@ public class Inventory extends Gui {
 	public Inventory(Handler game) {
 		super(game);
 
-		ForgeHandler.init(game, game.getPlayer());
 		outputs = ForgeHandler.craftings;
 		
-		preAmounts = new HashMap<String, Integer>();
-		items = new HashMap<String, InventoryItem>();
-		
-//		craft = new Button(game, 460, 230, 55, 20, "Crafts the selected item IF you are able to", "Craft");
+		preAmounts = new HashMap<>();
+		items = new HashMap<>();
+
 		craft = new Button(game, 460, 230, "Crafts the selected item IF you are able to", "Craft");
 		
 		body = new BevelPlatform(2, 2, 720, 400);
@@ -297,7 +295,7 @@ public class Inventory extends Gui {
 			
 			ForgeHandler.game=game;
 			
-			craftings = new ArrayList<CraftOutput>();
+			craftings = new ArrayList<>();
 			
 			presize = p.items.size();
 

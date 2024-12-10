@@ -1,6 +1,7 @@
 package com.zandgall.arvopia.entity.creatures.basic;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import com.zandgall.arvopia.Console;
@@ -8,6 +9,7 @@ import com.zandgall.arvopia.Handler;
 import com.zandgall.arvopia.entity.creatures.Creature;
 import com.zandgall.arvopia.entity.creatures.Player;
 import com.zandgall.arvopia.entity.creatures.npcs.NPC;
+import com.zandgall.arvopia.gfx.transform.Tran;
 import com.zandgall.arvopia.tiles.Tile;
 import com.zandgall.arvopia.utils.Public;
 import com.zandgall.arvopia.water.Water;
@@ -34,7 +36,7 @@ public abstract class BasicTemplate extends Creature {
 	public BasicTemplate(Handler handler, double x, double y, int width, int height, double speed, double acceleration,
 			int maxSpeed, String name, int hostility, int range, int health, int maxHealth, double strength,
 			double attackspeed) {
-		super(handler, x, y, width, height, false, speed * Public.debugRandom(0.8, 1.8), acceleration, maxSpeed, false,
+		super(handler, x, y, width, height, false, speed * Public.rand(0.8, 1.8), acceleration, maxSpeed, false,
 				false, Creature.DEFAULT_JUMP_FORCE, Creature.DEFAULT_JUMP_CARRY, name);
 
 		this.health = health;
@@ -299,7 +301,7 @@ public abstract class BasicTemplate extends Creature {
 
 		// If hitting wall, check space above to jump to
 		if ((right) && (r)) {
-			int tx = (int) ((x + getxMove() + bounds.x + bounds.width + 2.0D) / Tile.TILEWIDTH);
+			int tx = (int) ((x + getxMove() + bounds.x + bounds.width + 2.0D) / Tile.WIDTH);
 
 			if (emptySpaces(18, -108, 18, -18, false, true)) {
 				u = true;
@@ -311,7 +313,7 @@ public abstract class BasicTemplate extends Creature {
 				backleft = true;
 			}
 		} else if ((left) && (l)) {
-			int tx = (int) ((x + getxMove() + bounds.x) / Tile.TILEWIDTH + 2.0D);
+			int tx = (int) ((x + getxMove() + bounds.x) / Tile.WIDTH + 2.0D);
 
 			if (emptySpaces(-18, -108, -18, -18, true, true)) {
 				u = true;
@@ -469,40 +471,40 @@ public abstract class BasicTemplate extends Creature {
 	}
 
 	public boolean checkOff(int tX, int tY, boolean lr, boolean tb) {
-		int ty = (int) ((y + yMove + bounds.y + bounds.height + tY) / Tile.TILEHEIGHT);
+		int ty = (int) ((y + yMove + bounds.y + bounds.height + tY) / Tile.HEIGHT);
 		if (tb)
-			ty = (int) ((y + yMove + bounds.y + tY) / Tile.TILEHEIGHT);
-		int tx = (int) ((x + bounds.x + bounds.width + tX) / Tile.TILEWIDTH);
+			ty = (int) ((y + yMove + bounds.y + tY) / Tile.HEIGHT);
+		int tx = (int) ((x + bounds.x + bounds.width + tX) / Tile.WIDTH);
 		if (lr)
-			tx = (int) ((x + bounds.x + tX) / Tile.TILEWIDTH);
+			tx = (int) ((x + bounds.x + tX) / Tile.WIDTH);
 		return collisionWithDown(tx, ty);
 	}
 
 	public boolean isSafe(int tX, int width) {
-		return game.getWorld().SAFETOWALK(x + tX, y, width);
+		return game.getWorld().safeToWalk(x + tX, y, width);
 	}
 	
 	public boolean isSafe(int tX, int tY, int width) {
-		return game.getWorld().SAFETOWALK(x + tX, y+tY, width);
+		return game.getWorld().safeToWalk(x + tX, y+tY, width);
 	}
 
 	public boolean checkDown(int tX, int tY, boolean lr, boolean tb) {
-		int ty = (int) ((y + yMove + bounds.y + bounds.height + tY) / Tile.TILEHEIGHT);
+		int ty = (int) ((y + yMove + bounds.y + bounds.height + tY) / Tile.HEIGHT);
 		if (tb)
-			ty = (int) ((y + yMove + bounds.y + tY) / Tile.TILEHEIGHT);
-		int tx = (int) ((x + bounds.x + bounds.width + tX) / Tile.TILEWIDTH);
+			ty = (int) ((y + yMove + bounds.y + tY) / Tile.HEIGHT);
+		int tx = (int) ((x + bounds.x + bounds.width + tX) / Tile.WIDTH);
 		if (lr)
-			tx = (int) ((x + bounds.x + tX) / Tile.TILEWIDTH);
+			tx = (int) ((x + bounds.x + tX) / Tile.WIDTH);
 		return World.getTile(tx, ty).isTop()&&!World.getTile(tx, ty).isSolid();
 	}
 	
 	public boolean emptySpace(int tX, int tY, boolean lr, boolean tb) {
-		int ty = (int) ((y + yMove + bounds.y + bounds.height + tY) / Tile.TILEHEIGHT);
+		int ty = (int) ((y + yMove + bounds.y + bounds.height + tY) / Tile.HEIGHT);
 		if (tb)
-			ty = (int) ((y + yMove + bounds.y + tY) / Tile.TILEHEIGHT);
-		int tx = (int) ((x + bounds.x + bounds.width + tX) / Tile.TILEWIDTH);
+			ty = (int) ((y + yMove + bounds.y + tY) / Tile.HEIGHT);
+		int tx = (int) ((x + bounds.x + bounds.width + tX) / Tile.WIDTH);
 		if (lr)
-			tx = (int) ((x + bounds.x + tX) / Tile.TILEWIDTH);
+			tx = (int) ((x + bounds.x + tX) / Tile.WIDTH);
 		return !collisionWithDown(tx, ty);
 	}
 
@@ -525,67 +527,67 @@ public abstract class BasicTemplate extends Creature {
 				inWater = true;
 			}
 		}
-		int ty = (int) ((y + yMove + bounds.y + bounds.height) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
+		int ty = (int) ((y + yMove + bounds.y + bounds.height) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))
 				|| (checkCollision(0.0F, yMove))) {
 			bottom = true;
-		} else if ((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithDown((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))) {
-			if (y + bounds.y + bounds.height < ty * Tile.TILEHEIGHT + 4) {
+		} else if ((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithDown((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))) {
+			if (y + bounds.y + bounds.height < ty * Tile.HEIGHT + 4) {
 				down = true;
 			}
 
-			if ((y + bounds.y + bounds.height <= ty * Tile.TILEHEIGHT + 1) && (yMove >= 0.0F)) {
+			if ((y + bounds.y + bounds.height <= ty * Tile.HEIGHT + 1) && (yMove >= 0.0F)) {
 				bottoms = true;
 				bottom = true;
 			}
 		}
-		ty = (int) ((y + yMove + bounds.y + bounds.height + 2.0D) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
+		ty = (int) ((y + yMove + bounds.y + bounds.height + 2.0D) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))
 				|| (checkCollision(0.0F, yMove + 1.0F))
-				|| (((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-						|| (collisionWithDown((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty)))
-						&& (y + bounds.y + bounds.height <= ty * Tile.TILEHEIGHT + 1))) {
+				|| (((collisionWithDown((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+						|| (collisionWithDown((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty)))
+						&& (y + bounds.y + bounds.height <= ty * Tile.HEIGHT + 1))) {
 			bottoms = true;
 		}
 
-		ty = (int) ((y + yMove + bounds.y) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
+		ty = (int) ((y + yMove + bounds.y) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))
 				|| (checkCollision(0.0F, yMove))) {
 			top = true;
 		}
-		ty = (int) ((y + yMove + bounds.y - 2.0D) / Tile.TILEHEIGHT);
-		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.TILEWIDTH), ty))
-				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.TILEWIDTH), ty))
+		ty = (int) ((y + yMove + bounds.y - 2.0D) / Tile.HEIGHT);
+		if ((collisionWithTile((int) ((x + bounds.x + 2.0D) / Tile.WIDTH), ty))
+				|| (collisionWithTile((int) ((x + bounds.x + bounds.width - 2.0D) / Tile.WIDTH), ty))
 				|| (checkCollision(0.0F, yMove - 1.0F))) {
 			tops = true;
 		}
 
-		int tx = (int) ((x + getxMove() + bounds.x + bounds.width) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.TILEHEIGHT))
+		int tx = (int) ((x + getxMove() + bounds.x + bounds.width) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.HEIGHT))
 				|| (checkCollision(getxMove() + 1.0F, 0.0F))) {
 			right = true;
 		}
-		tx = (int) ((x + getxMove() + bounds.x + bounds.width + 2.0D) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.TILEHEIGHT))
+		tx = (int) ((x + getxMove() + bounds.x + bounds.width + 2.0D) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.HEIGHT))
 				|| (checkCollision(getxMove() + 1.0F, 0.0F))) {
 			rights = true;
 		}
 
-		tx = (int) ((x + getxMove() + bounds.x) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.TILEHEIGHT))
+		tx = (int) ((x + getxMove() + bounds.x) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.HEIGHT))
 				|| (checkCollision(getxMove(), 0.0F))) {
 			left = true;
 		}
-		tx = (int) ((x + getxMove() + bounds.x - 2.0D) / Tile.TILEWIDTH);
-		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.TILEHEIGHT))
-				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.TILEHEIGHT))
+		tx = (int) ((x + getxMove() + bounds.x - 2.0D) / Tile.WIDTH);
+		if ((collisionWithTile(tx, (int) (y + bounds.y + 2.0D) / Tile.HEIGHT))
+				|| (collisionWithTile(tx, (int) (y + bounds.y + bounds.height - 2.0D) / Tile.HEIGHT))
 				|| (checkCollision(getxMove() - 1.0F, 0.0F))) {
 			lefts = true;
 		}
@@ -593,12 +595,12 @@ public abstract class BasicTemplate extends Creature {
 	
 	@Override
 	public void render(Graphics2D g) {
-		g.drawImage(com.zandgall.arvopia.gfx.transform.Tran.flip(getFrame(), widthFlip, 1),
-				(int) (x - game.getGameCamera().getxOffset()), (int) (y - game.getGameCamera().getyOffset()), null);
+		AffineTransform p = g.getTransform();
+		g.translate(x, y);
 
-		if (health < MAX_HEALTH) {
-			showHealthBar(g);
-		}
+		g.drawImage(Tran.flip(getFrame(), widthFlip, 1), 0, 0, null);
+
+		g.setTransform(p);
 	}
 
 	public abstract BufferedImage getFrame();

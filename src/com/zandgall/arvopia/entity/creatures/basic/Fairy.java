@@ -13,9 +13,9 @@ public class Fairy extends BasicFlyTemplate {
 	private static final long serialVersionUID = 1L;
 	
 	public Animation animation;
-	
+
 	public Fairy(Handler handler, double x, double y) {
-		super(handler, x, y, 18, 18, Creature.DEFAULT_SPEED, Creature.DEFAULT_ACCELERATION, (int) (Creature.DEFAULT_SPEED+2), "Fairy", BasicTemplate.FLEER, 100, 10, 10, 2,
+		super(handler, x-9, y-9, 18, 18, Creature.DEFAULT_SPEED, Creature.DEFAULT_ACCELERATION, (int) (Creature.DEFAULT_SPEED+2), "Fairy", BasicTemplate.FLEER, 100, 10, 10, 2,
 				50);
 		
 		int i = 0;
@@ -25,7 +25,7 @@ public class Fairy extends BasicFlyTemplate {
 			i = 1;
 		}
 		
-		layer = Public.random(-5, 5);
+		layer = Public.expandedRand(-5, 5);
 		
 		bounds.x=10;
 		bounds.width=16;
@@ -45,7 +45,7 @@ public class Fairy extends BasicFlyTemplate {
 		
 		int i = hostile ? 1:0;
 		
-		layer = Public.random(-5, 5);
+		layer = Public.expandedRand(-5, 5);
 		
 		bounds.x=10;
 		bounds.width=16;

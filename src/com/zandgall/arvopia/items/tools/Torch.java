@@ -1,7 +1,7 @@
 package com.zandgall.arvopia.items.tools;
 
 import com.zandgall.arvopia.Handler;
-import com.zandgall.arvopia.enviornment.Light;
+import com.zandgall.arvopia.environment.Light;
 import com.zandgall.arvopia.gfx.Animation;
 import com.zandgall.arvopia.gfx.PublicAssets;
 import java.awt.Color;
@@ -35,7 +35,7 @@ public class Torch extends Tool {
 
 	public void tick() {
 		if (!one) {
-			game.getWorld().getEnviornment().getLightManager().addLight(torch);
+			game.getWorld().getEnvironment().getLightManager().addLight(torch);
 			one = true;
 		}
 
